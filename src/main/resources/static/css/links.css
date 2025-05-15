@@ -1,0 +1,150 @@
+/* Links Container */
+.links-container {
+    display: flex;
+    justify-content: center;
+    align-items: center; /* Added align-items: center for vertical centering */
+    gap: 20px;
+    opacity: 0;
+    transform: translateY(40px);
+    animation: fadeInUp 0.6s ease forwards 0.4s;
+}
+
+/* Auth Links */
+.auth-link {
+    display: inline-block;
+    padding: 12px 30px;
+    background-color: var(--navbar-bg);
+    color: #1d903e;
+    text-decoration: none;
+    border-radius: 8px;
+    font-size: 1.2rem;
+    font-weight: normal; /* Use Croogla4F */
+    letter-spacing: 0.5px;
+    border: 1px solid rgba(29, 144, 62, 0.5);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    transition: all 0.3s ease;
+    text-shadow: 0 0 2px rgba(29, 145, 62, 0.3);
+}
+
+.auth-link:hover {
+    transform: translateY(-5px);
+    border-color: rgba(29, 144, 62, 0.8);
+    box-shadow: none;
+}
+
+.auth-link:active {
+    transform: translateY(-2px);
+}
+
+/* Additional link styles for other page links */
+.standard-link {
+    color: #1d903e;
+    text-decoration: none;
+    position: relative;
+    transition: transform 0.3s ease;
+    font-weight: normal; /* Use Croogla4F */
+}
+
+.standard-link::after {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 2px;
+    bottom: -2px;
+    left: 0;
+    background-color: #1d903e;
+    transition: width 0.3s ease;
+}
+
+.standard-link:hover {
+    transform: translateY(-2px);
+    box-shadow: none;
+}
+
+.standard-link:hover::after {
+    width: 100%;
+}
+
+/* Nav Links */
+.nav-link {
+    color: #1d903e;
+    text-decoration: none;
+    font-size: 1rem;
+    font-weight: normal; /* Use Croogla4F */
+    padding: 6px 12px;
+    border-radius: 6px;
+    transition: transform 0.3s ease, background-color 0.3s ease;
+}
+
+.nav-link:hover {
+    transform: translateY(-2px);
+    background-color: rgba(29, 145, 62, 0.15);
+    box-shadow: none;
+}
+
+.nav-link.active {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+/* Button Links */
+.button-link {
+    display: inline-block;
+    padding: 10px 24px;
+    background-color: #1d913e;
+    color: white;
+    text-decoration: none;
+    border-radius: 6px;
+    font-size: 1rem;
+    font-weight: normal; /* Use Croogla4F */
+    transition: background-color 0.3s ease, transform 0.3s ease;
+    border: none;
+    cursor: pointer;
+}
+
+.button-link:hover {
+    background-color: #25b54c;
+    transform: translateY(-2px);
+    box-shadow: none;
+}
+
+.button-link:active {
+    transform: translateY(0);
+}
+
+/* Ghost Button Links */
+.ghost-link {
+    display: inline-block;
+    padding: 9px 23px;
+    background-color: transparent;
+    color: #1d903e;
+    text-decoration: none;
+    border-radius: 6px;
+    font-size: 1rem;
+    font-weight: normal; /* Use Croogla4F */
+    transition: all 0.3s ease;
+    border: 1px solid #1d903e;
+    cursor: pointer;
+    text-shadow: 0 0 2px rgba(29, 144, 62, 0.3);
+}
+
+.ghost-link:hover {
+    background-color: rgba(29, 144, 62, 0.1);
+    transform: translateY(-2px);
+    box-shadow: none;
+    text-shadow: none;
+}
+
+/* Fade in up animation for links */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(40px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

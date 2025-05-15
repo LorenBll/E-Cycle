@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Error - E-Cycle</title>
+    <!-- Include header files (favicon and styles) -->
+    <th:block th:replace="~{fragments/header :: headerfiles}"></th:block>
+    <style>        /* Ensure body takes full height */
+        html, body {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            width: 100%;
+            min-height: 100vh;
+            overflow-x: hidden;
+            background-color: var(--bg-color);
+        }
+        
+        .error-container {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            text-align: center;
+            padding: 0;
+            margin: 0;
+            box-sizing: border-box;
+        }
+        
+        .error-card {
+            background-color: var(--navbar-bg);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-radius: 15px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+            padding: 40px;
+            max-width: 600px;
+            width: 90%;
+            opacity: 0;
+            transform: translateY(100px);
+            animation: fadeInUp 0.8s ease forwards;
+        }
+        
+        .error-code {
+            font-size: 6rem;
+            margin-bottom: 10px;
+            color: var(--text-color);
+            opacity: 0;
+            transform: translateY(40px);
+            animation: fadeInUp 0.6s ease forwards 0.3s;
+        }
+
+        .error-title {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            color: var(--text-color);
+            opacity: 0;
+            transform: translateY(40px);
+            animation: fadeInUp 0.6s ease forwards 0.5s;
+        }
+
+        .error-message {
+            font-size: 1.5rem;
+            color: var(--text-color);
+            max-width: 600px;
+            line-height: 1.6;
+            opacity: 0;
+            transform: translateY(40px);
+            animation: fadeInUp 0.6s ease forwards 0.7s;
+        }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(40px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+<body>    
+    <!-- Include the header navbar -->
+    <nav th:replace="~{fragments/header :: header}"></nav>
+    <!-- Error content -->
+    <div class="error-container">
+        <div class="error-card">
+            <div class="error-code" th:text="${status}">404</div>
+            <div class="error-title">Error</div>
+            <div class="error-message" th:text="${error}">Page not found</div>
+        </div>
+    </div>
+</body>
+</html>

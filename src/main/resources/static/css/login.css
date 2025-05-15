@@ -1,0 +1,132 @@
+
+.login-section {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 90vh;
+}
+
+.login-card {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 10px;
+    padding: 30px;
+    width: 100%;
+    max-width: 400px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: box-shadow 0.3s ease, transform 0.2s ease;
+}
+
+/* Add shadow effect when hovering on the card */
+.login-card:hover {
+    box-shadow: 0 8px 15px rgba(29, 145, 62, 1);
+    transform: translateY(-2px);
+}
+
+/* Add shadow effect when any input is focused or card has focus */
+.login-card:focus-within {
+    box-shadow: 0 8px 15px rgba(29, 145, 62, 1);
+    transform: translateY(-2px);
+}
+
+.login-title {
+    color: var(--text-color);
+    text-align: center;
+    margin-bottom: 25px;
+    font-size: 24px;
+    font-weight: normal;
+}
+
+.input-group {
+    margin-bottom: 20px;
+    position: relative;
+}
+
+.input-group label {
+    display: block;
+    margin-bottom: 8px;
+    color: var(--text-color);
+}
+
+.input-group input {
+    width: 100%;
+    padding: 12px 15px;
+    border: 1px solid var(--card-border);
+    border-radius: 5px;
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--text-color);
+    font-size: 16px;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.input-group input:focus {
+    outline: none;
+    border-color: #1d913e;
+    box-shadow: 0 0 0 2px rgba(29, 145, 62, 0.5);
+}
+
+.password-container {
+    position: relative;
+}
+
+.toggle-password {
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    color: var(--text-color);
+    background: none;
+    border: none;
+    font-size: 18px;
+}
+
+.error-message {
+    color: #ff5757;
+    font-size: 14px;
+    margin: 15px 0;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+.login-btn {
+    background-color: #1d913e;
+    color: white !important; /* Ensure white text regardless of theme */
+    border: none;
+    border-radius: 5px;
+    padding: 12px;
+    width: 100%;
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.login-btn:hover {
+    background-color: #157c32;
+    box-shadow: 0 0 10px rgba(29, 145, 62, 0.8);
+    transform: scale(1.02);
+}
+
+.register-link-container {
+    margin-top: 25px;
+    text-align: center;
+}
+
+.register-link {
+    color: #1d903e;
+    text-decoration: none;
+    font-size: 16px;
+    transition: all 0.3s ease;
+    font-weight: bold;
+    text-shadow: 0 0 2px rgba(29, 144, 62, 0.4);
+}
+
+.register-link:hover {
+    transform: translateY(-2px);
+    text-shadow: none;
+    box-shadow: none;
+    display: inline-block;
+}

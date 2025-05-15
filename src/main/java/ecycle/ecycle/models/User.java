@@ -18,20 +18,18 @@ import jakarta.persistence.Column;
 @AllArgsConstructor
 @Table(name="users")
 
-public class User {    
-
-    @Id @Column(name="ID") @GeneratedValue(strategy=GenerationType.IDENTITY) private int id;
-    @Column(name="username") private String username;
-    @Column(name="name") private String name;
-    @Column(name="surname") private String surname;
-    @Column(name="email") private String email;
-    @Column(name="password") private String password;
+public class User {        @Id @Column(name="ID") @GeneratedValue(strategy=GenerationType.IDENTITY) private int id;
+    @Column(name="username", length=50) private String username;
+    @Column(name="name", length=50) private String name;
+    @Column(name="surname", length=50) private String surname;
+    @Column(name="email", length=100) private String email;
+    @Column(name="password", length=64) private String password; // SHA-256 produces 64 char hex string
     // address components
-    @Column(name="state") private String state;
-    @Column(name="region") private String region;
-    @Column(name="province") private String province;
-    @Column(name="city") private String city;
-    @Column(name="street") private String street;
-    @Column(name="civic") private String civic;
+    @Column(name="street", length=100) private String street;
+    @Column(name="civic", length=10) private String civic;
+    @Column(name="city", length=50) private String city;
+    @Column(name="province", length=50) private String province;
+    @Column(name="region", length=50) private String region;
+    @Column(name="state", length=50) private String state;
 
 }

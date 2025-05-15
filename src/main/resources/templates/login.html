@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>E-Cycle - Login</title>    <!-- Include header files (favicon and styles) -->
+    <th:block th:replace="~{fragments/header :: headerfiles}"></th:block>
+    <!-- Include Font Awesome for the eye icon -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
+    <!-- Include login-specific CSS -->
+    <link rel="stylesheet" th:href="@{/css/login.css}"/>
+    <style>
+        body {
+            margin: 0;            
+            padding: 0;
+            min-height: 100vh;
+            background: var(--bg-color);
+            font-family: 'CocoSharp', Arial, sans-serif;
+            font-weight: normal;
+        }
+    </style>
+</head>
+<body>    
+    <!-- Include the header navbar -->
+    <nav th:replace="~{fragments/header :: header}"></nav>    <!-- Main content -->
+    <div th:replace="~{fragments/content :: content(sections = ~{::section})}">
+        <section th:replace="~{fragments/section :: section(~{::div.login-section})}">
+            <div class="login-section">                <div class="login-card">
+                    <h2 class="login-title">Login</h2>
+                    <form method="post" action="/login">
+                        <div class="input-group">
+                            <label for="username">Username</label>
+                            <input type="text" id="username" name="username" placeholder="Enter your username" required>
+                        </div>
+                        <div class="input-group">
+                            <label for="password">Password</label>
+                            <div class="password-container">
+                                <input type="password" id="password" name="password" placeholder="Enter your password" required>
+                                <button type="button" class="toggle-password" onclick="togglePassword()">
+                                    <i id="eye-icon" class="fas fa-eye"></i>
+                                </button>
+                            </div>
+                        </div>                        <div class="error-message" id="error-message" th:text="${error != null} ? ${error} : ''">
+                            <!-- Error messages will appear here -->
+                        </div>
+                        <button type="submit" class="login-btn">Login</button>
+                    </form>
+                    <div class="register-link-container">
+                        <a th:href="@{/registration}" class="register-link">Create a new account</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>    <script>
+        function togglePassword() {
+            const passwordInput = document.getElementById('password');
+            const eyeIcon = document.getElementById('eye-icon');
+            
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                eyeIcon.classList.remove('fa-eye');
+                eyeIcon.classList.add('fa-eye-slash');
+            } else {
+                passwordInput.type = 'password';
+                eyeIcon.classList.remove('fa-eye-slash');
+                eyeIcon.classList.add('fa-eye');
+            }
+        }
+        
+        // Function to hide error message after 3.5 seconds
+        function hideErrorAfterDelay() {
+            const errorMessage = document.getElementById('error-message');
+            if (errorMessage && errorMessage.textContent.trim() !== '') {
+                setTimeout(() => {
+                    errorMessage.textContent = '';
+                    errorMessage.style.display = 'flex'; // Keep the container visible but empty
+                }, 3500); // 3.5 seconds
+            }
+        }
+        
+        // Run when the page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            hideErrorAfterDelay();
+        });
+    </script>
+</body>
+</html>

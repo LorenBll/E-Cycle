@@ -24,7 +24,7 @@ public class Asset {
 
     @Id @Column(name="ID") @GeneratedValue(strategy=GenerationType.IDENTITY) private int id;
     @Column(name="price") private float price;
-    @Column(name="picture_path") private String picture_path;
+    @Column(name="picture_path", length=100) private String picture_path;
     @ManyToOne @JoinColumn(name="id_offer") private Offer offer;
     @ManyToOne @JoinColumn(name="id_characteristics") private Characteristics characteristics;
 

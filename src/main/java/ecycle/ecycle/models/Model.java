@@ -20,7 +20,7 @@ import jakarta.persistence.Column;
 
 public class Model {    
 
-    @Id @Column(name="ID") private String id;
+    @Id @Column(name="ID", length=50) private String id;
     @ManyToOne @JoinColumn(name="id_brand") private Brand brand;
 
 }

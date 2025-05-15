@@ -23,8 +23,8 @@ import jakarta.persistence.JoinColumn;
 public class Characteristics {    
 
     @Id @Column(name="ID") @GeneratedValue(strategy=GenerationType.IDENTITY) private int id;
-    @Column(name="main_colour") private String main_colour;
-    @Column(name="function") private String function;
+    @Column(name="main_colour", length=10) private String main_colour;
+    @Column(name="function", length=50) private String function;
     @Column(name="quality") private String quality;
     @Column(name="prod_year") private int prod_year;
     @ManyToOne @JoinColumn(name="id_category") private Category category;

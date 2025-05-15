@@ -1,0 +1,10 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+    <div th:fragment="section(content)" class="section">
+        <div th:replace="${content}">
+            <!-- Content will be injected here -->
+        </div>
+    </div>
+</body>
+</html>

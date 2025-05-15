@@ -18,6 +18,6 @@ import jakarta.persistence.Column;
 
 public class Brand {    
 
-    @Id @Column(name="ID") private String id;
+    @Id @Column(name="ID", length=50) private String id;
     
 }

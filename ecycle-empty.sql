@@ -175,17 +175,17 @@ DELETE FROM `requests_characteristics`;
 DROP TABLE IF EXISTS `users`;
 CREATE TABLE IF NOT EXISTS `users` (
   `ID` int(11) NOT NULL AUTO_INCREMENT,
-  `username` varchar(15) NOT NULL,
-  `name` varchar(20) DEFAULT NULL,
-  `surname` varchar(20) DEFAULT NULL,
-  `email` varchar(30) NOT NULL,
-  `password` text NOT NULL,
-  `state` varchar(25) NOT NULL,
-  `region` varchar(25) NOT NULL,
-  `province` varchar(25) NOT NULL,
-  `city` varchar(25) NOT NULL,
-  `street` varchar(25) NOT NULL,
-  `civic` varchar(25) NOT NULL,
+  `username` varchar(50) NOT NULL,
+  `name` varchar(50) DEFAULT NULL,
+  `surname` varchar(50) DEFAULT NULL,
+  `email` varchar(100) NOT NULL,
+  `password` varchar(64) NOT NULL,
+  `state` varchar(50) NOT NULL,
+  `region` varchar(50) NOT NULL,
+  `province` varchar(50) NOT NULL,
+  `city` varchar(50) NOT NULL,
+  `street` varchar(100) NOT NULL,
+  `civic` varchar(10) NOT NULL,
   PRIMARY KEY (`ID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 

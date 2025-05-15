@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>    <th:block th:fragment="headerfiles">
+        <link rel="icon" th:href="@{/images/logos/logoIcon.png}" type="image/png"/>
+        <link rel="stylesheet" th:href="@{/css/general.css}"/>
+        <link rel="stylesheet" th:href="@{/css/fonts.css}"/>
+        <link rel="stylesheet" th:href="@{/css/header.css}"/>
+        <link rel="stylesheet" th:href="@{/css/links.css}"/><style>
+            /* Hide scrollbar for all elements */
+            * {
+                scrollbar-width: none; /* Firefox */
+                -ms-overflow-style: none; /* IE and Edge */
+            }
+            
+            /* Hide scrollbar for Chrome, Safari and Opera */
+            *::-webkit-scrollbar {
+                display: none;
+            }
+
+            html {
+                margin: 0;
+                padding: 0;
+                height: 100%;
+                width: 100%;
+            }
+
+            :root {
+                --bg-color: #1a1a1a;
+                --text-color: #ffffff;
+                --navbar-bg: rgba(255, 255, 255, 0.01);
+                --slider-bg: #2c2c2c;
+                --slider-checked-bg: #d4d4d4;
+            }
+
+            [data-theme="light"] {
+                --bg-color: #ffffff;
+                --text-color: #1a1a1a;
+                --navbar-bg: rgba(0, 0, 0, 0.01);
+                --slider-bg: #d4d4d4;
+                --slider-checked-bg: #2c2c2c;
+            }
+            
+            body {
+                background-color: var(--bg-color);
+                color: var(--text-color);
+                transition: all 0.3s ease;
+                margin: 0;
+                padding: 0;
+                overflow-x: hidden;
+                min-height: 100vh;
+            }
+        </style><script>
+            function setTheme(theme) {
+                document.documentElement.setAttribute('data-theme', theme);
+                document.body.style.backgroundColor = theme === 'light' ? '#ffffff' : '#1a1a1a';
+                localStorage.setItem('theme', theme);
+            }
+
+            // Initialize theme on page load
+            (function() {
+                const savedTheme = localStorage.getItem('theme') || 'dark';
+                setTheme(savedTheme);
+            })();
+        </script>
+    </th:block>
+</head>
+<body>
+    <nav th:fragment="header" class="navbar">
+        <div class="container">
+            <a class="navbar-brand" th:href="@{/}">
+                <img th:src="@{/images/logos/logo.png}" alt="E-Cycle Logo"/>
+            </a>
+            <label class="theme-switch">
+                <input type="checkbox" id="theme-toggle">
+                <span class="slider"></span>
+            </label>
+        </div>
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                const themeToggle = document.getElementById('theme-toggle');
+                const savedTheme = localStorage.getItem('theme') || 'dark';
+                themeToggle.checked = savedTheme === 'light';
+                setTheme(savedTheme);
+                
+                themeToggle.addEventListener('change', function() {
+                    const newTheme = this.checked ? 'light' : 'dark';
+                    setTheme(newTheme);
+                });
+            });
+        </script>
+    </nav>
+</body>
+</html>
