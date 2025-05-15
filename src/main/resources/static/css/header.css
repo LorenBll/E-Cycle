@@ -7,7 +7,8 @@
     background-color: var(--navbar-bg);
     backdrop-filter: blur(15px);
     -webkit-backdrop-filter: blur(15px);
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);    z-index: 1000;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);    
+    z-index: 1000;
     padding: 10px 0;
     font-family: 'Croogla4F', Arial, sans-serif;
     font-weight: normal;
@@ -17,14 +18,14 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 20px;
+    padding: 0 40px; /* Increased horizontal padding to push elements further out */
+    width: 100%;
 }
 
 .navbar-brand {
     display: flex;
     align-items: center;
+    margin-left: -15px; /* Move logo slightly to the left */
 }
 
 .navbar-brand img {
@@ -43,6 +44,7 @@
     width: 60px;
     height: 30px;
     transition: all 0.3s ease;
+    margin-right: -15px; /* Move switch slightly to the right */
 }
 
 .theme-switch:hover {
@@ -98,19 +100,6 @@ input:checked + .slider:before {
     font-weight: normal; /* Use Croogla4F */
 }
 
-/* Logo and Title */
-.logo-title {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
-.site-title {    font-size: 1.5rem;
-    color: var(--text-color);
-    margin: 0;
-    font-weight: normal; /* Use Croogla4F */
-}
-
 /* Mobile Navigation */
 .mobile-menu-btn {
     display: none;
@@ -157,12 +146,17 @@ input:checked + .slider:before {
     }
     
     .container {
-        padding: 0 15px;
+        padding: 0 20px;
+    }
+    
+    .navbar-brand {
+        margin-left: -10px; /* Smaller offset on mobile */
     }
     
     .theme-switch {
         width: 50px;
         height: 25px;
+        margin-right: -10px; /* Smaller offset on mobile */
     }
     
     .slider:before {

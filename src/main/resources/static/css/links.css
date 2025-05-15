@@ -31,11 +31,12 @@
 .auth-link:hover {
     transform: translateY(-5px);
     border-color: rgba(29, 144, 62, 0.8);
-    box-shadow: none;
+    box-shadow: 0 8px 15px rgba(29, 145, 62, 1);
 }
 
 .auth-link:active {
     transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(29, 145, 62, 0.6);
 }
 
 /* Additional link styles for other page links */
@@ -107,7 +108,7 @@
 .button-link:hover {
     background-color: #25b54c;
     transform: translateY(-2px);
-    box-shadow: none;
+    box-shadow: 0 0 10px rgba(29, 145, 62, 0.8);
 }
 
 .button-link:active {
@@ -133,7 +134,7 @@
 .ghost-link:hover {
     background-color: rgba(29, 144, 62, 0.1);
     transform: translateY(-2px);
-    box-shadow: none;
+    box-shadow: 0 0 10px rgba(29, 145, 62, 0.8);
     text-shadow: none;
 }
 

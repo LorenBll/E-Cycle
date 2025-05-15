@@ -30,6 +30,37 @@
     filter: brightness(1.2);
 }
 
+/* Buttons styling matching login page */
+.links-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    opacity: 0;
+    transform: translateY(40px);
+    animation: fadeInUp 0.6s ease forwards 0.4s;
+}
+
+.links-container .login-btn {
+    background-color: #1d913e;
+    color: white !important;
+    border: none;
+    border-radius: 5px;
+    padding: 12px 30px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: inline-block;
+    width: auto; /* Override the width:100% from login.css since we have horizontal buttons */
+}
+
+.links-container .login-btn:hover {
+    background-color: #157c32;
+    box-shadow: 0 0 10px rgba(29, 145, 62, 0.8);
+    transform: scale(1.02);
+}
+
 /* For smaller screens */
 @media (max-width: 768px) {
     .animated-logo img {
