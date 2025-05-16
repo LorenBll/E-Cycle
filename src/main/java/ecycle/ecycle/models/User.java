@@ -26,10 +26,10 @@ public class User {
     @Column(name="email",length=100) private String email;
     @Column(name="password",length=64) private String password;
     // address components
+    @Column(name="state",length=50) private String state;
+    @Column(name="region",length=50) private String region;
+    @Column(name="province",length=50) private String province;
+    @Column(name="city",length=50) private String city;
     @Column(name="street",length=100) private String street;
     @Column(name="civic",length=10) private String civic;
-    @Column(name="city",length=50) private String city;
-    @Column(name="province",length=50) private String province;
-    @Column(name="region",length=50) private String region;
-    @Column(name="state",length=50) private String state;
 }

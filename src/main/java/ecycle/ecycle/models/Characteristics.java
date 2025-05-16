@@ -25,7 +25,7 @@ import jakarta.persistence.FetchType;
 public class Characteristics { 
     @Id @Column(name="ID") @GeneratedValue(strategy=GenerationType.IDENTITY) private int id;
     @Column(name="main_colour",length=10) private String mainColour;
-    @Column(name="funnction",length=50) private String function;
+    @Column(name="function",length=50) private String function;
     @Column(name="quality",length=1) private String quality;
     @Column(name="prod_year") private int prodYear;
     @Column(name="batch",length=50) private String batch; //todo TO ADD TO SCHEME
