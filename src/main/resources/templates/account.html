@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>E-Cycle - My Account</title>
+    <!-- Include header files (favicon and styles) -->
+    <th:block th:replace="~{fragments/header :: headerfiles}"></th:block>
+    <!-- Include Font Awesome for the eye icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
+    <style>        
+        html, body {
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            width: 100%;
+            background-color: var(--bg-color);
+            overflow-x: hidden;
+            font-family: 'Croogla4F', Arial, sans-serif;
+        }
+    </style>    
+    <link rel="stylesheet" th:href="@{/css/home.css}"/>
+    <link rel="stylesheet" th:href="@{/css/account.css}"/>
+</head>
+<body>
+    <!-- Include the header navbar -->
+    <nav th:replace="~{fragments/header :: header}"></nav>    
+    <!-- Main content -->
+    <div th:replace="~{fragments/content :: content(sections = ~{::section})}">
+        <section th:replace="~{fragments/section :: section(~{::div.home-content})}">
+            <div class="home-content">
+                <!-- Welcome message -->
+                <div class="welcome-container">
+                    <h1 class="welcome-message">My Account Settings</h1>
+                </div>
+                
+                <hr class="section-separator">
+                
+                <!-- Account Card -->
+                <div class="account-card-container">
+                    <div class="account-card">
+                        <h2 class="account-title">Update Account Information</h2>
+                        <form method="post" action="/updateAccount">
+                            <div class="account-form-columns">
+                                <div class="left-column">
+                                    <div class="account-form-left">
+                                        <div class="account-form-left-content">
+                                            <!-- User info -->
+                                            <div class="input-group">
+                                                <label for="username">Username</label>
+                                                <input type="text" id="username" name="username" placeholder="Enter your username" th:value="${user.username}" required>
+                                            </div>
+                                            <div class="input-group">
+                                                <label for="name">First Name</label>
+                                                <input type="text" id="name" name="name" placeholder="Enter your first name" th:value="${user.name}" required>
+                                            </div>
+                                            <div class="input-group">
+                                                <label for="surname">Last Name</label>
+                                                <input type="text" id="surname" name="surname" placeholder="Enter your last name" th:value="${user.surname}" required>
+                                            </div>
+                                            <div class="input-group">
+                                                <label for="email">Email</label>
+                                                <input type="email" id="email" name="email" placeholder="Enter your email" th:value="${user.email}" required>
+                                            </div>
+                                        
+                                            <!-- Password fields -->
+                                            <div class="input-group">
+                                                <label for="password">New Password</label>
+                                                <div class="password-container">
+                                                    <input type="password" id="password" name="password" placeholder="Enter new password">
+                                                    <button type="button" class="toggle-password" onclick="togglePasswordVisibility('password', 'eye-icon-1')">
+                                                        <i id="eye-icon-1" class="fas fa-eye"></i>
+                                                    </button>
+                                                </div>
+                                                <div class="password-requirements">
+                                                    Password must be at least 8 characters and include capital letter and special character.
+                                                </div>
+                                            </div>
+                                            <div class="input-group">
+                                                <label for="confirmPassword">Confirm New Password</label>
+                                                <div class="password-container">
+                                                    <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Confirm new password">
+                                                    <button type="button" class="toggle-password" onclick="togglePasswordVisibility('confirmPassword', 'eye-icon-2')">
+                                                        <i id="eye-icon-2" class="fas fa-eye"></i>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="account-form-right">
+                                    <div class="address-card">
+                                        <h3 class="address-title">Address Information</h3>
+                                        <!-- Address fields -->
+                                        <div class="input-group">
+                                            <label for="state">State</label>
+                                            <input type="text" id="state" name="state" placeholder="Enter your state" th:value="${user.state}">
+                                        </div>
+                                        <div class="input-group">
+                                            <label for="region">Region</label>
+                                            <input type="text" id="region" name="region" placeholder="Enter your region" th:value="${user.region}">
+                                        </div>
+                                        <div class="input-group">
+                                            <label for="province">Province</label>
+                                            <input type="text" id="province" name="province" placeholder="Enter your province" th:value="${user.province}">
+                                        </div>
+                                        <div class="input-group">
+                                            <label for="city">City</label>
+                                            <input type="text" id="city" name="city" placeholder="Enter your city" th:value="${user.city}">
+                                        </div>
+                                        <div class="input-group">
+                                            <label for="street">Street</label>
+                                            <input type="text" id="street" name="street" placeholder="Enter your street" th:value="${user.street}">
+                                        </div>
+                                        <div class="input-group">
+                                            <label for="civic">Civic Number</label>
+                                            <input type="text" id="civic" name="civic" placeholder="Enter your civic number" th:value="${user.civic}">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                              <!-- Error message area -->
+                            <div class="account-error-message" id="account-error-message">
+                                <!-- Error messages will appear here -->
+                            </div>
+                            
+                            <button type="submit" class="update-btn">Update Information</button>
+                        </form>
+                        
+                        <div class="logout-container">
+                            <a th:href="@{/logout}" class="logout-btn">Logout</a>
+                        </div>
+                        
+                        <div class="back-link-container">
+                            <a th:href="@{/home}" class="back-link">Back to Home</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+    
+    <script>
+        // Toggle password visibility
+        function togglePasswordVisibility(inputId, iconId) {
+            const passwordInput = document.getElementById(inputId);
+            const eyeIcon = document.getElementById(iconId);
+            
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                eyeIcon.classList.remove('fa-eye');
+                eyeIcon.classList.add('fa-eye-slash');
+            } else {
+                passwordInput.type = 'password';
+                eyeIcon.classList.remove('fa-eye-slash');
+                eyeIcon.classList.add('fa-eye');
+            }
+        }
+          // Hide error message after 3.5 seconds
+        function hideAccountErrorAfterDelay() {
+            const errorMessage = document.getElementById('account-error-message');
+            if (errorMessage && errorMessage.textContent.trim() !== '') {
+                setTimeout(() => {
+                    errorMessage.style.opacity = '0';
+                    setTimeout(() => {
+                        errorMessage.textContent = '';
+                        errorMessage.style.opacity = '1';
+                    }, 300);
+                }, 3500); // 3.5 seconds
+            }
+        }
+        
+        // Show message function with type parameter (error/success)
+        function showAccountMessage(message, type = 'error') {
+            const messageElement = document.getElementById('account-error-message');
+            messageElement.textContent = message;
+            
+            if (type === 'success') {
+                messageElement.classList.remove('account-error-message');
+                messageElement.classList.add('account-success-message');
+            } else {
+                messageElement.classList.remove('account-success-message');
+                messageElement.classList.add('account-error-message');
+            }
+            
+            hideAccountErrorAfterDelay();
+        }
+        
+        // Legacy function for backward compatibility
+        function showAccountErrorMessage(message) {
+            showAccountMessage(message, 'error');
+        }
+        
+        // Form validation function
+        function validateAccountForm(event) {
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            
+            // Only validate if a new password is being set
+            if (password.trim() !== '') {
+                // Password validation regex pattern
+                const passwordPattern = /^(?=.*[A-Z])(?=.*[!@#$%^&*])(?=.{8,})/;
+                
+                // Check password requirements
+                if (!passwordPattern.test(password)) {
+                    showAccountErrorMessage('Password must be at least 8 characters and include a capital letter and special character.');
+                    event.preventDefault();
+                    return false;
+                }
+                
+                // Check if passwords match
+                if (password !== confirmPassword) {
+                    showAccountErrorMessage('Passwords do not match!');
+                    event.preventDefault();
+                    return false;
+                }
+            }
+            
+            return true;
+        }
+        
+        // Run when the page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            hideAccountErrorAfterDelay();
+            
+            // Add form validation
+            const form = document.querySelector('form');
+            if (form) {
+                form.addEventListener('submit', validateAccountForm);
+            }            // Check for URL parameters to display error messages
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.has('error')) {
+                const error = urlParams.get('error');
+                if (error === 'username-taken') {
+                    showAccountErrorMessage('Username already taken');
+                } else if (error === 'email-taken') {
+                    showAccountErrorMessage('Email already taken');
+                } else if (error === 'passwords-not-equal') {
+                    showAccountErrorMessage('Passwords do not match');
+                } else if (error === 'error-verifying-password') {
+                    showAccountErrorMessage('Error verifying password');
+                } else if (error === 'invalid-password') {
+                    showAccountErrorMessage('Password must be at least 8 characters and include a capital letter and special character.');
+                }
+            } else if (urlParams.has('nochanges') && urlParams.get('nochanges') === 'true') {
+                showAccountMessage('No changes to apply', 'success');
+            } else if (urlParams.has('success') && urlParams.get('success') === 'true') {
+                showAccountMessage('Account updated successfully!', 'success');
+            }
+        });
+    </script>
+</body>
+</html>

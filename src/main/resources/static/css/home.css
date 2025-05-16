@@ -17,6 +17,30 @@
     font-size: 2rem;
     margin-bottom: 1rem;
     color: var(--text-color);
+    transition: color 0.3s ease;
+}
+
+/* Section Separator */
+.section-separator {
+    width: 100%;
+    max-width: 1800px;
+    margin: 1.5rem auto;
+    border: 0;
+    height: 2px;
+    background-color: #1c903d; /* Green separator */
+    position: relative;
+    overflow: hidden;
+    animation: separatorSlide 1.2s ease-out forwards;
+    transform-origin: left center;
+}
+
+@keyframes separatorSlide {
+    from {
+        transform: scaleX(0);
+    }
+    to {
+        transform: scaleX(1);
+    }
 }
 
 /* Horizontal cards styling */
@@ -24,7 +48,7 @@
     display: flex;
     flex-direction: column;
     gap: 1.8rem;
-    max-width: 850px;
+    max-width: 1800px; /* Further increased width for account card */
     margin: 2rem auto;
     padding: 0 1rem;
     width: 100%;
@@ -37,7 +61,7 @@
     border: 1px solid var(--card-border);
     border-radius: 10px;
     width: 100%; /* Ensure it takes full width of container */
-    max-width: 850px; /* Increased max-width for wider cards */
+    max-width: 1800px; /* Further increased width for account card */
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     transition: box-shadow 0.3s ease;
     animation: slideFromBottom 0.8s ease-out;
@@ -77,22 +101,17 @@
     margin-left: 10px;
 }
 
-/* Card expanded content */
+/* Card expanded content - always expanded */
 .card-expanded-content {
-    max-height: 0;
-    opacity: 0;
-    overflow: hidden;
-    transition: max-height 0s, opacity 0s; /* Instant collapse */
-}
-
-.horizontal-card.active .card-expanded-content {
-    max-height: 300px; /* Adjust based on your content's height */
+    max-height: 1500px;
     opacity: 1;
-    transition: max-height 0.5s ease-in-out, opacity 0.5s ease-in-out; /* Smooth expansion */
+    overflow: visible;
+    transition: none;
 }
 
 .content-wrapper {
-    padding: 0 2rem 1.5rem 3.5rem;
+    padding: 0 2.5rem 1.8rem 2.5rem;
+    width: 100%;
 }
 
 .content-wrapper p {
@@ -178,7 +197,7 @@
 @keyframes slideUp {
     from {
         opacity: 0;
-        transform: translateY(30px);
+        transform: translateY(40px);
     }
     to {
         opacity: 1;
@@ -189,12 +208,167 @@
 @keyframes slideFromBottom {
     from {
         opacity: 0;
-        transform: translateY(100%);
+        transform: translateY(20px);
     }
     to {
         opacity: 1;
         transform: translateY(0);
     }
+}
+
+/* My Account Card Styles */
+.account-card-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px 0;
+    width: 100%;
+}
+
+/* Account Form Columns */
+.account-form-columns {
+    display: flex;
+    gap: 30px;
+    margin-bottom: 25px;
+    width: 100%;
+}
+
+.left-column {
+    flex: 1;
+    display: flex;
+    align-items: center; /* Center vertically */
+    justify-content: center;
+    height: 100%;
+    padding: 0;
+    margin: 0;
+}
+
+.account-form-left {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    min-height: 518px; /* Match the height of the address-card */
+}
+
+.account-form-left-content {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    max-width: 100%;
+}
+
+.account-form-right {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+}
+
+/* Address Card Styles */
+.address-card {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--card-border);
+    border-radius: 8px;
+    padding: 20px;
+    height: 100%;
+    width: 100%;
+}
+
+.address-title {
+    color: var(--text-color);
+    margin-bottom: 20px;
+    font-size: 18px;
+    font-weight: normal;
+    text-align: center;
+}
+
+.account-title {
+    color: var(--text-color);
+    text-align: center;
+    margin-bottom: 25px;
+    font-size: 24px;
+    font-weight: normal;
+}
+
+.input-group {
+    margin-bottom: 20px;
+    position: relative;
+    width: 100%; /* Increased from 95% to fill the column */
+}
+
+.input-group label {
+    display: block;
+    margin-bottom: 8px;
+    color: var(--text-color);
+}
+
+.input-group input {
+    width: 100%;
+    padding: 12px 15px;
+    border: 1px solid var(--card-border);
+    border-radius: 5px;
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--text-color);
+    font-size: 16px;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.input-group input:focus {
+    outline: none;
+    border-color: #1d913e;
+    box-shadow: 0 0 0 2px rgba(29, 145, 62, 0.5);
+}
+
+.password-container {
+    position: relative;
+}
+
+.toggle-password {
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    color: var(--text-color);
+    background: none;
+    border: none;
+    font-size: 18px;
+}
+
+.account-error-message {
+    color: #ff5757;
+    font-size: 14px;
+    margin: 15px 0;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    opacity: 1;
+    transition: opacity 0.3s ease;
+}
+
+.update-btn {
+    background-color: #1d913e;
+    color: white !important; /* Ensure white text regardless of theme */
+    border: none;
+    border-radius: 5px;
+    padding: 12px;
+    width: 100%;
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.update-btn:hover {
+    background-color: #157c32;
+    box-shadow: 0 0 10px rgba(29, 145, 62, 0.8);
+    transform: scale(1.02);
 }
 
 /* Responsive adjustments */
@@ -229,5 +403,20 @@
         width: 100%;
         text-align: center;
         padding: 0.7rem;
+    }
+    
+    /* Account form responsive adjustments */
+    .account-form-columns {
+        flex-direction: column;
+        gap: 20px;
+    }
+    
+    .account-form-left, 
+    .account-form-right {
+        width: 100%;
+    }
+    
+    .address-card {
+        margin-top: 10px;
     }
 }

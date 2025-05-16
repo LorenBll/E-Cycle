@@ -5,7 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>E-Cycle - Home</title>
     <!-- Include header files (favicon and styles) -->
-    <th:block th:replace="~{fragments/header :: headerfiles}"></th:block>    <style>        
+    <th:block th:replace="~{fragments/header :: headerfiles}"></th:block>
+    <!-- Include Font Awesome for the eye icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
+    <style>        
         html, body {
             margin: 0;
             padding: 0;
@@ -15,15 +18,50 @@
             overflow-x: hidden;
             font-family: 'Croogla4F', Arial, sans-serif;
         }
-    </style>
+        
+        /* Floating account button */
+        .floating-account-btn {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background-color: #1d913e;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease;
+            z-index: 999;
+            border: none;
+            font-size: 24px;
+            text-decoration: none;
+        }
+        
+        .floating-account-btn:hover {
+            transform: scale(1.1) translateY(-5px);
+            box-shadow: 0 6px 12px rgba(29, 145, 62, 0.8);
+            background-color: #25b54c;
+        }
+        
+        /* Media queries for responsive design */
+        @media (max-width: 768px) {
+            .floating-account-btn {
+                width: 50px;
+                height: 50px;
+                bottom: 20px;
+                right: 20px;
+                font-size: 20px;
+            }
+        }
+    </style>    
     <link rel="stylesheet" th:href="@{/css/home.css}"/>
-    <!-- Add Font Awesome for the arrow icon -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
 </head>
 <body>
-    <!-- Include the header navbar -->
-    <nav th:replace="~{fragments/header :: header}"></nav>    
-    
+    <!-- Include the header navbar -->    <nav th:replace="~{fragments/header :: header}"></nav>
     <!-- Main content -->
     <div th:replace="~{fragments/content :: content(sections = ~{::section})}">
         <section th:replace="~{fragments/section :: section(~{::div.home-content})}">
@@ -31,101 +69,60 @@
                 <!-- Welcome message -->
                 <div class="welcome-container">
                     <h1 class="welcome-message" th:text="'Welcome to E-Cycle, ' + ${user.username}"></h1>
-                </div>                  <!-- Horizontal cards -->                
-                <div class="horizontal-cards-container">                      <!-- Card 1 -->
-                    <div class="horizontal-card" style="animation-delay: 0.1s;">
-                        <div class="card-title">
-                            <button class="arrow-button">
-                                <img th:src="@{/images/arrow.png}" alt="Arrow">
-                            </button>
-                            <div class="card-content">
-                                <span>My Account</span>
-                            </div>
-                        </div>
-                        <div class="card-expanded-content">
-                            <div class="content-wrapper">
-                                <p>View and update your account information, change settings, and manage your personal details.</p>
-                                <a href="#" class="card-action-btn">Go to My Profile</a>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Card 2 -->
-                    <div class="horizontal-card" style="animation-delay: 0.3s;">
-                        <div class="card-title">
-                            <button class="arrow-button">
-                                <img th:src="@{/images/arrow.png}" alt="Arrow">
-                            </button>
-                            <div class="card-content">
-                                <span>My Requests</span>
-                            </div>
-                        </div>
-                        <div class="card-expanded-content">
-                            <div class="content-wrapper">
-                                <p>View your active and past e-cycling requests. Track the status of your requests and manage your recycling activities.</p>
-                                <a href="#" class="card-action-btn">View All Requests</a>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Card 3 -->
-                    <div class="horizontal-card" style="animation-delay: 0.5s;">
-                        <div class="card-title">
-                            <button class="arrow-button">
-                                <img th:src="@{/images/arrow.png}" alt="Arrow">
-                            </button>
-                            <div class="card-content">
-                                <span>My Offers</span>
-                            </div>
-                        </div>
-                        <div class="card-expanded-content">
-                            <div class="content-wrapper">
-                                <p>View and manage offers you've made for e-cycling. Keep track of accepted offers and negotiation states.</p>
-                                <a href="#" class="card-action-btn">View All Offers</a>
-                            </div>
-                        </div>
-                    </div>
+                </div>                
+                <hr class="section-separator">
+                <!-- Content for your home page goes here -->
+                <div class="home-content-message">
+                    <p>Welcome to your E-Cycle dashboard. Here you can manage your recycling activities and track your environmental impact.</p>
                 </div>
             </div>
         </section>
-    </div>    <script>
-        // Add event listeners to all arrow buttons and cards
-        document.addEventListener('DOMContentLoaded', function() {
-            const cards = document.querySelectorAll('.horizontal-card');
+    </div>
+      <script>
+        // Toggle password visibility
+        function togglePasswordVisibility(inputId, iconId) {
+            const passwordInput = document.getElementById(inputId);
+            const eyeIcon = document.getElementById(iconId);
             
-            // Function to toggle a specific card
-            function toggleCard(card) {
-                const isActive = card.classList.contains('active');
-                
-                // First close all cards
-                cards.forEach(c => {
-                    if (c !== card) {
-                        c.classList.remove('active');
-                    }
-                });
-                
-                // Toggle the clicked card
-                card.classList.toggle('active');
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                eyeIcon.classList.remove('fa-eye');
+                eyeIcon.classList.add('fa-eye-slash');
+            } else {
+                passwordInput.type = 'password';
+                eyeIcon.classList.remove('fa-eye-slash');
+                eyeIcon.classList.add('fa-eye');
             }
-            
-            // Add click event to card titles
-            cards.forEach(card => {
-                const cardTitle = card.querySelector('.card-title');
-                
-                cardTitle.addEventListener('click', function(e) {
-                    e.stopPropagation(); // Prevent bubbling
-                    toggleCard(card);
-                });
-                
-                // Make sure clicks inside expanded content don't toggle the card
-                const expandedContent = card.querySelector('.card-expanded-content');
-                if (expandedContent) {
-                    expandedContent.addEventListener('click', function(e) {
-                        e.stopPropagation(); // Prevent the card's click event from firing
-                    });
-                }
-            });
+        }
+          // Hide error message after 3.5 seconds
+        function hideAccountErrorAfterDelay() {
+            const errorMessage = document.getElementById('account-error-message');
+            if (errorMessage && errorMessage.textContent.trim() !== '') {
+                setTimeout(() => {
+                    errorMessage.style.opacity = '0';
+                    setTimeout(() => {
+                        errorMessage.textContent = '';
+                        errorMessage.style.opacity = '1';
+                    }, 300);
+                }, 3500); // 3.5 seconds
+            }
+        }
+        
+        // Show error message function (for demonstration purposes)
+        function showAccountErrorMessage(message) {
+            const errorMessage = document.getElementById('account-error-message');
+            errorMessage.textContent = message;
+            hideAccountErrorAfterDelay();
+        }
+          // Run when the page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            hideAccountErrorAfterDelay();
         });
     </script>
+    
+    <!-- Floating Account Button -->
+    <a th:href="@{/account}" class="floating-account-btn" title="My Account Settings">
+        <i class="fas fa-user"></i>
+    </a>
 </body>
 </html>

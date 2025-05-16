@@ -49,11 +49,32 @@
                 overflow-x: hidden;
                 min-height: 100vh;
             }
-        </style><script>
+            
+            /* Class for synchronized theme transitions */
+            .theme-transitioning * {
+                transition: background-color 0.3s ease, color 0.3s ease !important;
+                transition-delay: 0s !important;
+            }
+        </style>        <script>
             function setTheme(theme) {
+                // Apply theme to the document element all at once
                 document.documentElement.setAttribute('data-theme', theme);
+                
+                // Force a repaint to ensure all elements update simultaneously
+                document.documentElement.style.transition = 'background-color 0.3s ease, color 0.3s ease';
                 document.body.style.backgroundColor = theme === 'light' ? '#ffffff' : '#1a1a1a';
+                
+                // Store the theme preference
                 localStorage.setItem('theme', theme);
+                
+                // Ensure all text elements update together, including the title
+                const textElements = document.querySelectorAll('title, .welcome-message, h1, h2, h3, p, span, div');
+                textElements.forEach(el => {
+                    el.style.transition = 'color 0.3s ease';
+                });
+                
+                // Force synchronous reflow to ensure all elements update together
+                document.documentElement.getBoundingClientRect();
             }
 
             // Initialize theme on page load
@@ -81,10 +102,20 @@
                 const savedTheme = localStorage.getItem('theme') || 'dark';
                 themeToggle.checked = savedTheme === 'light';
                 setTheme(savedTheme);
-                
-                themeToggle.addEventListener('change', function() {
-                    const newTheme = this.checked ? 'light' : 'dark';
-                    setTheme(newTheme);
+                  themeToggle.addEventListener('change', function() {
+                    // Apply a class to the body to indicate theme is changing
+                    document.body.classList.add('theme-transitioning');
+                    
+                    // Small delay to batch all DOM updates
+                    setTimeout(() => {
+                        const newTheme = this.checked ? 'light' : 'dark';
+                        setTheme(newTheme);
+                        
+                        // Remove transition class
+                        setTimeout(() => {
+                            document.body.classList.remove('theme-transitioning');
+                        }, 300); // Match transition duration
+                    }, 10);
                 });
             });
         </script>

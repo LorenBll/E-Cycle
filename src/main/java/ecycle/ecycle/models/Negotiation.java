@@ -27,7 +27,7 @@ public class Negotiation {
     @Id @Column(name="ID") @GeneratedValue(strategy=GenerationType.IDENTITY) private int id;
     @Column(name="ts_creation") private Timestamp tsCreation;
     @Column(name="ts_closure") private Timestamp tsClosure;
-    @Column(name="closure") private String closure;
-    @ManyToOne @JoinColumn(name="id_sing_request") private SingRequest singRequest;
+    @Column(name="wasAccepted") private boolean wasAccepted;
     @ManyToOne @JoinColumn(name="id_sing_offer") private SingOffer singOffer;
+    @ManyToOne @JoinColumn(name="id_sing_request") private SingRequest singRequest;
 }

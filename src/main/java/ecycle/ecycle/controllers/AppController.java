@@ -90,18 +90,18 @@ public class AppController {
 
     @PostMapping("/register")
     public String register(
+        @RequestParam String username,
         @RequestParam(required=false) String name,
         @RequestParam(required=false) String surname,
-        @RequestParam String username,
         @RequestParam String email,
         @RequestParam String password,
         @RequestParam String confirmPassword,
+        @RequestParam String state,
+        @RequestParam String region,
+        @RequestParam String province,
+        @RequestParam String city,
         @RequestParam String street,
         @RequestParam String civic,
-        @RequestParam String city,
-        @RequestParam String province,
-        @RequestParam String region,
-        @RequestParam String state,
         Model model,
         HttpSession session
     ) {
@@ -123,17 +123,17 @@ public class AppController {
         }
 
         User user = new User();
+        user.setUsername(username);
         user.setName(name);
         user.setSurname(surname);
-        user.setUsername(username);
         user.setEmail(email);
         user.setPassword(hashedPassword);
+        user.setState(state);
+        user.setRegion(region);
+        user.setProvince(province);
+        user.setCity(city);
         user.setStreet(street);
         user.setCivic(civic);
-        user.setCity(city);
-        user.setProvince(province);
-        user.setRegion(region);
-        user.setState(state);
 
         usersService.register(user);
         session.setAttribute("user", user);
@@ -141,31 +141,7 @@ public class AppController {
 
     }
 
-    @GetMapping("/error")
-    public ModelAndView handleError(HttpServletRequest request) {
-        ModelAndView modelAndView = new ModelAndView("error");
-        
-        // Get error status
-        Integer statusCode = (Integer) request.getAttribute("jakarta.servlet.error.status_code");
-        String errorMsg = (String) request.getAttribute("jakarta.servlet.error.message");
-        
-        modelAndView.addObject("status", statusCode);
-        modelAndView.addObject("error", errorMsg);
-        
-        return modelAndView;
-    }
-
-    @GetMapping("/home")
-    public String home(Model model, HttpSession session) {
-        User user = (User) session.getAttribute("user");
-        if (user == null) {
-            return "redirect:/login";
-        }
-        model.addAttribute("user", user);
-        return "home";
-    }
-
-    public String hashPassword(String password) {
+        public String hashPassword(String password) {
         try {
             MessageDigest digest = MessageDigest.getInstance("SHA-256");
             byte[] hash = digest.digest(password.getBytes(StandardCharsets.UTF_8));
@@ -189,4 +165,141 @@ public class AppController {
         }
     }
 
+    @GetMapping("/error")
+    public ModelAndView handleError(HttpServletRequest request) {
+        ModelAndView modelAndView = new ModelAndView("error");
+        
+        // Get error status
+        Integer statusCode = (Integer) request.getAttribute("jakarta.servlet.error.status_code");
+        String errorMsg = (String) request.getAttribute("jakarta.servlet.error.message");
+        
+        modelAndView.addObject("status", statusCode);
+        modelAndView.addObject("error", errorMsg);
+        
+        return modelAndView;
+    }
+
+    @GetMapping("/logout")
+    public String logout(HttpSession session) {
+        session.invalidate();
+        return "redirect:/";
+    }      
+    
+    @GetMapping("/home")
+    public String home(Model model, HttpSession session) {
+        User user = (User) session.getAttribute("user");
+        if (user == null) {
+            return "redirect:/login";
+        }
+        model.addAttribute("user", user);
+        return "home";
+    }
+    
+    @GetMapping("/account")
+    public String account(Model model, HttpSession session) {
+        User user = (User) session.getAttribute("user");
+        if (user == null) {
+            return "redirect:/login";
+        }
+        model.addAttribute("user", user);
+        return "account";
+    }
+      @PostMapping("/updateAccount")
+    public String updateAccount(
+        @RequestParam String username,
+        @RequestParam(required=false) String name,
+        @RequestParam(required=false) String surname,
+        @RequestParam String email,
+        @RequestParam(required=false) String password,
+        @RequestParam(required=false) String confirmPassword,
+        @RequestParam String state,
+        @RequestParam String region,
+        @RequestParam String province,
+        @RequestParam String city,
+        @RequestParam String street,
+        @RequestParam String civic,
+        Model model,
+        HttpSession session
+    ) {
+        User currentUser = (User) session.getAttribute("user");
+        if (currentUser == null) {
+            return "redirect:/login";
+        }
+        
+        // Check if username is changed and already exists
+        if (!username.equals(currentUser.getUsername()) && usersService.findByUsername(username) != null) {
+            return "redirect:/account?error=username-taken";
+        }
+        // Check if email is changed and already exists
+        if (!email.equals(currentUser.getEmail()) && usersService.findByEmail(email) != null) {
+            return "redirect:/account?error=email-taken";
+        }
+        
+        // Check if any changes were made to the user's information
+        boolean hasChanges = false;
+        
+        // Check if basic information changed
+        if (!username.equals(currentUser.getUsername()) ||
+            (name != null && !name.equals(currentUser.getName())) ||
+            (surname != null && !surname.equals(currentUser.getSurname())) ||
+            !email.equals(currentUser.getEmail())) {
+            hasChanges = true;
+        }
+        
+        // Check if address information changed
+        if (!state.equals(currentUser.getState()) ||
+            !region.equals(currentUser.getRegion()) ||
+            !province.equals(currentUser.getProvince()) ||
+            !city.equals(currentUser.getCity()) ||
+            !street.equals(currentUser.getStreet()) ||
+            !civic.equals(currentUser.getCivic())) {
+            hasChanges = true;
+        }
+        
+        // Check if password is being changed
+        if (password != null && !password.isEmpty()) {
+            hasChanges = true;
+            // Check password pattern
+            if (!password.matches("^(?=.*[A-Z])(?=.*[!@#$%^&*])(?=.{8,}).*$")) {
+                return "redirect:/account?error=invalid-password";
+            }
+            
+            if (confirmPassword == null || !password.equals(confirmPassword)) {
+                return "redirect:/account?error=passwords-not-equal";
+            }
+            
+            String hashedPassword = hashPassword(password);
+            if (hashedPassword == null) {
+                return "redirect:/account?error=error-verifying-password";
+            }
+            currentUser.setPassword(hashedPassword);
+        }
+        
+        // If no changes detected, return with a no-changes message
+        if (!hasChanges) {
+            return "redirect:/account?nochanges=true";
+        }
+        
+        // Update user information
+        currentUser.setUsername(username);
+        currentUser.setName(name);
+        currentUser.setSurname(surname);
+        currentUser.setEmail(email);
+        
+        // Update address information
+        currentUser.setState(state);
+        currentUser.setRegion(region);
+        currentUser.setProvince(province);
+        currentUser.setCity(city);
+        currentUser.setStreet(street);
+        currentUser.setCivic(civic);
+        
+        // Save updated user
+        usersService.update(currentUser);
+        
+        // Update the session with the updated user
+        session.setAttribute("user", currentUser);
+        
+        return "redirect:/account?success=true";
+    }
 }

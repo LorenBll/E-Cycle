@@ -46,7 +46,7 @@ CREATE TABLE IF NOT EXISTS `characteristics` (
   `ID` int(11) NOT NULL AUTO_INCREMENT,
   `main_colour` varchar(10) NOT NULL,
   `function` varchar(50) NOT NULL,
-  `quality` varchar(1) NOT NULL,
+  `quality` varchar(50) DEFAULT NULL,
   `prod_year` int(11) DEFAULT NULL,
   `batch` varchar(50) DEFAULT NULL,
   `id_model` varchar(50) NOT NULL,
@@ -109,14 +109,13 @@ CREATE TABLE IF NOT EXISTS `negotiations` (
   `ID` int(11) NOT NULL,
   `ts_creation` timestamp NOT NULL DEFAULT current_timestamp(),
   `ts_closure` timestamp NULL DEFAULT NULL,
-  `closure` varchar(255) DEFAULT NULL,
+  `wasAccepted` bit(1) DEFAULT NULL,
   `id_sing_offer` int(11) NOT NULL,
   `id_sing_request` int(11) NOT NULL,
   KEY `id_sing_request` (`id_sing_request`),
   KEY `id_sing_offer` (`id_sing_offer`),
-  CONSTRAINT `FK27y1uh6hcvw79jsovlfr0vfue` FOREIGN KEY (`id_sing_request`) REFERENCES `sing_requests` (`ID`),
-  CONSTRAINT `FK_negotiations_requests` FOREIGN KEY (`id_sing_request`) REFERENCES `interactions` (`ID`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `FK_negotiations_sing_offer` FOREIGN KEY (`id_sing_offer`) REFERENCES `sing_offers` (`ID`) ON DELETE CASCADE ON UPDATE CASCADE
+  CONSTRAINT `FK_negotiations_sing_offer` FOREIGN KEY (`id_sing_offer`) REFERENCES `sing_offers` (`ID`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `FK_negotiations_sing_requests` FOREIGN KEY (`id_sing_request`) REFERENCES `sing_requests` (`ID`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- Dump dei dati della tabella ecycle.negotiations: ~0 rows (circa)
@@ -127,7 +126,8 @@ DROP TABLE IF EXISTS `sing_offers`;
 CREATE TABLE IF NOT EXISTS `sing_offers` (
   `ID` int(11) NOT NULL AUTO_INCREMENT,
   `price` float NOT NULL,
-  `picture_path` varchar(255) DEFAULT NULL,
+  `picture_path` varchar(255) NOT NULL,
+  `description` varchar(255) DEFAULT NULL,
   `expiration` date DEFAULT NULL,
   `ts_deletion` timestamp NULL DEFAULT NULL,
   `id_offer` int(11) NOT NULL,

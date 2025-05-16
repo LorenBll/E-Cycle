@@ -1,8 +1,9 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>E-Cycle - Login</title>    <!-- Include header files (favicon and styles) -->
+<head>    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>E-Cycle - Login</title>
+    <!-- Include header files (favicon and styles) -->
     <th:block th:replace="~{fragments/header :: headerfiles}"></th:block>
     <!-- Include Font Awesome for the eye icon -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
@@ -21,7 +22,9 @@
 </head>
 <body>    
     <!-- Include the header navbar -->
-    <nav th:replace="~{fragments/header :: header}"></nav>    <!-- Main content -->
+    <nav th:replace="~{fragments/header :: header}"></nav>
+    
+    <!-- Main content -->
     <div th:replace="~{fragments/content :: content(sections = ~{::section})}">
         <section th:replace="~{fragments/section :: section(~{::div.login-section})}">
             <div class="login-section">                <div class="login-card">
@@ -48,9 +51,10 @@
                         <a th:href="@{/registration}" class="register-link">Create a new account</a>
                     </div>
                 </div>
-            </div>
-        </section>
-    </div>    <script>
+            </div>        </section>
+    </div>
+    
+    <script>
         function togglePassword() {
             const passwordInput = document.getElementById('password');
             const eyeIcon = document.getElementById('eye-icon');
@@ -76,10 +80,13 @@
                 }, 3500); // 3.5 seconds
             }
         }
-        
-        // Run when the page loads
+          // Run when the page loads
         document.addEventListener('DOMContentLoaded', function() {
             hideErrorAfterDelay();
+            
+            // Clear input fields
+            document.getElementById('username').value = '';
+            document.getElementById('password').value = '';
         });
     </script>
 </body>
