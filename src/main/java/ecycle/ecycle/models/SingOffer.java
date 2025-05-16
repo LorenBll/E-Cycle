@@ -10,22 +10,24 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.Column;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Column;
+import java.sql.Date;
+import java.sql.Timestamp;
 
 @Entity
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name="assets")
+@Table(name="sing_offers")
 
-public class Asset {    
-
+public class SingOffer {
     @Id @Column(name="ID") @GeneratedValue(strategy=GenerationType.IDENTITY) private int id;
     @Column(name="price") private float price;
-    @Column(name="picture_path", length=100) private String picture_path;
-    @ManyToOne @JoinColumn(name="id_offer") private Offer offer;
+    @Column(name="picture_path") private String picturePath;
+    @Column(name="exipration") private Date expiration;
+    @Column(name="ts_deletion") private Timestamp tsDeletion;
+    @ManyToOne @JoinColumn(name="id_offer") private Interaction offer;
     @ManyToOne @JoinColumn(name="id_characteristics") private Characteristics characteristics;
-
 }

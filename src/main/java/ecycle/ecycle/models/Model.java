@@ -6,6 +6,8 @@ import lombok.Setter;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 import jakarta.persistence.Table;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
@@ -18,9 +20,7 @@ import jakarta.persistence.Column;
 @AllArgsConstructor
 @Table(name="models")
 
-public class Model {    
-
-    @Id @Column(name="ID", length=50) private String id;
+public class Model {
+    @Id @Column(name="ID",length=50) private String id;
     @ManyToOne @JoinColumn(name="id_brand") private Brand brand;
-
 }

@@ -155,6 +155,16 @@ public class AppController {
         return modelAndView;
     }
 
+    @GetMapping("/home")
+    public String home(Model model, HttpSession session) {
+        User user = (User) session.getAttribute("user");
+        if (user == null) {
+            return "redirect:/login";
+        }
+        model.addAttribute("user", user);
+        return "home";
+    }
+
     public String hashPassword(String password) {
         try {
             MessageDigest digest = MessageDigest.getInstance("SHA-256");

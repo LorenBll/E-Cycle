@@ -6,6 +6,8 @@ import lombok.Setter;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 import jakarta.persistence.Table;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Column;
 
@@ -16,8 +18,6 @@ import jakarta.persistence.Column;
 @AllArgsConstructor
 @Table(name="categories")
 
-public class Category {    
-
-    @Id @Column(name="ID", length=50) private String id;
-
+public class Category {
+    @Id @Column(name="ID",length=50) private String id;
 }

@@ -9,23 +9,24 @@ import jakarta.persistence.Table;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import java.sql.Timestamp;
 import jakarta.persistence.Column;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.JoinColumn;
+import java.sql.Timestamp;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.FetchType;
 
 @Entity
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name="requests")
+@Table(name="interactions")
 
-public class Request {    
-
+public class Interaction { 
     @Id @Column(name="ID") @GeneratedValue(strategy=GenerationType.IDENTITY) private int id;
-    @Column(name="ts_creation") private Timestamp ts_creation;
-    @Column(name="ts_deletion") private Timestamp ts_deletion;
+    @Column(name="title",length=50) private String title;
+    @Column(name="ts_creation") private Timestamp tsCreation;
+    @Column(name="isOffer") private boolean isOffer;
     @ManyToOne @JoinColumn(name="id_user") private User user;
-
 }

@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>E-Cycle - Home</title>
+    <!-- Include header files (favicon and styles) -->
+    <th:block th:replace="~{fragments/header :: headerfiles}"></th:block>    <style>        
+        html, body {
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            width: 100%;
+            background-color: var(--bg-color);
+            overflow-x: hidden;
+            font-family: 'Croogla4F', Arial, sans-serif;
+        }
+    </style>
+    <link rel="stylesheet" th:href="@{/css/home.css}"/>
+    <!-- Add Font Awesome for the arrow icon -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
+</head>
+<body>
+    <!-- Include the header navbar -->
+    <nav th:replace="~{fragments/header :: header}"></nav>    
+    
+    <!-- Main content -->
+    <div th:replace="~{fragments/content :: content(sections = ~{::section})}">
+        <section th:replace="~{fragments/section :: section(~{::div.home-content})}">
+            <div class="home-content">
+                <!-- Welcome message -->
+                <div class="welcome-container">
+                    <h1 class="welcome-message" th:text="'Welcome to E-Cycle, ' + ${user.username}"></h1>
+                </div>                  <!-- Horizontal cards -->                
+                <div class="horizontal-cards-container">                      <!-- Card 1 -->
+                    <div class="horizontal-card" style="animation-delay: 0.1s;">
+                        <div class="card-title">
+                            <button class="arrow-button">
+                                <img th:src="@{/images/arrow.png}" alt="Arrow">
+                            </button>
+                            <div class="card-content">
+                                <span>My Account</span>
+                            </div>
+                        </div>
+                        <div class="card-expanded-content">
+                            <div class="content-wrapper">
+                                <p>View and update your account information, change settings, and manage your personal details.</p>
+                                <a href="#" class="card-action-btn">Go to My Profile</a>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Card 2 -->
+                    <div class="horizontal-card" style="animation-delay: 0.3s;">
+                        <div class="card-title">
+                            <button class="arrow-button">
+                                <img th:src="@{/images/arrow.png}" alt="Arrow">
+                            </button>
+                            <div class="card-content">
+                                <span>My Requests</span>
+                            </div>
+                        </div>
+                        <div class="card-expanded-content">
+                            <div class="content-wrapper">
+                                <p>View your active and past e-cycling requests. Track the status of your requests and manage your recycling activities.</p>
+                                <a href="#" class="card-action-btn">View All Requests</a>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Card 3 -->
+                    <div class="horizontal-card" style="animation-delay: 0.5s;">
+                        <div class="card-title">
+                            <button class="arrow-button">
+                                <img th:src="@{/images/arrow.png}" alt="Arrow">
+                            </button>
+                            <div class="card-content">
+                                <span>My Offers</span>
+                            </div>
+                        </div>
+                        <div class="card-expanded-content">
+                            <div class="content-wrapper">
+                                <p>View and manage offers you've made for e-cycling. Keep track of accepted offers and negotiation states.</p>
+                                <a href="#" class="card-action-btn">View All Offers</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>    <script>
+        // Add event listeners to all arrow buttons and cards
+        document.addEventListener('DOMContentLoaded', function() {
+            const cards = document.querySelectorAll('.horizontal-card');
+            
+            // Function to toggle a specific card
+            function toggleCard(card) {
+                const isActive = card.classList.contains('active');
+                
+                // First close all cards
+                cards.forEach(c => {
+                    if (c !== card) {
+                        c.classList.remove('active');
+                    }
+                });
+                
+                // Toggle the clicked card
+                card.classList.toggle('active');
+            }
+            
+            // Add click event to card titles
+            cards.forEach(card => {
+                const cardTitle = card.querySelector('.card-title');
+                
+                cardTitle.addEventListener('click', function(e) {
+                    e.stopPropagation(); // Prevent bubbling
+                    toggleCard(card);
+                });
+                
+                // Make sure clicks inside expanded content don't toggle the card
+                const expandedContent = card.querySelector('.card-expanded-content');
+                if (expandedContent) {
+                    expandedContent.addEventListener('click', function(e) {
+                        e.stopPropagation(); // Prevent the card's click event from firing
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>

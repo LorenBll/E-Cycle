@@ -10,9 +10,11 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Column;
-import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.JoinColumn;
 import java.sql.Timestamp;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.FetchType;
 
 @Entity
 @Getter
@@ -21,14 +23,11 @@ import java.sql.Timestamp;
 @AllArgsConstructor
 @Table(name="negotiations")
 
-public class Negotiation {    
-
+public class Negotiation { 
     @Id @Column(name="ID") @GeneratedValue(strategy=GenerationType.IDENTITY) private int id;
-    @Column(name="ts_creation") private Timestamp ts_creation;
-    @Column(name="ts_update") private Timestamp ts_update;
-    @Column(name="ts_closure") private Timestamp ts_closure;
+    @Column(name="ts_creation") private Timestamp tsCreation;
+    @Column(name="ts_closure") private Timestamp tsClosure;
     @Column(name="closure") private String closure;
-    @ManyToOne @JoinColumn(name="id_request") private Request request;
-    @ManyToOne @JoinColumn(name="id_asset") private Asset asset;
-
+    @ManyToOne @JoinColumn(name="id_sing_request") private SingRequest singRequest;
+    @ManyToOne @JoinColumn(name="id_sing_offer") private SingOffer singOffer;
 }

@@ -9,24 +9,23 @@ import jakarta.persistence.Table;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import java.sql.Timestamp;
-import java.sql.Date;
-import jakarta.persistence.Column;
-import jakarta.persistence.ManyToOne;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Column;
+import java.sql.Date;
+import java.sql.Timestamp;
 
 @Entity
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name="offers")
+@Table(name="sing_requests")
 
-public class Offer {    
-
+public class SingRequest {
     @Id @Column(name="ID") @GeneratedValue(strategy=GenerationType.IDENTITY) private int id;
-    @Column(name="ts_creation") private Timestamp ts_creation;
-    @Column(name="expiration") private Date expiration;
-    @ManyToOne @JoinColumn(name="id_user") private User user;
-
+    @Column(name="max_price") private float max_price;
+    @Column(name="ts_deletion") private Timestamp tsDeletion;
+    @ManyToOne @JoinColumn(name="id_request") private Interaction request;
+    @ManyToOne @JoinColumn(name="id_characteristics") private Characteristics characteristics;
 }

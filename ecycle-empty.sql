@@ -20,24 +20,6 @@ DROP DATABASE IF EXISTS `ecycle`;
 CREATE DATABASE IF NOT EXISTS `ecycle` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci */;
 USE `ecycle`;
 
--- Dump della struttura di tabella ecycle.assets
-DROP TABLE IF EXISTS `assets`;
-CREATE TABLE IF NOT EXISTS `assets` (
-  `ID` int(11) NOT NULL AUTO_INCREMENT,
-  `price` float NOT NULL,
-  `picture_path` varchar(50) NOT NULL,
-  `id_offer` int(11) NOT NULL,
-  `id_characteristics` int(11) NOT NULL,
-  PRIMARY KEY (`ID`),
-  KEY `id_offer` (`id_offer`),
-  KEY `id_characteristics` (`id_characteristics`),
-  CONSTRAINT `FK_assets_characteristics` FOREIGN KEY (`id_characteristics`) REFERENCES `characteristics` (`ID`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `FK_assets_offers` FOREIGN KEY (`id_offer`) REFERENCES `offers` (`ID`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
--- Dump dei dati della tabella ecycle.assets: ~0 rows (circa)
-DELETE FROM `assets`;
-
 -- Dump della struttura di tabella ecycle.brands
 DROP TABLE IF EXISTS `brands`;
 CREATE TABLE IF NOT EXISTS `brands` (
@@ -62,24 +44,41 @@ DELETE FROM `categories`;
 DROP TABLE IF EXISTS `characteristics`;
 CREATE TABLE IF NOT EXISTS `characteristics` (
   `ID` int(11) NOT NULL AUTO_INCREMENT,
-  `main_colour` varchar(10) DEFAULT NULL,
+  `main_colour` varchar(10) NOT NULL,
   `function` varchar(50) NOT NULL,
-  `quality` enum('Excellent','Great','Good','Acceptable','To Revisionate') NOT NULL,
+  `quality` enum('5','4','3','2','1') NOT NULL,
   `prod_year` int(11) DEFAULT NULL,
-  `id_category` varchar(50) NOT NULL,
+  `batch` varchar(50) DEFAULT NULL,
   `id_model` varchar(50) NOT NULL,
+  `id_category` varchar(50) NOT NULL,
   `id_nature` varchar(50) NOT NULL,
   PRIMARY KEY (`ID`),
   KEY `id_model` (`id_model`),
   KEY `id_category` (`id_category`),
   KEY `id_nature` (`id_nature`),
-  CONSTRAINT `FK_characteristics_categories` FOREIGN KEY (`id_category`) REFERENCES `categories` (`ID`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `FK_characteristics_models` FOREIGN KEY (`id_model`) REFERENCES `models` (`ID`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `FK_characteristics_natures` FOREIGN KEY (`id_nature`) REFERENCES `natures` (`ID`) ON DELETE NO ACTION ON UPDATE NO ACTION
+  CONSTRAINT `FK_characteristics_categories` FOREIGN KEY (`id_category`) REFERENCES `categories` (`ID`) ON DELETE NO ACTION ON UPDATE CASCADE,
+  CONSTRAINT `FK_characteristics_models` FOREIGN KEY (`id_model`) REFERENCES `models` (`ID`) ON DELETE NO ACTION ON UPDATE CASCADE,
+  CONSTRAINT `FK_characteristics_natures` FOREIGN KEY (`id_nature`) REFERENCES `natures` (`ID`) ON DELETE NO ACTION ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- Dump dei dati della tabella ecycle.characteristics: ~0 rows (circa)
 DELETE FROM `characteristics`;
+
+-- Dump della struttura di tabella ecycle.interactions
+DROP TABLE IF EXISTS `interactions`;
+CREATE TABLE IF NOT EXISTS `interactions` (
+  `ID` int(11) NOT NULL AUTO_INCREMENT,
+  `title` varchar(50) NOT NULL,
+  `ts_creation` timestamp NOT NULL DEFAULT current_timestamp(),
+  `isOffer` enum('Y','N') NOT NULL,
+  `id_user` int(11) NOT NULL,
+  PRIMARY KEY (`ID`),
+  KEY `id_user` (`id_user`),
+  CONSTRAINT `FK_requests_users` FOREIGN KEY (`id_user`) REFERENCES `users` (`ID`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- Dump dei dati della tabella ecycle.interactions: ~0 rows (circa)
+DELETE FROM `interactions`;
 
 -- Dump della struttura di tabella ecycle.models
 DROP TABLE IF EXISTS `models`;
@@ -88,7 +87,7 @@ CREATE TABLE IF NOT EXISTS `models` (
   `id_brand` varchar(50) NOT NULL,
   PRIMARY KEY (`ID`),
   KEY `id_brand` (`id_brand`),
-  CONSTRAINT `FK_models_brands` FOREIGN KEY (`id_brand`) REFERENCES `brands` (`ID`) ON DELETE NO ACTION ON UPDATE NO ACTION
+  CONSTRAINT `FK_models_brands` FOREIGN KEY (`id_brand`) REFERENCES `brands` (`ID`) ON DELETE NO ACTION ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- Dump dei dati della tabella ecycle.models: ~0 rows (circa)
@@ -107,69 +106,58 @@ DELETE FROM `natures`;
 -- Dump della struttura di tabella ecycle.negotiations
 DROP TABLE IF EXISTS `negotiations`;
 CREATE TABLE IF NOT EXISTS `negotiations` (
-  `ID` int(11) NOT NULL AUTO_INCREMENT,
+  `ID` int(11) NOT NULL,
   `ts_creation` timestamp NOT NULL DEFAULT current_timestamp(),
-  `ts_update` timestamp NULL DEFAULT NULL,
   `ts_closure` timestamp NULL DEFAULT NULL,
   `closure` enum('Accepted','Refused') DEFAULT NULL,
-  `id_request` int(11) NOT NULL,
-  `id_asset` int(11) NOT NULL,
-  PRIMARY KEY (`ID`),
-  KEY `id_request` (`id_request`),
-  KEY `id_asset` (`id_asset`),
-  CONSTRAINT `FK_negotiations_assets` FOREIGN KEY (`id_asset`) REFERENCES `assets` (`ID`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `FK_negotiations_requests` FOREIGN KEY (`id_request`) REFERENCES `requests` (`ID`) ON DELETE NO ACTION ON UPDATE NO ACTION
+  `id_sing_request` int(11) NOT NULL,
+  `id_sing_offer` int(11) NOT NULL,
+  KEY `id_sing_request` (`id_sing_request`),
+  KEY `id_sing_offer` (`id_sing_offer`),
+  CONSTRAINT `FK_negotiations_requests` FOREIGN KEY (`id_sing_request`) REFERENCES `interactions` (`ID`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `FK_negotiations_sing_offer` FOREIGN KEY (`id_sing_offer`) REFERENCES `sing_offers` (`ID`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- Dump dei dati della tabella ecycle.negotiations: ~0 rows (circa)
 DELETE FROM `negotiations`;
 
--- Dump della struttura di tabella ecycle.offers
-DROP TABLE IF EXISTS `offers`;
-CREATE TABLE IF NOT EXISTS `offers` (
+-- Dump della struttura di tabella ecycle.sing_offers
+DROP TABLE IF EXISTS `sing_offers`;
+CREATE TABLE IF NOT EXISTS `sing_offers` (
   `ID` int(11) NOT NULL AUTO_INCREMENT,
-  `ts_creation` timestamp NOT NULL DEFAULT current_timestamp(),
+  `price` float NOT NULL,
+  `picture_path` text NOT NULL,
   `expiration` date NOT NULL,
-  `id_user` int(11) NOT NULL,
-  PRIMARY KEY (`ID`),
-  KEY `id_user` (`id_user`),
-  CONSTRAINT `FK_offers_users` FOREIGN KEY (`id_user`) REFERENCES `users` (`ID`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
--- Dump dei dati della tabella ecycle.offers: ~0 rows (circa)
-DELETE FROM `offers`;
-
--- Dump della struttura di tabella ecycle.requests
-DROP TABLE IF EXISTS `requests`;
-CREATE TABLE IF NOT EXISTS `requests` (
-  `ID` int(11) NOT NULL AUTO_INCREMENT,
-  `ts_creation` timestamp NOT NULL DEFAULT current_timestamp(),
   `ts_deletion` timestamp NULL DEFAULT NULL,
-  `id_user` int(11) NOT NULL,
+  `id_offer` int(11) NOT NULL,
+  `id_characteristics` int(11) NOT NULL,
   PRIMARY KEY (`ID`),
-  KEY `id_user` (`id_user`),
-  CONSTRAINT `FK_requests_users` FOREIGN KEY (`id_user`) REFERENCES `users` (`ID`) ON DELETE NO ACTION ON UPDATE NO ACTION
+  KEY `id_offer` (`id_offer`),
+  KEY `id_characteristics` (`id_characteristics`),
+  CONSTRAINT `FK_sing_offer_characteristics` FOREIGN KEY (`id_characteristics`) REFERENCES `characteristics` (`ID`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `FK_sing_offer_interactions` FOREIGN KEY (`id_offer`) REFERENCES `interactions` (`ID`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- Dump dei dati della tabella ecycle.requests: ~0 rows (circa)
-DELETE FROM `requests`;
+-- Dump dei dati della tabella ecycle.sing_offers: ~0 rows (circa)
+DELETE FROM `sing_offers`;
 
--- Dump della struttura di tabella ecycle.requests_characteristics
-DROP TABLE IF EXISTS `requests_characteristics`;
-CREATE TABLE IF NOT EXISTS `requests_characteristics` (
+-- Dump della struttura di tabella ecycle.sing_requests
+DROP TABLE IF EXISTS `sing_requests`;
+CREATE TABLE IF NOT EXISTS `sing_requests` (
   `ID` int(11) NOT NULL AUTO_INCREMENT,
   `max_price` float DEFAULT NULL,
+  `ts_deletion` timestamp NULL DEFAULT NULL,
   `id_request` int(11) NOT NULL,
   `id_characteristics` int(11) NOT NULL,
   PRIMARY KEY (`ID`),
   KEY `id_request` (`id_request`),
   KEY `id_characteristics` (`id_characteristics`),
-  CONSTRAINT `FK_requests_characteristics_characteristics` FOREIGN KEY (`id_characteristics`) REFERENCES `characteristics` (`ID`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `FK_requests_characteristics_requests` FOREIGN KEY (`id_request`) REFERENCES `requests` (`ID`) ON DELETE NO ACTION ON UPDATE NO ACTION
+  CONSTRAINT `FK_sing_request_characteristics` FOREIGN KEY (`id_characteristics`) REFERENCES `characteristics` (`ID`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `FK_sing_request_requests` FOREIGN KEY (`id_request`) REFERENCES `interactions` (`ID`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- Dump dei dati della tabella ecycle.requests_characteristics: ~0 rows (circa)
-DELETE FROM `requests_characteristics`;
+-- Dump dei dati della tabella ecycle.sing_requests: ~0 rows (circa)
+DELETE FROM `sing_requests`;
 
 -- Dump della struttura di tabella ecycle.users
 DROP TABLE IF EXISTS `users`;
@@ -187,7 +175,7 @@ CREATE TABLE IF NOT EXISTS `users` (
   `street` varchar(100) NOT NULL,
   `civic` varchar(10) NOT NULL,
   PRIMARY KEY (`ID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- Dump dei dati della tabella ecycle.users: ~0 rows (circa)
 DELETE FROM `users`;

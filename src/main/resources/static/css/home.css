@@ -1,0 +1,233 @@
+/* Home page specific styles */
+
+.home-content {
+    padding: 1rem;
+}
+
+.welcome-container {
+    animation: slideUp 0.8s ease-out;
+    animation-delay: 0s;
+    animation-fill-mode: both;
+    text-align: center;
+    margin-top: 2rem;
+    padding-top: 1rem;
+}
+
+.welcome-message {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+    color: var(--text-color);
+}
+
+/* Horizontal cards styling */
+.horizontal-cards-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1.8rem;
+    max-width: 850px;
+    margin: 2rem auto;
+    padding: 0 1rem;
+    width: 100%;
+}
+
+.horizontal-card {
+    display: flex;
+    flex-direction: column;
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 10px;
+    width: 100%; /* Ensure it takes full width of container */
+    max-width: 850px; /* Increased max-width for wider cards */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: box-shadow 0.3s ease;
+    animation: slideFromBottom 0.8s ease-out;
+    animation-fill-mode: both;
+    overflow: hidden;
+}
+
+.card-title {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    padding: 0.8rem;
+    height: 60px;
+    width: 100%;
+    cursor: pointer;
+    position: relative;
+    z-index: 1;
+    transition: background-color 0.3s ease;
+}
+
+.horizontal-card:hover {
+    box-shadow: 0 8px 20px rgba(29, 145, 62, 0.8);
+}
+
+[data-theme="light"] .horizontal-card:hover {
+    box-shadow: 0 8px 20px rgba(29, 145, 62, 1);
+}
+
+.card-content {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    font-size: 1rem;
+    line-height: 1.2;
+    opacity: 1;
+    visibility: visible;
+    margin-left: 10px;
+}
+
+/* Card expanded content */
+.card-expanded-content {
+    max-height: 0;
+    opacity: 0;
+    overflow: hidden;
+    transition: max-height 0s, opacity 0s; /* Instant collapse */
+}
+
+.horizontal-card.active .card-expanded-content {
+    max-height: 300px; /* Adjust based on your content's height */
+    opacity: 1;
+    transition: max-height 0.5s ease-in-out, opacity 0.5s ease-in-out; /* Smooth expansion */
+}
+
+.content-wrapper {
+    padding: 0 2rem 1.5rem 3.5rem;
+}
+
+.content-wrapper p {
+    margin-bottom: 1rem;
+    line-height: 1.5;
+    color: var(--text-color);
+}
+
+.card-action-btn {
+    display: inline-block;
+    background-color: var(--accent-color);
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 5px;
+    text-decoration: none;
+    font-size: 0.9rem;
+    transition: background-color 0.3s ease;
+}
+
+.card-action-btn:hover {
+    background-color: var(--accent-hover);
+}
+
+.arrow-button {
+    background: transparent;
+    border: none;
+    width: 30px;
+    height: 30px;
+    cursor: pointer;
+    transition: transform 0.5s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 15px;
+    padding: 0;
+}
+
+.arrow-button img {
+    width: 100%;
+    height: auto;
+    transition: transform 0.5s ease;
+}
+
+.arrow-button:hover {
+    transform: scale(1.2);
+}
+
+.horizontal-card.active .arrow-button img {
+    transform: rotate(90deg);
+}
+
+/* Add a CSS variable for accent hover color */
+:root {
+    --accent-hover: #137a34;
+}
+
+/* Removed unused styles */
+
+.dashboard-card {
+    position: relative;
+    overflow: hidden;
+    background-color: rgba(255, 255, 255, 0.05);
+    border-radius: 10px;
+    padding: 1.5rem;
+    min-width: 250px;
+    flex: 1;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    cursor: pointer;
+}
+
+/* Removed unused dashboard card and card link styles */
+
+/* Animations */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes slideFromBottom {
+    from {
+        opacity: 0;
+        transform: translateY(100%);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .dashboard-section {
+        flex-direction: column;
+    }
+    
+    .card-title {
+        height: 50px; /* Slightly taller on mobile */
+        padding: 0.8rem;
+    }
+    
+    .welcome-message {
+        font-size: 1.5rem;
+    }
+    
+    .dashboard-card {
+        min-width: auto;
+        width: 100%;
+    }
+    
+    .user-info {
+        padding: 1rem;
+    }
+    
+    .content-wrapper {
+        padding: 0 1.5rem 1.2rem 2.5rem;
+    }
+    
+    .card-action-btn {
+        width: 100%;
+        text-align: center;
+        padding: 0.7rem;
+    }
+}
