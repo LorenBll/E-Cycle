@@ -19,7 +19,6 @@ import java.util.List;
 import ecycle.ecycle.services.Users_Service;
 
 @Controller @RequiredArgsConstructor
-
 public class AppController {
     
     @Autowired Users_Service usersService;
@@ -42,9 +41,6 @@ public class AppController {
                 model.addAttribute("error", error);
             }
         }
-        if (session.getAttribute("user") != null) {
-            session.removeAttribute("user");
-        }
         return "login";
     }
 
@@ -64,7 +60,7 @@ public class AppController {
     }
 
     @GetMapping("/registration")
-    public String register(@RequestParam(required=false) String error , Model model, HttpSession session) {
+    public String register(@RequestParam(required=false) String error, Model model, HttpSession session) {
         if (error != null) {
             if (error.equals("username-taken")) {
                 model.addAttribute("error", "Username already taken");
@@ -82,28 +78,25 @@ public class AppController {
                 model.addAttribute("error", error);
             }
         }
-        if (session.getAttribute("user") != null) {
-            session.removeAttribute("user");
-        }
         return "registration";
     }
 
     @PostMapping("/register")
     public String register(
-        @RequestParam String username,
-        @RequestParam(required=false) String name,
-        @RequestParam(required=false) String surname,
-        @RequestParam String email,
-        @RequestParam String password,
-        @RequestParam String confirmPassword,
-        @RequestParam String state,
-        @RequestParam String region,
-        @RequestParam String province,
-        @RequestParam String city,
-        @RequestParam String street,
-        @RequestParam String civic,
-        Model model,
-        HttpSession session
+            @RequestParam String username,
+            @RequestParam(required=false) String name,
+            @RequestParam(required=false) String surname,
+            @RequestParam String email,
+            @RequestParam String password,
+            @RequestParam String confirmPassword,
+            @RequestParam String state,
+            @RequestParam String region,
+            @RequestParam String province,
+            @RequestParam String city,
+            @RequestParam String street,
+            @RequestParam String civic,
+            Model model,
+            HttpSession session
     ) {
         
         if (usersService.findByUsername(username) != null) {
@@ -138,10 +131,9 @@ public class AppController {
         usersService.register(user);
         session.setAttribute("user", user);
         return "redirect:/home";
-
     }
 
-        public String hashPassword(String password) {
+    public String hashPassword(String password) {
         try {
             MessageDigest digest = MessageDigest.getInstance("SHA-256");
             byte[] hash = digest.digest(password.getBytes(StandardCharsets.UTF_8));
@@ -183,7 +175,7 @@ public class AppController {
     public String logout(HttpSession session) {
         session.invalidate();
         return "redirect:/";
-    }      
+    }    
     
     @GetMapping("/home")
     public String home(Model model, HttpSession session) {
@@ -204,22 +196,23 @@ public class AppController {
         model.addAttribute("user", user);
         return "account";
     }
-      @PostMapping("/updateAccount")
+    
+    @PostMapping("/updateAccount")
     public String updateAccount(
-        @RequestParam String username,
-        @RequestParam(required=false) String name,
-        @RequestParam(required=false) String surname,
-        @RequestParam String email,
-        @RequestParam(required=false) String password,
-        @RequestParam(required=false) String confirmPassword,
-        @RequestParam String state,
-        @RequestParam String region,
-        @RequestParam String province,
-        @RequestParam String city,
-        @RequestParam String street,
-        @RequestParam String civic,
-        Model model,
-        HttpSession session
+            @RequestParam String username,
+            @RequestParam(required=false) String name,
+            @RequestParam(required=false) String surname,
+            @RequestParam String email,
+            @RequestParam(required=false) String password,
+            @RequestParam(required=false) String confirmPassword,
+            @RequestParam String state,
+            @RequestParam String region,
+            @RequestParam String province,
+            @RequestParam String city,
+            @RequestParam String street,
+            @RequestParam String civic,
+            Model model,
+            HttpSession session
     ) {
         User currentUser = (User) session.getAttribute("user");
         if (currentUser == null) {
@@ -240,19 +233,19 @@ public class AppController {
         
         // Check if basic information changed
         if (!username.equals(currentUser.getUsername()) ||
-            (name != null && !name.equals(currentUser.getName())) ||
-            (surname != null && !surname.equals(currentUser.getSurname())) ||
-            !email.equals(currentUser.getEmail())) {
+                (name != null && !name.equals(currentUser.getName())) ||
+                (surname != null && !surname.equals(currentUser.getSurname())) ||
+                !email.equals(currentUser.getEmail())) {
             hasChanges = true;
         }
         
         // Check if address information changed
         if (!state.equals(currentUser.getState()) ||
-            !region.equals(currentUser.getRegion()) ||
-            !province.equals(currentUser.getProvince()) ||
-            !city.equals(currentUser.getCity()) ||
-            !street.equals(currentUser.getStreet()) ||
-            !civic.equals(currentUser.getCivic())) {
+                !region.equals(currentUser.getRegion()) ||
+                !province.equals(currentUser.getProvince()) ||
+                !city.equals(currentUser.getCity()) ||
+                !street.equals(currentUser.getStreet()) ||
+                !civic.equals(currentUser.getCivic())) {
             hasChanges = true;
         }
         

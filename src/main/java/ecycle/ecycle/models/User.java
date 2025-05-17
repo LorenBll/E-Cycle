@@ -17,7 +17,6 @@ import jakarta.persistence.Column;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name="users")
-
 public class User {
     @Id @Column(name="ID") @GeneratedValue(strategy=GenerationType.IDENTITY) private int id;
     @Column(name="username",length=50) private String username;

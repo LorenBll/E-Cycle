@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<body>
-    <div th:fragment="content(sections)" class="content">
+<body>    <div th:fragment="content(sections)">
         <div th:each="section : ${sections}" th:remove="tag">
             <div th:replace="${section}"></div>
         </div>

@@ -22,7 +22,6 @@ import jakarta.persistence.FetchType;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name="negotiations")
-
 public class Negotiation { 
     @Id @Column(name="ID") @GeneratedValue(strategy=GenerationType.IDENTITY) private int id;
     @Column(name="ts_creation") private Timestamp tsCreation;

@@ -22,7 +22,6 @@ import jakarta.persistence.FetchType;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name="interactions")
-
 public class Interaction { 
     @Id @Column(name="ID") @GeneratedValue(strategy=GenerationType.IDENTITY) private int id;
     @Column(name="title",length=50) private String title;

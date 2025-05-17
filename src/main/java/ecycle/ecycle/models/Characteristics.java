@@ -21,14 +21,13 @@ import jakarta.persistence.FetchType;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name="characteristics")
-
 public class Characteristics { 
     @Id @Column(name="ID") @GeneratedValue(strategy=GenerationType.IDENTITY) private int id;
     @Column(name="main_colour",length=10) private String mainColour;
     @Column(name="function",length=50) private String function;
     @Column(name="quality",length=50) private String quality;
     @Column(name="prod_year") private int prodYear;
-    @Column(name="batch",length=50) private String batch; //todo TO ADD TO SCHEME
+    @Column(name="batch",length=50) private String batch;
     @ManyToOne @JoinColumn(name="id_model") private Model model;
     @ManyToOne @JoinColumn(name="id_category") private Category category;
     @ManyToOne @JoinColumn(name="id_nature") private Nature nature;

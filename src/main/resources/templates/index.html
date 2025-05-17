@@ -1,37 +1,22 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
+<head>    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>E-Cycle</title>
-    <!-- Include header files (favicon and styles) -->
-    <th:block th:replace="~{fragments/header :: headerfiles}"></th:block>
-    <style>        
-        html, body {
-            margin: 0;
-            padding: 0;
-            min-height: 100vh;
-            width: 100%;
-            background-color: var(--bg-color);
-            overflow-x: hidden;
-            font-family: 'CocoSharp', Arial, sans-serif;
-        }
-    </style>
-    <link rel="stylesheet" th:href="@{/css/index.css}"/>
+    <!-- Include favicon -->
+    <link rel="icon" th:href="@{/images/logos/logoIcon.png}" type="image/png"/>
 </head>
 <body>
     <!-- Include the header navbar -->
     <nav th:replace="~{fragments/header :: header}"></nav>    
-    <!-- Main content -->
-    <div th:replace="~{fragments/content :: content(sections = ~{::section})}">
-        <section th:replace="~{fragments/section :: section(~{::div.logo-section})}">
-            <div class="logo-section">
-                <div class="animated-logo">
+    <!-- Main content -->    <div th:replace="~{fragments/content :: content(sections = ~{::section})}">
+        <section th:replace="~{fragments/section :: section(~{::div})}}"><div>
+                <div>
                     <img th:src="@{/images/logos/logo.png}" alt="E-Cycle Logo"/>
                 </div>
-                <div class="links-container fade-in-up">
-                    <button th:onclick="'window.location.href=\'' + @{/login} + '\''" class="login-btn">Login</button>
-                    <button th:onclick="'window.location.href=\'' + @{/registration} + '\''" class="login-btn">Register</button>
+                <div>
+                    <button th:onclick="'window.location.href=\'' + @{/login} + '\''">Login</button>
+                    <button th:onclick="'window.location.href=\'' + @{/registration} + '\''">Register</button>
                 </div>
             </div>
         </section>

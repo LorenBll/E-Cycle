@@ -1,137 +1,118 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
+<head>    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>E-Cycle - Registration</title>
-    <!-- Include header files (favicon and styles) -->
-    <th:block th:replace="~{fragments/header :: headerfiles}"></th:block>
-    <!-- Include Font Awesome for the eye icon -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
-    <!-- Include registration-specific CSS -->
-    <link rel="stylesheet" th:href="@{/css/registration.css}"/>
-    <style>
-        body {
-            margin: 0;
-            padding: 0;
-            min-height: 100vh;
-            background: var(--bg-color);
-            font-family: 'CocoSharp', Arial, sans-serif;
-            font-weight: normal;
-        }
-    </style>
+    <!-- Include favicon -->
+    <link rel="icon" th:href="@{/images/logos/logoIcon.png}" type="image/png"/>
 </head>
 <body>
     <!-- Include the header navbar -->
     <nav th:replace="~{fragments/header :: header}"></nav>
     <!-- Main content -->
-    <div th:replace="~{fragments/content :: content(sections = ~{::section})}">
-        <section th:replace="~{fragments/section :: section(~{::div.registration-section})}">
-            <div class="registration-section">
-                <div class="registration-card">
-                    <h2 class="registration-title">Create an Account</h2>
-                    <form method="post" action="/register" id="registrationForm">
-                        
-                        <!-- Personal Information Section -->
-                        <div class="form-section">
-                            <h3 class="section-title">Account Information</h3>
+    <div th:replace="~{fragments/content :: content(sections = ~{::section})}">        <section th:replace="~{fragments/section :: section(~{::div})}">
+            <div>
+                <div>
+                    <h2>Create an Account</h2>
+                    <form method="post" action="/register" id="registrationForm">                        <!-- Personal Information Section -->
+                        <div>
+                            <h3>Account Information</h3>
                             
-                            <div class="input-row">                                <div class="input-group">
-                                    <label for="name">Name <span class="optional">(optional)</span></label>
+                            <div>
+                                <div>
+                                    <label for="name">Name (optional)</label>
                                     <input type="text" id="name" name="name" placeholder="Your first name" maxlength="50">
                                 </div>
                                 
-                                <div class="input-group">
-                                    <label for="surname">Surname <span class="optional">(optional)</span></label>
+                                <div>
+                                    <label for="surname">Surname (optional)</label>
                                     <input type="text" id="surname" name="surname" placeholder="Your last name" maxlength="50">
                                 </div>
-                            </div>                              
-                              <div class="input-group">
+                            </div>                
+                            <div>
                                 <label for="username">Username *</label>
                                 <input type="text" id="username" name="username" placeholder="Choose a username" required maxlength="50">
                             </div>
 
-                            <div class="input-group">
+                            <div>
                                 <label for="email">Email *</label>
                                 <input type="email" id="email" name="email" placeholder="Your email address" required maxlength="100">
                             </div>
                             
                             
-                            <div class="input-group">
+                            <div>
                                 <label for="password">Password *</label>
-                                <div class="password-container">
+                                <div>
                                     <input type="password" id="password" name="password" placeholder="Create a password" required>
-                                    <button type="button" class="toggle-password" onclick="togglePassword('password', 'eye-icon-1')">
-                                        <i id="eye-icon-1" class="fas fa-eye"></i>
+                                    <button type="button" onclick="togglePassword('password', 'eye-icon-1')">
+                                        <i id="eye-icon-1">Show</i>
                                     </button>
                                 </div>
-                                <div class="password-requirements">
+                                <div>
                                     Password must be at least 8 characters and include capital letter and special character.
                                 </div>
                             </div>
                             
-                            <div class="input-group">
+                            <div>
                                 <label for="confirmPassword">Confirm Password *</label>
-                                <div class="password-container">
+                                <div>
                                     <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Confirm your password" required>
-                                    <button type="button" class="toggle-password" onclick="togglePassword('confirmPassword', 'eye-icon-2')">
-                                        <i id="eye-icon-2" class="fas fa-eye"></i>
+                                    <button type="button" onclick="togglePassword('confirmPassword', 'eye-icon-2')">
+                                        <i id="eye-icon-2">Show</i>
                                     </button>
                                 </div>
                             </div>
                         </div>
                         
                         <!-- Address Information Section -->
-                        <div class="form-section">
-                            <h3 class="section-title">Address Information</h3>
+                        <div>
+                            <h3>Address Information</h3>
                             
-                            <div class="address-card">    
-                                
-                                <div class="input-row">
-                                    <div class="input-group">
+                            <div>    
+                            
+                                <div>
+                                    <div>
                                         <label for="country">State *</label>
                                         <input type="text" id="state" name="state" placeholder="State" required maxlength="50">
                                     </div>
-                                    <div class="input-group">
+                                    <div>
                                         <label for="region">Region *</label>
                                         <input type="text" id="region" name="region" placeholder="Region" required maxlength="50">
                                     </div>
                                 </div>
-                                
-                                <div class="input-row">
-                                    <div class="input-group">
+                                  <div>
+                                    <div>
                                         <label for="province">Province *</label>
                                         <input type="text" id="province" name="province" placeholder="Province" required maxlength="50">
                                     </div>
-                                    <div class="input-group">
+                                    <div>
                                         <label for="city">City *</label>
                                         <input type="text" id="city" name="city" placeholder="City" required maxlength="50">
                                     </div>
                                 </div>
 
-                                <div class="input-row">
-                                    <div class="input-group">
+                                <div>
+                                    <div>
                                         <label for="street">Street *</label>
                                         <input type="text" id="street" name="street" placeholder="Street" required maxlength="100">
                                     </div>
-                                    <div class="input-group">
+                                    <div>
                                         <label for="civic">Civic Number *</label>
-                                        <input type="text" id="civic" name="civic" placeholder="Civic Number" required maxlength="10">                                        
+                                        <input type="text" id="civic" name="civic" placeholder="Civic Number" required maxlength="10">                    
                                     </div>
                                 </div>
                                 
                             </div>
                         </div>
-                        
-                        <div class="error-message" id="error-message" th:text="${error != null} ? ${error} : ''">
+                          <div id="error-message" th:text="${error != null} ? ${error} : ''">
                             <!-- Error messages will appear here -->
                         </div>
                         
-                        <button type="submit" class="register-btn">Register</button>
+                        <button type="submit">Register</button>
                     </form>
                     
-                    <div class="login-link-container">
-                        <a th:href="@{/login}" class="login-link">Already have an account? Login</a>
+                    <div>
+                        <a th:href="@{/login}">Already have an account? Login</a>
                     </div>
                 </div>
             </div>
@@ -139,19 +120,16 @@
     </div>
     
     <script>
-        // Toggle password visibility function
-        function togglePassword(inputId, iconId) {
+        // Toggle password visibility function        function togglePassword(inputId, iconId) {
             const passwordInput = document.getElementById(inputId);
             const eyeIcon = document.getElementById(iconId);
             
             if (passwordInput.type === 'password') {
                 passwordInput.type = 'text';
-                eyeIcon.classList.remove('fa-eye');
-                eyeIcon.classList.add('fa-eye-slash');
+                eyeIcon.textContent = 'Hide';
             } else {
                 passwordInput.type = 'password';
-                eyeIcon.classList.remove('fa-eye-slash');
-                eyeIcon.classList.add('fa-eye');
+                eyeIcon.textContent = 'Show';
             }
         }
         
@@ -161,11 +139,10 @@
             if (errorMessage && errorMessage.textContent.trim() !== '') {
                 setTimeout(() => {
                     errorMessage.textContent = '';
-                    errorMessage.style.display = 'flex'; // Keep the container visible but empty
                 }, 3500); // 3.5 seconds
             }
         }
-          // Form validation function
+        // Form validation function
         function validateForm(event) {
             const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;

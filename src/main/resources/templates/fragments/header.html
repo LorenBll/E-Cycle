@@ -1,124 +1,17 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head>    <th:block th:fragment="headerfiles">
-        <link rel="icon" th:href="@{/images/logos/logoIcon.png}" type="image/png"/>
-        <link rel="stylesheet" th:href="@{/css/general.css}"/>
-        <link rel="stylesheet" th:href="@{/css/fonts.css}"/>
-        <link rel="stylesheet" th:href="@{/css/header.css}"/>
-        <link rel="stylesheet" th:href="@{/css/links.css}"/><style>
-            /* Hide scrollbar for all elements */
-            * {
-                scrollbar-width: none; /* Firefox */
-                -ms-overflow-style: none; /* IE and Edge */
-            }
-            
-            /* Hide scrollbar for Chrome, Safari and Opera */
-            *::-webkit-scrollbar {
-                display: none;
-            }
-
-            html {
-                margin: 0;
-                padding: 0;
-                height: 100%;
-                width: 100%;
-            }
-
-            :root {
-                --bg-color: #1a1a1a;
-                --text-color: #ffffff;
-                --navbar-bg: rgba(255, 255, 255, 0.01);
-                --slider-bg: #2c2c2c;
-                --slider-checked-bg: #d4d4d4;
-            }
-
-            [data-theme="light"] {
-                --bg-color: #ffffff;
-                --text-color: #1a1a1a;
-                --navbar-bg: rgba(0, 0, 0, 0.01);
-                --slider-bg: #d4d4d4;
-                --slider-checked-bg: #2c2c2c;
-            }
-            
-            body {
-                background-color: var(--bg-color);
-                color: var(--text-color);
-                transition: all 0.3s ease;
-                margin: 0;
-                padding: 0;
-                overflow-x: hidden;
-                min-height: 100vh;
-            }
-            
-            /* Class for synchronized theme transitions */
-            .theme-transitioning * {
-                transition: background-color 0.3s ease, color 0.3s ease !important;
-                transition-delay: 0s !important;
-            }
-        </style>        <script>
-            function setTheme(theme) {
-                // Apply theme to the document element all at once
-                document.documentElement.setAttribute('data-theme', theme);
-                
-                // Force a repaint to ensure all elements update simultaneously
-                document.documentElement.style.transition = 'background-color 0.3s ease, color 0.3s ease';
-                document.body.style.backgroundColor = theme === 'light' ? '#ffffff' : '#1a1a1a';
-                
-                // Store the theme preference
-                localStorage.setItem('theme', theme);
-                
-                // Ensure all text elements update together, including the title
-                const textElements = document.querySelectorAll('title, .welcome-message, h1, h2, h3, p, span, div');
-                textElements.forEach(el => {
-                    el.style.transition = 'color 0.3s ease';
-                });
-                
-                // Force synchronous reflow to ensure all elements update together
-                document.documentElement.getBoundingClientRect();
-            }
-
-            // Initialize theme on page load
-            (function() {
-                const savedTheme = localStorage.getItem('theme') || 'dark';
-                setTheme(savedTheme);
-            })();
-        </script>
+<head>      <th:block th:fragment="headerfiles">          <link rel="icon" th:href="@{/images/logos/logoIcon.png}" type="image/png"/>
     </th:block>
 </head>
-<body>
-    <nav th:fragment="header" class="navbar">
-        <div class="container">
-            <a class="navbar-brand" th:href="@{/}">
-                <img th:src="@{/images/logos/logoIcon.png}" alt="E-Cycle Logo"/>
-            </a>
-            <label class="theme-switch">
-                <input type="checkbox" id="theme-toggle">
-                <span class="slider"></span>
-            </label>
+<body>    <nav th:fragment="header">
+        <th:block th:replace="~{fragments/header :: headerfiles}"></th:block><div>
+            <!-- Added logo on the left side -->
+            <div>
+                <a th:href="@{/}">
+                    <img th:src="@{/images/logos/logoIcon.png}" alt="E-Cycle Logo Icon">
+                </a>
+            </div>
         </div>
-        <script>
-            document.addEventListener('DOMContentLoaded', function() {
-                const themeToggle = document.getElementById('theme-toggle');
-                const savedTheme = localStorage.getItem('theme') || 'dark';
-                themeToggle.checked = savedTheme === 'light';
-                setTheme(savedTheme);
-                  themeToggle.addEventListener('change', function() {
-                    // Apply a class to the body to indicate theme is changing
-                    document.body.classList.add('theme-transitioning');
-                    
-                    // Small delay to batch all DOM updates
-                    setTimeout(() => {
-                        const newTheme = this.checked ? 'light' : 'dark';
-                        setTheme(newTheme);
-                        
-                        // Remove transition class
-                        setTimeout(() => {
-                            document.body.classList.remove('theme-transitioning');
-                        }, 300); // Match transition duration
-                    }, 10);
-                });
-            });
-        </script>
     </nav>
 </body>
 </html>

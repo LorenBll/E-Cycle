@@ -1,128 +1,30 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
+<head>    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>E-Cycle - Home</title>
-    <!-- Include header files (favicon and styles) -->
-    <th:block th:replace="~{fragments/header :: headerfiles}"></th:block>
-    <!-- Include Font Awesome for the eye icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
-    <style>        
-        html, body {
-            margin: 0;
-            padding: 0;
-            min-height: 100vh;
-            width: 100%;
-            background-color: var(--bg-color);
-            overflow-x: hidden;
-            font-family: 'Croogla4F', Arial, sans-serif;
-        }
-        
-        /* Floating account button */
-        .floating-account-btn {
-            position: fixed;
-            bottom: 30px;
-            right: 30px;
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            background-color: #1d913e;
-            color: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-            transition: all 0.3s ease;
-            z-index: 999;
-            border: none;
-            font-size: 24px;
-            text-decoration: none;
-        }
-        
-        .floating-account-btn:hover {
-            transform: scale(1.1) translateY(-5px);
-            box-shadow: 0 6px 12px rgba(29, 145, 62, 0.8);
-            background-color: #25b54c;
-        }
-        
-        /* Media queries for responsive design */
-        @media (max-width: 768px) {
-            .floating-account-btn {
-                width: 50px;
-                height: 50px;
-                bottom: 20px;
-                right: 20px;
-                font-size: 20px;
-            }
-        }
-    </style>    
-    <link rel="stylesheet" th:href="@{/css/home.css}"/>
+    <!-- Include favicon -->
+    <link rel="icon" th:href="@{/images/logos/logoIcon.png}" type="image/png"/>
 </head>
 <body>
-    <!-- Include the header navbar -->    <nav th:replace="~{fragments/header :: header}"></nav>
+    <!-- Include the header navbar -->    
+    <nav th:replace="~{fragments/header :: header}"></nav>
     <!-- Main content -->
-    <div th:replace="~{fragments/content :: content(sections = ~{::section})}">
-        <section th:replace="~{fragments/section :: section(~{::div.home-content})}">
-            <div class="home-content">
-                <!-- Welcome message -->
-                <div class="welcome-container">
-                    <h1 class="welcome-message" th:text="'Welcome to E-Cycle, ' + ${user.username}"></h1>
-                </div>                
-                <hr class="section-separator">
+    <div th:replace="~{fragments/content :: content(sections = ~{::section})}">        <section th:replace="~{fragments/section :: section(~{::div})}">
+            <div>
+                <!-- Welcome message -->                <div>
+                    <h1 th:text="'Welcome to E-Cycle, ' + ${user.username}"></h1>
+                </div>        
+                <hr>
                 <!-- Content for your home page goes here -->
-                <div class="home-content-message">
+                <div>
                     <p>Welcome to your E-Cycle dashboard. Here you can manage your recycling activities and track your environmental impact.</p>
                 </div>
             </div>
         </section>
-    </div>
-      <script>
-        // Toggle password visibility
-        function togglePasswordVisibility(inputId, iconId) {
-            const passwordInput = document.getElementById(inputId);
-            const eyeIcon = document.getElementById(iconId);
-            
-            if (passwordInput.type === 'password') {
-                passwordInput.type = 'text';
-                eyeIcon.classList.remove('fa-eye');
-                eyeIcon.classList.add('fa-eye-slash');
-            } else {
-                passwordInput.type = 'password';
-                eyeIcon.classList.remove('fa-eye-slash');
-                eyeIcon.classList.add('fa-eye');
-            }
-        }
-          // Hide error message after 3.5 seconds
-        function hideAccountErrorAfterDelay() {
-            const errorMessage = document.getElementById('account-error-message');
-            if (errorMessage && errorMessage.textContent.trim() !== '') {
-                setTimeout(() => {
-                    errorMessage.style.opacity = '0';
-                    setTimeout(() => {
-                        errorMessage.textContent = '';
-                        errorMessage.style.opacity = '1';
-                    }, 300);
-                }, 3500); // 3.5 seconds
-            }
-        }
-        
-        // Show error message function (for demonstration purposes)
-        function showAccountErrorMessage(message) {
-            const errorMessage = document.getElementById('account-error-message');
-            errorMessage.textContent = message;
-            hideAccountErrorAfterDelay();
-        }
-          // Run when the page loads
-        document.addEventListener('DOMContentLoaded', function() {
-            hideAccountErrorAfterDelay();
-        });
-    </script>
-    
-    <!-- Floating Account Button -->
-    <a th:href="@{/account}" class="floating-account-btn" title="My Account Settings">
-        <i class="fas fa-user"></i>
+    </div>      <!-- Floating Account Button -->
+    <a th:href="@{/account}" title="My Account Settings">
+        Account
     </a>
 </body>
 </html>

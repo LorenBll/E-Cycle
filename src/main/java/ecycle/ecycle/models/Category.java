@@ -17,7 +17,6 @@ import jakarta.persistence.Column;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name="categories")
-
 public class Category {
     @Id @Column(name="ID",length=50) private String id;
 }

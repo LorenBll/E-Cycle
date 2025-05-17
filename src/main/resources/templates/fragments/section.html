@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<body>
-    <div th:fragment="section(content)" class="section">
+<body>    <div th:fragment="section(content)">
         <div th:replace="${content}">
             <!-- Content will be injected here -->
         </div>

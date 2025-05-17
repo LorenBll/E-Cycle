@@ -8,7 +8,6 @@ import org.springframework.lang.NonNull;
 
 
 @Repository
-
 public interface Users_Repository extends JpaRepository<User, Integer> {
 
     User findById (int id);

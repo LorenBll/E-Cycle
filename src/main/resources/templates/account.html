@@ -1,70 +1,50 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>E-Cycle - My Account</title>
-    <!-- Include header files (favicon and styles) -->
-    <th:block th:replace="~{fragments/header :: headerfiles}"></th:block>
-    <!-- Include Font Awesome for the eye icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
-    <style>        
-        html, body {
-            margin: 0;
-            padding: 0;
-            min-height: 100vh;
-            width: 100%;
-            background-color: var(--bg-color);
-            overflow-x: hidden;
-            font-family: 'Croogla4F', Arial, sans-serif;
-        }
-    </style>    
-    <link rel="stylesheet" th:href="@{/css/home.css}"/>
-    <link rel="stylesheet" th:href="@{/css/account.css}"/>
+    <meta charset="UTF-8">    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>E-Cycle - My Account</title>    <!-- Include favicon -->
+    <link rel="icon" th:href="@{/images/logos/logoIcon.png}" type="image/png"/>
 </head>
 <body>
     <!-- Include the header navbar -->
     <nav th:replace="~{fragments/header :: header}"></nav>    
     <!-- Main content -->
-    <div th:replace="~{fragments/content :: content(sections = ~{::section})}">
-        <section th:replace="~{fragments/section :: section(~{::div.home-content})}">
-            <div class="home-content">
-                <!-- Welcome message -->
-                <div class="welcome-container">
-                    <h1 class="welcome-message">My Account Settings</h1>
+    <div th:replace="~{fragments/content :: content(sections = ~{::section})}">        <section th:replace="~{fragments/section :: section(~{::div})}">
+            <div>
+                <!-- Welcome message -->                <div>
+                    <h1>My Account Settings</h1>
                 </div>
                 
-                <hr class="section-separator">
-                
-                <!-- Account Card -->
-                <div class="account-card-container">
-                    <div class="account-card">
-                        <h2 class="account-title">Update Account Information</h2>
+                <hr>
+                  <!-- Account Card -->
+                <div>
+                    <div>
+                        <h2>Update Account Information</h2>
                         <form method="post" action="/updateAccount">
-                            <div class="account-form-columns">
-                                <div class="left-column">
-                                    <div class="account-form-left">
-                                        <div class="account-form-left-content">
+                            <div>
+                                <div>
+                                    <div>
+                                        <div>
                                             <!-- User info -->
-                                            <div class="input-group">
+                                            <div>
                                                 <label for="username">Username</label>
                                                 <input type="text" id="username" name="username" placeholder="Enter your username" th:value="${user.username}" required>
                                             </div>
-                                            <div class="input-group">
+                                            <div>
                                                 <label for="name">First Name</label>
                                                 <input type="text" id="name" name="name" placeholder="Enter your first name" th:value="${user.name}" required>
                                             </div>
-                                            <div class="input-group">
+                                            <div>
                                                 <label for="surname">Last Name</label>
                                                 <input type="text" id="surname" name="surname" placeholder="Enter your last name" th:value="${user.surname}" required>
                                             </div>
-                                            <div class="input-group">
+                                            <div>
                                                 <label for="email">Email</label>
                                                 <input type="email" id="email" name="email" placeholder="Enter your email" th:value="${user.email}" required>
                                             </div>
                                         
                                             <!-- Password fields -->
-                                            <div class="input-group">
+                                            <div>
                                                 <label for="password">New Password</label>
                                                 <div class="password-container">
                                                     <input type="password" id="password" name="password" placeholder="Enter new password">
@@ -120,16 +100,18 @@
                                     </div>
                                 </div>
                             </div>
-                              <!-- Error message area -->
+                            <!-- Error message area -->
                             <div class="account-error-message" id="account-error-message">
                                 <!-- Error messages will appear here -->
                             </div>
                             
-                            <button type="submit" class="update-btn">Update Information</button>
+                            <button type="submit" class="update-btn btn-positive">Update Information</button>
                         </form>
                         
                         <div class="logout-container">
-                            <a th:href="@{/logout}" class="logout-btn">Logout</a>
+                            <form th:action="@{/logout}" method="post">
+                                <button type="submit" class="btn btn-negative">Logout</button>
+                            </form>
                         </div>
                         
                         <div class="back-link-container">
@@ -157,41 +139,26 @@
                 eyeIcon.classList.add('fa-eye');
             }
         }
-          // Hide error message after 3.5 seconds
+
+        // Hide error message after 3.5 seconds
         function hideAccountErrorAfterDelay() {
             const errorMessage = document.getElementById('account-error-message');
             if (errorMessage && errorMessage.textContent.trim() !== '') {
                 setTimeout(() => {
-                    errorMessage.style.opacity = '0';
-                    setTimeout(() => {
-                        errorMessage.textContent = '';
-                        errorMessage.style.opacity = '1';
-                    }, 300);
+                    errorMessage.textContent = '';
                 }, 3500); // 3.5 seconds
             }
         }
-        
+
         // Show message function with type parameter (error/success)
-        function showAccountMessage(message, type = 'error') {
+        function showAccountMessage(message) {
             const messageElement = document.getElementById('account-error-message');
-            messageElement.textContent = message;
-            
-            if (type === 'success') {
-                messageElement.classList.remove('account-error-message');
-                messageElement.classList.add('account-success-message');
-            } else {
-                messageElement.classList.remove('account-success-message');
-                messageElement.classList.add('account-error-message');
+            if (messageElement) {
+                messageElement.textContent = message;
+                hideAccountErrorAfterDelay();
             }
-            
-            hideAccountErrorAfterDelay();
         }
-        
-        // Legacy function for backward compatibility
-        function showAccountErrorMessage(message) {
-            showAccountMessage(message, 'error');
-        }
-        
+
         // Form validation function
         function validateAccountForm(event) {
             const password = document.getElementById('password').value;
@@ -204,14 +171,14 @@
                 
                 // Check password requirements
                 if (!passwordPattern.test(password)) {
-                    showAccountErrorMessage('Password must be at least 8 characters and include a capital letter and special character.');
+                    showAccountMessage('Password must be at least 8 characters and include a capital letter and special character.');
                     event.preventDefault();
                     return false;
                 }
                 
                 // Check if passwords match
                 if (password !== confirmPassword) {
-                    showAccountErrorMessage('Passwords do not match!');
+                    showAccountMessage('Passwords do not match!');
                     event.preventDefault();
                     return false;
                 }
@@ -219,7 +186,7 @@
             
             return true;
         }
-        
+
         // Run when the page loads
         document.addEventListener('DOMContentLoaded', function() {
             hideAccountErrorAfterDelay();
@@ -228,25 +195,27 @@
             const form = document.querySelector('form');
             if (form) {
                 form.addEventListener('submit', validateAccountForm);
-            }            // Check for URL parameters to display error messages
+            }
+            
+            // Check for URL parameters to display error messages
             const urlParams = new URLSearchParams(window.location.search);
             if (urlParams.has('error')) {
                 const error = urlParams.get('error');
                 if (error === 'username-taken') {
-                    showAccountErrorMessage('Username already taken');
+                    showAccountMessage('Username already taken');
                 } else if (error === 'email-taken') {
-                    showAccountErrorMessage('Email already taken');
+                    showAccountMessage('Email already taken');
                 } else if (error === 'passwords-not-equal') {
-                    showAccountErrorMessage('Passwords do not match');
+                    showAccountMessage('Passwords do not match');
                 } else if (error === 'error-verifying-password') {
-                    showAccountErrorMessage('Error verifying password');
+                    showAccountMessage('Error verifying password');
                 } else if (error === 'invalid-password') {
-                    showAccountErrorMessage('Password must be at least 8 characters and include a capital letter and special character.');
+                    showAccountMessage('Password must be at least 8 characters and include a capital letter and special character.');
                 }
             } else if (urlParams.has('nochanges') && urlParams.get('nochanges') === 'true') {
-                showAccountMessage('No changes to apply', 'success');
+                showAccountMessage('No changes to apply');
             } else if (urlParams.has('success') && urlParams.get('success') === 'true') {
-                showAccountMessage('Account updated successfully!', 'success');
+                showAccountMessage('Account updated successfully!');
             }
         });
     </script>
