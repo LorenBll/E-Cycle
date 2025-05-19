@@ -36,7 +36,7 @@ public class Users_Service {
     }
 
     // register a new user
-    public User register(User user) {
+    public User save(User user) {
         return users_repository.save(user);
     }
 
@@ -46,7 +46,7 @@ public class Users_Service {
     }
 
     // delete user
-    public void delete(int id) {
-        users_repository.deleteById(id);
+    public void delete(User user) {
+        users_repository.deleteById(user.getId());
     }
 }

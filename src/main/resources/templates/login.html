@@ -1,77 +1,74 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head>      <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<head>    
     <title>E-Cycle - Login</title>
-    <!-- Include favicon -->
-    <link rel="icon" th:href="@{/images/logos/logoIcon.png}" type="image/png"/>
+    <link rel="icon" th:href="@{/images/logos/logoIcon.png}" type="image/png">    <style>
+        .password-container {
+            position: relative;
+        }
+        .toggle-password {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+        }
+        .error-message {
+            color: red;
+        }
+        .success-message {
+            color: green;
+        }
+    </style>
 </head>
-<body>    
-    <!-- Include the header navbar -->
-    <nav th:replace="~{fragments/header :: header}"></nav>
-    
-    <!-- Main content -->
-    <div th:replace="~{fragments/content :: content(sections = ~{::section})}">        <section th:replace="~{fragments/section :: section(~{::div})}">
-            <div>
+<body>
+    <section>
+        <div>
+            <h2>Login</h2>
+            <form method="post" action="/login">
                 <div>
-                    <h2>Login</h2>
-                    <form method="post" action="/login">
-                        <div>
-                            <label for="username">Username</label>
-                            <input type="text" id="username" name="username" placeholder="Enter your username" required>
-                        </div>
-                        <div>
-                            <label for="password">Password</label>
-                            <div>
-                                <input type="password" id="password" name="password" placeholder="Enter your password" required>
-                                <button type="button" onclick="togglePassword()">
-                                    <i id="eye-icon">Show</i>
-                                </button>
-                            </div>
-                        </div>
-                        <div id="error-message" th:text="${error != null} ? ${error} : ''">
-                            <!-- Error messages will appear here -->
-                        </div>
-                        <button type="submit">Login</button>
-                    </form>
-                    <div>
-                        <a th:href="@{/registration}">Create a new account</a>
-                    </div>
+                    <label for="username">Username</label>
+                    <input type="text" id="username" name="username" required>
+                </div>                <div class="password-container">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" required>
+                    <span class="toggle-password" onclick="togglePassword()">
+                        <span id="eye-icon-open" style="display:inline;">👁️</span>
+                        <span id="eye-icon-closed" style="display:none;">👁️‍🗨️</span>
+                    </span>
+                </div>                <div th:if="${error}" class="error-message">
+                    <p th:text="${error}">Error message</p>
                 </div>
+                <div th:if="${success}" class="success-message">
+                    <p th:text="${success}">Success message</p>
+                </div>
+                <div>
+                    <button type="submit">Login</button>
+                </div>
+            </form>
+            <div>
+                <p><a href="/registration">Don't have an account? Register</a></p>
+                <p><a href="/">Back to the Initial Page</a></p>
             </div>
-        </section>
-    </div>
-      <script>
+        </div>    
+    </section>
+    
+    <script>
         function togglePassword() {
             const passwordInput = document.getElementById('password');
-            const eyeIcon = document.getElementById('eye-icon');
+            const openEye = document.getElementById('eye-icon-open');
+            const closedEye = document.getElementById('eye-icon-closed');
             
             if (passwordInput.type === 'password') {
                 passwordInput.type = 'text';
-                eyeIcon.textContent = 'Hide';
+                openEye.style.display = 'none';
+                closedEye.style.display = 'inline';
             } else {
                 passwordInput.type = 'password';
-                eyeIcon.textContent = 'Show';
+                openEye.style.display = 'inline';
+                closedEye.style.display = 'none';
             }
         }
-        
-        // Function to hide error message after 3.5 seconds
-        function hideErrorAfterDelay() {
-            const errorMessage = document.getElementById('error-message');
-            if (errorMessage && errorMessage.textContent.trim() !== '') {
-                setTimeout(() => {
-                    errorMessage.textContent = '';
-                }, 3500); // 3.5 seconds
-            }
-        }
-        // Run when the page loads
-        document.addEventListener('DOMContentLoaded', function() {
-            hideErrorAfterDelay();
-            
-            // Clear input fields
-            document.getElementById('username').value = '';
-            document.getElementById('password').value = '';
-        });
     </script>
 </body>
 </html>

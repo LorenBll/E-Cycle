@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>    
+    <title>E-Cycle - Profile</title>
+    <link rel="icon" th:href="@{/images/logos/logoIcon.png}" type="image/png">    <!-- Styling removed as requested -->
+</head>
+<body>    <header>
+        <div>
+            <img th:src="@{/images/logos/logo.png}" alt="E-Cycle Logo">
+            <h1>User Profile</h1>
+        </div>
+        <div>
+            <span>Welcome, <strong th:text="${user.username}"></strong></span>
+            <a href="/home">Home</a>
+            <a href="/logout">Logout</a>
+        </div>
+    </header>
+      <main>
+        <!-- Edit Profile Form -->
+        <section id="edit-profile-form">
+            <h2>Edit Profile</h2>
+            
+            <form method="post" action="/profile/edit"><div class="profile-section">
+                    <h3>Account Information</h3>
+                    <div class="form-row">
+                        <div class="form-col">
+                            <div class="form-group">
+                                <label for="username">Username:</label>
+                                <input type="text" id="username" name="username" th:value="${user.username}" required>
+                            </div>
+                        </div>
+                        <div class="form-col">
+                            <div class="form-group">
+                                <label for="email">Email:</label>
+                                <input type="email" id="email" name="email" th:value="${user.email}" required>
+                            </div>
+                        </div>
+                    </div>                    <div class="form-group">
+                        <label for="password">New Password (leave blank to keep current):</label>
+                        <div class="password-container">
+                            <input type="password" id="password" name="password">
+                            <span class="toggle-password" onclick="togglePassword('password', 'eye-icon-open-password', 'eye-icon-closed-password')">
+                                <span id="eye-icon-open-password" style="display:inline;">👁️</span>
+                                <span id="eye-icon-closed-password" style="display:none;">👁️‍🗨️</span>
+                            </span>
+                        </div>
+                    </div>
+                    <div class="password-instructions">
+                        <small>Password requirements: at least 8 characters, 1 uppercase letter, 1 lowercase letter, 1 number, and 1 special character.</small>
+                    </div>
+                    <div class="form-group">
+                        <label for="confirm_password">Confirm New Password:</label>
+                        <div class="password-container">
+                            <input type="password" id="confirm_password" name="confirm_password">
+                            <span class="toggle-password" onclick="togglePassword('confirm_password', 'eye-icon-open-confirm', 'eye-icon-closed-confirm')">
+                                <span id="eye-icon-open-confirm" style="display:inline;">👁️</span>
+                                <span id="eye-icon-closed-confirm" style="display:none;">👁️‍🗨️</span>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="profile-section">
+                    <h3>Address</h3>
+                    <div class="form-row">
+                        <div class="form-col">
+                            <div class="form-group">
+                                <label for="state">State:</label>
+                                <input type="text" id="state" name="state" th:value="${user.state}" required>
+                            </div>
+                        </div>
+                        <div class="form-col">
+                            <div class="form-group">
+                                <label for="region">Region:</label>
+                                <input type="text" id="region" name="region" th:value="${user.region}" required>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-col">
+                            <div class="form-group">
+                                <label for="province">Province:</label>
+                                <input type="text" id="province" name="province" th:value="${user.province}" required>
+                            </div>
+                        </div>
+                        <div class="form-col">
+                            <div class="form-group">
+                                <label for="city">City:</label>
+                                <input type="text" id="city" name="city" th:value="${user.city}" required>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-col">
+                            <div class="form-group">
+                                <label for="street">Street:</label>
+                                <input type="text" id="street" name="street" th:value="${user.street}" required>
+                            </div>
+                        </div>
+                        <div class="form-col">
+                            <div class="form-group">
+                                <label for="civic">Civic Number:</label>
+                                <input type="text" id="civic" name="civic" th:value="${user.civic}" required>
+                            </div>
+                        </div>
+                    </div>                </div>
+                
+                <!-- Error message display -->
+                <div class="error-message" th:if="${error != null}">
+                    <span th:text="${error}"></span>
+                </div>
+                <!-- Dynamic error message display -->
+                <div id="dynamic-error-message" class="error-message" style="display: none;">
+                    <span id="error-message-text"></span>
+                </div>
+                <!-- Success message display -->
+                <div class="success-message" th:if="${success != null}">
+                    <span th:text="${success}"></span>
+                </div>                <div class="buttons">
+                    <button type="submit" class="submit-btn">Save Changes</button>
+                    <button type="button" class="cancel-btn" id="cancel-edit-btn">Cancel</button>
+                </div>
+            </form>
+              <!-- Delete Account Section -->
+            <section id="delete-account-section" class="danger-zone">
+                <h3>Danger Zone</h3>
+                <p>Once you delete your account, all your data will be permanently removed. This action cannot be undone.</p>
+                <button type="button" id="delete-account-btn" class="delete-btn">Delete My Account</button>
+            </section>
+        </section>    
+    </main>        <script>        // Function to handle account deletion with two-step confirmation
+        function deleteAccount() {
+            const deleteBtn = document.getElementById('delete-account-btn');
+            
+            if (deleteBtn.textContent === "Delete My Account") {
+                // First click - change button text to confirmation message
+                deleteBtn.textContent = "Click to confirm";
+            } else {
+                // Second click - actually delete the account
+                fetch('/profile/delete', {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        // Include CSRF token if your Spring Security setup requires it
+                        // 'X-CSRF-TOKEN': document.querySelector('meta[name="_csrf"]').getAttribute('content')
+                    }
+                }).then(response => {
+                    if (response.redirected) {
+                        window.location.href = response.url;
+                    } else {
+                        window.location.href = "/login?deleted=true";
+                    }
+                }).catch(error => {
+                    console.error('Error:', error);
+                    alert('An error occurred while trying to delete your account. Please try again later.');
+                });
+            }
+        }
+        
+        function togglePassword(inputId, openEyeId, closedEyeId) {
+            const passwordInput = document.getElementById(inputId);
+            const openEye = document.getElementById(openEyeId);
+            const closedEye = document.getElementById(closedEyeId);
+            
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                openEye.style.display = 'none';
+                closedEye.style.display = 'inline';
+            } else {
+                passwordInput.type = 'password';
+                openEye.style.display = 'inline';
+                closedEye.style.display = 'none';
+            }
+        }        function checkPasswordStrength() {
+            const password = document.getElementById('password').value;
+            const errorDiv = document.getElementById('dynamic-error-message');
+            const errorMessage = document.getElementById('error-message-text');
+            
+            if (password.length === 0) {
+                errorDiv.style.display = 'none';
+                return;
+            }
+            
+            if (password.length < 8) {
+                errorDiv.style.display = 'block';
+                errorMessage.textContent = 'Password must be at least 8 characters long.';
+                return;
+            }
+            
+            if (!/[A-Z]/.test(password)) {
+                errorDiv.style.display = 'block';
+                errorMessage.textContent = 'Password must contain at least one uppercase letter.';
+                return;
+            }
+            
+            if (!/[a-z]/.test(password)) {
+                errorDiv.style.display = 'block';
+                errorMessage.textContent = 'Password must contain at least one lowercase letter.';
+                return;
+            }
+
+            
+            if (!/[^A-Za-z0-9]/.test(password)) {
+                errorDiv.style.display = 'block';
+                errorMessage.textContent = 'Password must contain at least one special character.';
+                return;
+            }
+            
+            errorDiv.style.display = 'none';
+        }
+        function checkPasswordsMatch() {
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirm_password').value;
+            const errorDiv = document.getElementById('dynamic-error-message');
+            const errorMessage = document.getElementById('error-message-text');
+            
+            if (confirmPassword.length === 0) {
+                return;
+            }
+            
+            if (password !== confirmPassword) {
+                errorDiv.style.display = 'block';
+                errorMessage.textContent = 'Passwords do not match.';
+            } else {
+                // Only hide the error if it's currently showing a password match error
+                if (errorMessage.textContent === 'Passwords do not match.') {
+                    errorDiv.style.display = 'none';
+                }
+            }
+        }
+        
+        function validatePassword(password) {
+            const errorDiv = document.getElementById('dynamic-error-message');
+            const errorMessage = document.getElementById('error-message-text');
+            
+            // Check password length
+            if (password.length < 8) {
+                errorDiv.style.display = 'block';
+                errorMessage.textContent = 'Password must be at least 8 characters long.';
+                return false;
+            }
+            
+            // Check for uppercase letter
+            if (!/[A-Z]/.test(password)) {
+                errorDiv.style.display = 'block';
+                errorMessage.textContent = 'Password must contain at least one uppercase letter.';
+                return false;
+            }
+            
+            // Check for special character
+            if (!/[^A-Za-z0-9]/.test(password)) {
+                errorDiv.style.display = 'block';
+                errorMessage.textContent = 'Password must contain at least one special character.';
+                return false;
+            }
+            
+            return true;
+        }        document.addEventListener('DOMContentLoaded', function() {
+            const editProfileForm = document.getElementById('edit-profile-form');
+            const cancelEditBtn = document.getElementById('cancel-edit-btn');
+            const successMessage = document.querySelector('.success-message');
+            const deleteAccountBtn = document.getElementById('delete-account-btn');
+            
+            // Add event listener for delete account button
+            if (deleteAccountBtn) {
+                deleteAccountBtn.addEventListener('click', deleteAccount);
+            }
+            
+            // Password visibility toggle functionality is now handled by the togglePassword function
+            // Add event listeners once the DOM is fully loaded
+            const passwordInput = document.getElementById('password');
+            const confirmPasswordInput = document.getElementById('confirm_password');
+            
+            // Check password requirements as user types
+            passwordInput.addEventListener('input', checkPasswordStrength);
+            
+            // Check if passwords match when user types in either field
+            passwordInput.addEventListener('input', checkPasswordsMatch);
+            confirmPasswordInput.addEventListener('input', checkPasswordsMatch);
+            
+            // Form validation with password confirmation
+            const form = document.querySelector('form');
+            form.addEventListener('submit', function(event) {
+                const password = document.getElementById('password').value;
+                const confirmPassword = document.getElementById('confirm_password').value;
+                const username = document.getElementById('username').value;
+                const email = document.getElementById('email').value;
+                  if (!username.trim()) {
+                    const errorDiv = document.getElementById('dynamic-error-message');
+                    const errorMessage = document.getElementById('error-message-text');
+                    errorDiv.style.display = 'block';
+                    errorMessage.textContent = 'Username cannot be empty!';
+                    event.preventDefault();
+                    return;
+                }
+                
+                if (!email.trim() || !email.includes('@')) {
+                    const errorDiv = document.getElementById('dynamic-error-message');
+                    const errorMessage = document.getElementById('error-message-text');
+                    errorDiv.style.display = 'block';
+                    errorMessage.textContent = 'Please enter a valid email address!';
+                    event.preventDefault();
+                    return;
+                }
+                
+                // Only validate passwords if user is trying to change password
+                if (password || confirmPassword) {
+                    if (password !== confirmPassword) {
+                        const errorDiv = document.getElementById('dynamic-error-message');
+                        const errorMessage = document.getElementById('error-message-text');
+                        errorDiv.style.display = 'block';
+                        errorMessage.textContent = 'Passwords do not match!';
+                        event.preventDefault();
+                        return;
+                    }
+                    
+                    // Password validation rules
+                    if (password) {
+                        if (!validatePassword(password)) {
+                            event.preventDefault();
+                            return;
+                        }
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>

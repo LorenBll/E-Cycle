@@ -1,25 +1,20 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head>    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>E-Cycle</title>
-    <!-- Include favicon -->
-    <link rel="icon" th:href="@{/images/logos/logoIcon.png}" type="image/png"/>
+<head>    
+    <title>E-Cycle - Welcome</title>
+    <link rel="icon" th:href="@{/images/logos/logoIcon.png}" type="image/png">
 </head>
 <body>
-    <!-- Include the header navbar -->
-    <nav th:replace="~{fragments/header :: header}"></nav>    
-    <!-- Main content -->    <div th:replace="~{fragments/content :: content(sections = ~{::section})}">
-        <section th:replace="~{fragments/section :: section(~{::div})}}"><div>
-                <div>
-                    <img th:src="@{/images/logos/logo.png}" alt="E-Cycle Logo"/>
-                </div>
-                <div>
-                    <button th:onclick="'window.location.href=\'' + @{/login} + '\''">Login</button>
-                    <button th:onclick="'window.location.href=\'' + @{/registration} + '\''">Register</button>
-                </div>
+    <section>
+        <div>
+            <div>
+                <img th:src="@{/images/logos/logo.png}" alt="E-Cycle Logo">
             </div>
-        </section>
-    </div>
+            <div>
+                <a href="/login">Login</a>
+                <a href="/registration">Registration</a>
+            </div>
+        </div>    
+    </section>
 </body>
 </html>

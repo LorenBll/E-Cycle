@@ -1,20 +1,27 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Error - E-Cycle</title>    <!-- Include favicon -->
-    <link rel="icon" th:href="@{/images/logos/logoIcon.png}" type="image/png"/>
+<head>    <title>E-Cycle - Error</title>
+    <link rel="icon" th:href="@{/images/logos/logoIcon.png}" type="image/png">
 </head>
-<body>    
-    <!-- Include the header navbar -->
-    <nav th:replace="~{fragments/header :: header}"></nav>    <!-- Error content -->
-    <div>
+<body>
+    <section id="error-content">
         <div>
-            <div th:text="${status}">404</div>
-            <div>Error</div>
-            <div th:text="${error}">Page not found</div>
-        </div>
-    </div>
+            <h1>An Error Occurred</h1>
+            <div>
+                <div th:text="${status != null ? status : 'Error'}">404</div>
+                
+                <div th:text="${error != null ? error : 'Something went wrong'}">
+                    Page not found
+                </div>
+                
+                <div th:if="${exception != null}">
+                    <p><strong>Exception:</strong> <span th:text="${exception.message}">Exception message</span></p>
+                    <p th:if="${trace != null}"><strong>Stack trace:</strong> <span th:text="${trace}">Stack trace</span></p>
+                </div>
+                
+                <a href="/">Back to Homepage</a>
+            </div>
+        </div>    
+    </section>
 </body>
 </html>

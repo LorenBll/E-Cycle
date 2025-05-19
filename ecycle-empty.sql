@@ -176,7 +176,7 @@ CREATE TABLE IF NOT EXISTS `users` (
   `street` varchar(100) NOT NULL,
   `civic` varchar(10) NOT NULL,
   PRIMARY KEY (`ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- Dump dei dati della tabella ecycle.users: ~0 rows (circa)
 DELETE FROM `users`;

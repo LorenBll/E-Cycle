@@ -1,197 +1,235 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head>    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<head>    
     <title>E-Cycle - Registration</title>
-    <!-- Include favicon -->
-    <link rel="icon" th:href="@{/images/logos/logoIcon.png}" type="image/png"/>
+    <link rel="icon" th:href="@{/images/logos/logoIcon.png}" type="image/png">
+    <style>
+        .password-container {
+            position: relative;
+        }
+        
+        .toggle-password {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+        }
+          .error-message {
+            color: red;
+        }
+        
+        .password-instructions {
+            font-size: 0.8em;
+            color: #666;
+            margin-top: -5px;
+            margin-bottom: 10px;
+        }
+    </style>
 </head>
 <body>
-    <!-- Include the header navbar -->
-    <nav th:replace="~{fragments/header :: header}"></nav>
-    <!-- Main content -->
-    <div th:replace="~{fragments/content :: content(sections = ~{::section})}">        <section th:replace="~{fragments/section :: section(~{::div})}">
-            <div>
+    <section>
+        <div>
+            <h2>Registration</h2>
+            <form id="registrationForm" method="post" action="/register" onsubmit="return validateForm()">
                 <div>
-                    <h2>Create an Account</h2>
-                    <form method="post" action="/register" id="registrationForm">                        <!-- Personal Information Section -->
-                        <div>
-                            <h3>Account Information</h3>
-                            
-                            <div>
-                                <div>
-                                    <label for="name">Name (optional)</label>
-                                    <input type="text" id="name" name="name" placeholder="Your first name" maxlength="50">
-                                </div>
-                                
-                                <div>
-                                    <label for="surname">Surname (optional)</label>
-                                    <input type="text" id="surname" name="surname" placeholder="Your last name" maxlength="50">
-                                </div>
-                            </div>                
-                            <div>
-                                <label for="username">Username *</label>
-                                <input type="text" id="username" name="username" placeholder="Choose a username" required maxlength="50">
-                            </div>
-
-                            <div>
-                                <label for="email">Email *</label>
-                                <input type="email" id="email" name="email" placeholder="Your email address" required maxlength="100">
-                            </div>
-                            
-                            
-                            <div>
-                                <label for="password">Password *</label>
-                                <div>
-                                    <input type="password" id="password" name="password" placeholder="Create a password" required>
-                                    <button type="button" onclick="togglePassword('password', 'eye-icon-1')">
-                                        <i id="eye-icon-1">Show</i>
-                                    </button>
-                                </div>
-                                <div>
-                                    Password must be at least 8 characters and include capital letter and special character.
-                                </div>
-                            </div>
-                            
-                            <div>
-                                <label for="confirmPassword">Confirm Password *</label>
-                                <div>
-                                    <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Confirm your password" required>
-                                    <button type="button" onclick="togglePassword('confirmPassword', 'eye-icon-2')">
-                                        <i id="eye-icon-2">Show</i>
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <!-- Address Information Section -->
-                        <div>
-                            <h3>Address Information</h3>
-                            
-                            <div>    
-                            
-                                <div>
-                                    <div>
-                                        <label for="country">State *</label>
-                                        <input type="text" id="state" name="state" placeholder="State" required maxlength="50">
-                                    </div>
-                                    <div>
-                                        <label for="region">Region *</label>
-                                        <input type="text" id="region" name="region" placeholder="Region" required maxlength="50">
-                                    </div>
-                                </div>
-                                  <div>
-                                    <div>
-                                        <label for="province">Province *</label>
-                                        <input type="text" id="province" name="province" placeholder="Province" required maxlength="50">
-                                    </div>
-                                    <div>
-                                        <label for="city">City *</label>
-                                        <input type="text" id="city" name="city" placeholder="City" required maxlength="50">
-                                    </div>
-                                </div>
-
-                                <div>
-                                    <div>
-                                        <label for="street">Street *</label>
-                                        <input type="text" id="street" name="street" placeholder="Street" required maxlength="100">
-                                    </div>
-                                    <div>
-                                        <label for="civic">Civic Number *</label>
-                                        <input type="text" id="civic" name="civic" placeholder="Civic Number" required maxlength="10">                    
-                                    </div>
-                                </div>
-                                
-                            </div>
-                        </div>
-                          <div id="error-message" th:text="${error != null} ? ${error} : ''">
-                            <!-- Error messages will appear here -->
-                        </div>
-                        
-                        <button type="submit">Register</button>
-                    </form>
-                    
-                    <div>
-                        <a th:href="@{/login}">Already have an account? Login</a>
-                    </div>
+                    <label for="username">Username*</label>
+                    <input type="text" id="username" name="username" required>
                 </div>
+                <div>
+                    <label for="name">Name</label>
+                    <input type="text" id="name" name="name">
+                </div>
+                <div>
+                    <label for="surname">Surname</label>
+                    <input type="text" id="surname" name="surname">
+                </div>
+                <div>
+                    <label for="email">Email*</label>
+                    <input type="email" id="email" name="email" required>
+                </div>                <div class="password-container">
+                    <label for="password">Password*</label>
+                    <input type="password" id="password" name="password" required>
+                    <span class="toggle-password" onclick="togglePassword('password', 'eye-icon-open-password', 'eye-icon-closed-password')">
+                        <span id="eye-icon-open-password" style="display:inline;">👁️</span>
+                        <span id="eye-icon-closed-password" style="display:none;">👁️‍🗨️</span>
+                    </span>
+                </div>
+                <div class="password-instructions">
+                    <small>Password requirements: at least 8 characters, 1 uppercase letter, and 1 special character.</small>
+                </div>
+                <div class="password-container">
+                    <label for="confirmPassword">Confirm Password*</label>
+                    <input type="password" id="confirmPassword" name="confirmPassword" required>
+                    <span class="toggle-password" onclick="togglePassword('confirmPassword', 'eye-icon-open-confirm', 'eye-icon-closed-confirm')">
+                        <span id="eye-icon-open-confirm" style="display:inline;">👁️</span>
+                        <span id="eye-icon-closed-confirm" style="display:none;">👁️‍🗨️</span>
+                    </span>
+                </div>
+                <div>
+                    <label for="state">State*</label>
+                    <input type="text" id="state" name="state" required>
+                </div>
+                <div>
+                    <label for="region">Region*</label>
+                    <input type="text" id="region" name="region" required>
+                </div>
+                <div>
+                    <label for="province">Province*</label>
+                    <input type="text" id="province" name="province" required>
+                </div>
+                <div>
+                    <label for="city">City*</label>
+                    <input type="text" id="city" name="city" required>
+                </div>
+                <div>
+                    <label for="street">Street*</label>
+                    <input type="text" id="street" name="street" required>
+                </div>
+                <div>
+                    <label for="civic">Civic Number*</label>
+                    <input type="text" id="civic" name="civic" required>
+                </div>                <div id="password-validation-error" class="error-message" style="display: none;">
+                    <p id="password-validation-message"></p>
+                </div>
+                <div th:if="${error}" class="error-message">
+                    <p th:text="${error}">Error message</p>
+                </div>
+                <div>
+                    <button type="submit">Register</button>
+                </div>
+            </form>
+            <div>
+                <p><a href="/login">Already have an account? Login</a></p>
+                <p><a href="/">Back to the Initial Page</a></p>            
             </div>
-        </section>
-    </div>
+        </div>
+    </section>
     
+    <footer>
+        <p>&copy; 2025 E-Cycle - Sustainable  Recycling</p>
+    </footer>
+      
     <script>
-        // Toggle password visibility function        function togglePassword(inputId, iconId) {
+        function togglePassword(inputId, openEyeId, closedEyeId) {
             const passwordInput = document.getElementById(inputId);
-            const eyeIcon = document.getElementById(iconId);
+            const openEye = document.getElementById(openEyeId);
+            const closedEye = document.getElementById(closedEyeId);
             
             if (passwordInput.type === 'password') {
                 passwordInput.type = 'text';
-                eyeIcon.textContent = 'Hide';
+                openEye.style.display = 'none';
+                closedEye.style.display = 'inline';
             } else {
                 passwordInput.type = 'password';
-                eyeIcon.textContent = 'Show';
+                openEye.style.display = 'inline';
+                closedEye.style.display = 'none';
             }
         }
         
-        // Function to hide error message after 3.5 seconds
-        function hideErrorAfterDelay() {
-            const errorMessage = document.getElementById('error-message');
-            if (errorMessage && errorMessage.textContent.trim() !== '') {
-                setTimeout(() => {
-                    errorMessage.textContent = '';
-                }, 3500); // 3.5 seconds
+        // Add event listeners once the DOM is fully loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            const passwordInput = document.getElementById('password');
+            const confirmPasswordInput = document.getElementById('confirmPassword');
+            
+            // Check password requirements as user types
+            passwordInput.addEventListener('input', checkPasswordStrength);
+            
+            // Check if passwords match when user types in either field
+            passwordInput.addEventListener('input', checkPasswordsMatch);
+            confirmPasswordInput.addEventListener('input', checkPasswordsMatch);
+        });
+        
+        function checkPasswordStrength() {
+            const password = document.getElementById('password').value;
+            const errorDiv = document.getElementById('password-validation-error');
+            const errorMessage = document.getElementById('password-validation-message');
+            
+            if (password.length === 0) {
+                errorDiv.style.display = 'none';
+                return;
             }
+            
+            if (password.length < 8) {
+                errorDiv.style.display = 'block';
+                errorMessage.textContent = 'Password must be at least 8 characters long.';
+                return;
+            }
+            
+            if (!/[A-Z]/.test(password)) {
+                errorDiv.style.display = 'block';
+                errorMessage.textContent = 'Password must contain at least one uppercase letter.';
+                return;
+            }
+            
+            if (!/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password)) {
+                errorDiv.style.display = 'block';
+                errorMessage.textContent = 'Password must contain at least one special character.';
+                return;
+            }
+            
+            errorDiv.style.display = 'none';
         }
-        // Form validation function
-        function validateForm(event) {
-            const email = document.getElementById('email').value;
+        
+        function checkPasswordsMatch() {
             const password = document.getElementById('password').value;
             const confirmPassword = document.getElementById('confirmPassword').value;
-            const errorMessage = document.getElementById('error-message');
+            const errorDiv = document.getElementById('password-validation-error');
+            const errorMessage = document.getElementById('password-validation-message');
             
-            // Email validation regex pattern
-            const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            
-            // Check email format
-            if (!emailPattern.test(email)) {
-                errorMessage.textContent = 'Please enter a valid email address.';
-                event.preventDefault();
-                hideErrorAfterDelay();
-                return false;
+            if (confirmPassword.length === 0) {
+                return;
             }
             
-            // Password validation regex pattern
-            const passwordPattern = /^(?=.*[A-Z])(?=.*[!@#$%^&*])(?=.{8,})/;
-            
-            // Check password requirements
-            if (!passwordPattern.test(password)) {
-                errorMessage.textContent = 'Password must be at least 8 characters and include a capital letter and special character.';
-                event.preventDefault();
-                hideErrorAfterDelay();
-                return false;
+            if (password !== confirmPassword) {
+                errorDiv.style.display = 'block';
+                errorMessage.textContent = 'Passwords do not match.';
+            } else {
+                // Only hide the error if it's currently showing a password match error
+                if (errorMessage.textContent === 'Passwords do not match.') {
+                    errorDiv.style.display = 'none';
+                }
             }
+        }
+        
+        function validateForm() {
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            const errorDiv = document.getElementById('password-validation-error');
+            const errorMessage = document.getElementById('password-validation-message');
             
             // Check if passwords match
             if (password !== confirmPassword) {
-                errorMessage.textContent = 'Passwords do not match!';
-                event.preventDefault();
-                hideErrorAfterDelay();
+                errorDiv.style.display = 'block';
+                errorMessage.textContent = 'Passwords do not match.';
                 return false;
             }
             
+            // Check password length
+            if (password.length < 8) {
+                errorDiv.style.display = 'block';
+                errorMessage.textContent = 'Password must be at least 8 characters long.';
+                return false;
+            }
+            
+            // Check for uppercase letter
+            if (!/[A-Z]/.test(password)) {
+                errorDiv.style.display = 'block';
+                errorMessage.textContent = 'Password must contain at least one uppercase letter.';
+                return false;
+            }
+            
+            // Check for special character
+            if (!/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password)) {
+                errorDiv.style.display = 'block';
+                errorMessage.textContent = 'Password must contain at least one special character.';
+                return false;
+            }
+            
+            // All validations passed
+            errorDiv.style.display = 'none';            
             return true;
         }
-        
-        // Run when the page loads
-        document.addEventListener('DOMContentLoaded', function() {
-            hideErrorAfterDelay();
-            
-            // Add form validation
-            const form = document.getElementById('registrationForm');
-            if (form) {
-                form.addEventListener('submit', validateForm);
-            }
-        });
     </script>
 </body>
 </html>
