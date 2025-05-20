@@ -8,7 +8,8 @@ import ecycle.ecycle.models.SingOffer;
 import ecycle.ecycle.models.SingRequest;
 import java.util.List;
 
-@Service @RequiredArgsConstructor
+@Service
+@RequiredArgsConstructor
 public class Negotiations_Service {
         
     private final Negotiations_Repository negotiationsRepository;
@@ -25,19 +26,19 @@ public class Negotiations_Service {
         return negotiationsRepository.findBySingRequest(singRequest);
     }
 
-    public List<Negotiation> findBySingOfferAndWasAccepted(SingOffer singOffer, boolean wasAccepted) {
+    public Negotiation findBySingOfferAndWasAccepted(SingOffer singOffer, boolean wasAccepted) {
         return negotiationsRepository.findBySingOfferAndWasAccepted(singOffer, wasAccepted);
     }
 
-    public List<Negotiation> findBySingRequestAndWasAccepted(SingRequest singRequest, boolean wasAccepted) {
+    public Negotiation findBySingRequestAndWasAccepted(SingRequest singRequest, boolean wasAccepted) {
         return negotiationsRepository.findBySingRequestAndWasAccepted(singRequest, wasAccepted);
     }
 
-    public Negotiation findBySingOfferAndTsClosureIsNull(SingOffer singOffer) {
+    public List<Negotiation> findBySingOfferAndTsClosureIsNull(SingOffer singOffer) {
         return negotiationsRepository.findBySingOfferAndTsClosureIsNull(singOffer);
     }
 
-    public Negotiation findBySingRequestAndTsClosureIsNull(SingRequest singRequest) {
+    public List<Negotiation> findBySingRequestAndTsClosureIsNull(SingRequest singRequest) {
         return negotiationsRepository.findBySingRequestAndTsClosureIsNull(singRequest);
     }
 

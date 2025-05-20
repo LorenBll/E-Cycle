@@ -28,4 +28,12 @@ public class Interaction {
     @Column(name="ts_creation") private Timestamp tsCreation;
     @Column(name="isOffer") private boolean isOffer;
     @ManyToOne @JoinColumn(name="id_user") private User user;
+
+    public void setIsOffer(boolean isOffer) {
+        this.isOffer = isOffer;
+    }
+    public boolean getIsOffer() {
+        return isOffer;
+    }
+
 }

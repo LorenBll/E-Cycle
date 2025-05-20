@@ -12,5 +12,5 @@ public interface Brands_Repository extends JpaRepository<Brand, String> {
 
     @NonNull Optional<Brand> findById(String id);
     @NonNull List<Brand> findAll();
-    
+ 
 }

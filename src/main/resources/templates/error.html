@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head>    <title>E-Cycle - Error</title>
+<head>    
+    <title>E-Cycle - Error</title>
     <link rel="icon" th:href="@{/images/logos/logoIcon.png}" type="image/png">
 </head>
 <body>
     <section id="error-content">
         <div>
+            <img th:src="@{/images/logos/logo.png}" alt="E-Cycle Logo">
             <h1>An Error Occurred</h1>
             <div>
                 <div th:text="${status != null ? status : 'Error'}">404</div>

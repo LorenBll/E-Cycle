@@ -1,8 +1,9 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>    
-    <title>E-Cycle - Login</title>
-    <link rel="icon" th:href="@{/images/logos/logoIcon.png}" type="image/png">    <style>
+    <title>E-Cycle - Login</title>    
+    <link rel="icon" th:href="@{/images/logos/logoIcon.png}" type="image/png">
+    <style>
         .password-container {
             position: relative;
         }
@@ -24,19 +25,22 @@
 <body>
     <section>
         <div>
+            <img th:src="@{/images/logos/logo.png}" alt="E-Cycle Logo">            
             <h2>Login</h2>
-            <form method="post" action="/login">
+            <form method="post" action="/login" onsubmit="return validateLoginForm()">
                 <div>
                     <label for="username">Username</label>
-                    <input type="text" id="username" name="username" required>
-                </div>                <div class="password-container">
+                    <input type="text" id="username" name="username" required>                
+                </div>
+                <div class="password-container">
                     <label for="password">Password</label>
                     <input type="password" id="password" name="password" required>
                     <span class="toggle-password" onclick="togglePassword()">
                         <span id="eye-icon-open" style="display:inline;">👁️</span>
                         <span id="eye-icon-closed" style="display:none;">👁️‍🗨️</span>
                     </span>
-                </div>                <div th:if="${error}" class="error-message">
+                </div>
+                <div th:if="${error}" class="error-message">
                     <p th:text="${error}">Error message</p>
                 </div>
                 <div th:if="${success}" class="success-message">
@@ -53,8 +57,8 @@
         </div>    
     </section>
     
-    <script>
-        function togglePassword() {
+    <script>        
+    function togglePassword() {
             const passwordInput = document.getElementById('password');
             const openEye = document.getElementById('eye-icon-open');
             const closedEye = document.getElementById('eye-icon-closed');
@@ -68,6 +72,37 @@
                 openEye.style.display = 'inline';
                 closedEye.style.display = 'none';
             }
+        }
+        
+        function validateLoginForm() {
+            const usernameInput = document.getElementById('username');
+            const passwordInput = document.getElementById('password');
+            const errorDiv = document.querySelector('.error-message');
+            
+            // Check if either username or password is empty
+            if (!usernameInput.value.trim() || !passwordInput.value.trim()) {
+                // Create error message element if it doesn't exist
+                if (!errorDiv) {
+                    const newErrorDiv = document.createElement('div');
+                    newErrorDiv.className = 'error-message';
+                    const errorMessage = document.createElement('p');
+                    errorMessage.textContent = 'Username and password are required';
+                    newErrorDiv.appendChild(errorMessage);
+                    
+                    // Insert before the submit button
+                    const submitButtonDiv = document.querySelector('button[type="submit"]').parentNode;
+                    submitButtonDiv.parentNode.insertBefore(newErrorDiv, submitButtonDiv);
+                } else {
+                    // Update existing error message
+                    const errorMessageP = errorDiv.querySelector('p');
+                    errorMessageP.textContent = 'Username and password are required';
+                    errorDiv.style.display = 'block';
+                }
+                
+                return false;
+            }
+            
+            return true;
         }
     </script>
 </body>

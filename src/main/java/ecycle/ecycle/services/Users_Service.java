@@ -7,7 +7,8 @@ import ecycle.ecycle.models.User;
 import ecycle.ecycle.services.Interactions_Service;
 import java.util.List;
 
-@Service @RequiredArgsConstructor
+@Service
+@RequiredArgsConstructor
 public class Users_Service {
     
     private final Users_Repository usersRepository;

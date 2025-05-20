@@ -7,13 +7,36 @@ import ecycle.ecycle.models.Interaction;
 import ecycle.ecycle.models.SingRequest;
 import java.util.List;
 import ecycle.ecycle.models.Characteristics;
+import ecycle.ecycle.models.Negotiation;
 import java.sql.Timestamp;
 
-@Service @RequiredArgsConstructor
+@Service
+@RequiredArgsConstructor
 public class SingRequests_Service {
     
     private final SingRequests_Repository singRequestsRepository;
     private final Negotiations_Service negotiationsService;
+
+    public boolean isSingRequestActive(SingRequest singRequest) {
+        
+        // check if the sing request has been deleted
+        boolean isActive = (
+            singRequest.getTsDeletion() == null
+        );
+
+        // check if there are any negotiations with the request that have been accepted
+        if (isActive) {
+
+            Negotiation negotiation = negotiationsService.findBySingRequestAndWasAccepted(singRequest , true);
+            if (negotiation != null) {
+                isActive = false;
+            }
+
+        }
+
+        return isActive;
+
+    }
 
     public SingRequest findById(int id) {
         return singRequestsRepository.findById(id);

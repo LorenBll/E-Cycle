@@ -1,10 +1,12 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>    
-    <title>E-Cycle - Profile</title>
-    <link rel="icon" th:href="@{/images/logos/logoIcon.png}" type="image/png">    <!-- Styling removed as requested -->
+    <title>E-Cycle - Profile</title>    
+    <link rel="icon" th:href="@{/images/logos/logoIcon.png}" type="image/png">
+    <!-- Styling removed as requested -->
 </head>
-<body>    <header>
+<body>
+    <header>
         <div>
             <img th:src="@{/images/logos/logo.png}" alt="E-Cycle Logo">
             <h1>User Profile</h1>
@@ -12,15 +14,15 @@
         <div>
             <span>Welcome, <strong th:text="${user.username}"></strong></span>
             <a href="/home">Home</a>
-            <a href="/logout">Logout</a>
-        </div>
+        </div>    
     </header>
-      <main>
+    <main>
         <!-- Edit Profile Form -->
         <section id="edit-profile-form">
             <h2>Edit Profile</h2>
             
-            <form method="post" action="/profile/edit"><div class="profile-section">
+            <form method="post" action="/profile/edit">
+                <div class="profile-section">
                     <h3>Account Information</h3>
                     <div class="form-row">
                         <div class="form-col">
@@ -34,8 +36,9 @@
                                 <label for="email">Email:</label>
                                 <input type="email" id="email" name="email" th:value="${user.email}" required>
                             </div>
-                        </div>
-                    </div>                    <div class="form-group">
+                        </div>                    
+                    </div>
+                    <div class="form-group">
                         <label for="password">New Password (leave blank to keep current):</label>
                         <div class="password-container">
                             <input type="password" id="password" name="password">
@@ -100,10 +103,11 @@
                         <div class="form-col">
                             <div class="form-group">
                                 <label for="civic">Civic Number:</label>
-                                <input type="text" id="civic" name="civic" th:value="${user.civic}" required>
+                                <input type="text" id="civic" name="civic" th:value="${user.civic}" required>                            
                             </div>
                         </div>
-                    </div>                </div>
+                    </div>
+                </div>
                 
                 <!-- Error message display -->
                 <div class="error-message" th:if="${error != null}">
@@ -116,19 +120,18 @@
                 <!-- Success message display -->
                 <div class="success-message" th:if="${success != null}">
                     <span th:text="${success}"></span>
-                </div>                <div class="buttons">
+                </div>
+                <div class="buttons">
                     <button type="submit" class="submit-btn">Save Changes</button>
                     <button type="button" class="cancel-btn" id="cancel-edit-btn">Cancel</button>
                 </div>
             </form>
-              <!-- Delete Account Section -->
-            <section id="delete-account-section" class="danger-zone">
-                <h3>Danger Zone</h3>
-                <p>Once you delete your account, all your data will be permanently removed. This action cannot be undone.</p>
-                <button type="button" id="delete-account-btn" class="delete-btn">Delete My Account</button>
-            </section>
+            <button onclick="window.location.href='/logout'" class="logout-btn">Logout</button>
+            <button type="button" id="delete-account-btn" class="delete-btn">Delete My Account</button>
         </section>    
-    </main>        <script>        // Function to handle account deletion with two-step confirmation
+    </main>        
+    <script>        
+        
         function deleteAccount() {
             const deleteBtn = document.getElementById('delete-account-btn');
             
@@ -171,7 +174,9 @@
                 openEye.style.display = 'inline';
                 closedEye.style.display = 'none';
             }
-        }        function checkPasswordStrength() {
+        }        
+        
+        function checkPasswordStrength() {
             const password = document.getElementById('password').value;
             const errorDiv = document.getElementById('dynamic-error-message');
             const errorMessage = document.getElementById('error-message-text');
@@ -208,6 +213,7 @@
             
             errorDiv.style.display = 'none';
         }
+
         function checkPasswordsMatch() {
             const password = document.getElementById('password').value;
             const confirmPassword = document.getElementById('confirm_password').value;
@@ -324,6 +330,7 @@
                 }
             });
         });
+        
     </script>
 </body>
 </html>

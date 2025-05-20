@@ -7,14 +7,38 @@ import ecycle.ecycle.models.Interaction;
 import ecycle.ecycle.models.SingOffer;
 import java.util.List;
 import ecycle.ecycle.models.Characteristics;
+import ecycle.ecycle.models.Negotiation;
 import java.sql.Date;
 import java.sql.Timestamp;
 
-@Service @RequiredArgsConstructor
+@Service
+@RequiredArgsConstructor
 public class SingOffers_Service {
     
     private final SingOffers_Repository singOffersRepository;
     private final Negotiations_Service negotiationsService;
+
+    public boolean isSingOfferActive(SingOffer singOffer) {
+        
+        // check if the sing offer has been deleted or has expired
+        boolean isActive = (
+            singOffer.getTsDeletion() == null && 
+            singOffer.getExpiration().after(new Date(System.currentTimeMillis()))
+        );
+
+        // check if there are any negotiations with the offer that have been accepted
+        if (isActive) {
+        
+            Negotiation negotiation = negotiationsService.findBySingOfferAndWasAccepted(singOffer , true);
+            if (negotiation != null) {
+                isActive = false;
+            }
+
+        }
+
+        return isActive;
+
+    }
 
     public SingOffer findById(int id) {
         return singOffersRepository.findById(id);

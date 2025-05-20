@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>    
+    <title>E-Cycle - Request Insertion</title>
+    <link rel="icon" th:href="@{/images/logos/logoIcon.png}" type="image/png">
+    <style>
+        .characteristics-section {
+            border: 1px solid #ddd;
+            padding: 15px;
+            margin-bottom: 15px;
+            position: relative;
+        }
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+        .input-group {
+            margin-bottom: 10px;
+        }
+        .input-group label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        .btn-container {
+            margin: 20px 0;
+        }
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div>
+            <img th:src="@{/images/logos/logo.png}" alt="E-Cycle Logo">
+        </div>    
+    </header>
+    <main>
+        <section>
+            <h2>Insert New Request</h2>
+            <form id="requestForm" action="/insertRequest" method="post">
+                <div class="input-group">
+                    <label for="title">Request Title:</label>
+                    <input type="text" id="title" name="title" required>
+                </div>
+                
+                <button type="button" id="addCharacteristicsBtn">Add Another Characteristics Section</button>
+                
+                <div id="characteristicsContainer">
+                    <div class="characteristics-section" data-index="0">
+                        <div class="section-header">
+                            <h3>Characteristics #1</h3>
+                            <div>
+                                <label for="quantity-0">Quantity:</label>
+                                <input type="number" id="quantity-0" name="characteristics[0].quantity" min="1" value="1" required>
+                                
+                                <label for="maxPrice-0">Max Price per Unit:</label>
+                                <input type="number" id="maxPrice-0" name="characteristics[0].maxPricePerUnit" step="0.01" min="0" required>
+                                
+                                <button type="button" class="cancelSectionBtn" data-index="0" disabled>Cancel</button>
+                            </div>
+                        </div>
+                        
+                        <div class="input-group">
+                            <label for="category-0">Category:</label>
+                            <select id="category-0" name="characteristics[0].category" required>
+                                <option value="">Select a category</option>
+                                <option value="manual">Enter manually</option>
+                                <option th:each="category : ${categories}" th:value="${category.id}" th:text="${category.id}"></option>
+                            </select>
+                            <input type="text" id="categoryManual-0" name="characteristics[0].categoryManual" class="hidden" placeholder="Enter category name">
+                        </div>
+                        
+                        <div class="input-group">
+                            <label for="nature-0">Nature:</label>
+                            <select id="nature-0" name="characteristics[0].nature" required>
+                                <option value="">Select a nature</option>
+                                <option value="manual">Enter manually</option>
+                                <option th:each="nature : ${natures}" th:value="${nature.id}" th:text="${nature.id}"></option>
+                            </select>
+                            <input type="text" id="natureManual-0" name="characteristics[0].natureManual" class="hidden" placeholder="Enter nature name">
+                        </div>
+                        
+                        <div class="input-group">
+                            <label for="brand-0">Brand:</label>
+                            <select id="brand-0" name="characteristics[0].brand" required>
+                                <option value="">Select a brand</option>
+                                <option value="manual">Enter manually</option>
+                                <option th:each="brand : ${brands}" th:value="${brand.id}" th:text="${brand.id}"></option>
+                            </select>
+                            <input type="text" id="brandManual-0" name="characteristics[0].brandManual" class="hidden" placeholder="Enter brand name">
+                        </div>
+                        
+                        <div class="input-group">
+                            <label for="model-0">Model:</label>
+                            <select id="model-0" name="characteristics[0].model" required disabled>
+                                <option value="">Select a model</option>
+                                <option value="manual">Enter manually</option>
+                            </select>
+                            <input type="text" id="modelManual-0" name="characteristics[0].modelManual" class="hidden" placeholder="Enter model name">
+                        </div>
+                        
+                        <div class="input-group">
+                            <label for="mainColour-0">Colour:</label>
+                            <input type="text" id="mainColour-0" name="characteristics[0].mainColour" required>
+                        </div>
+                        
+                        <div class="input-group">
+                            <label for="function-0">Function:</label>
+                            <input type="text" id="function-0" name="characteristics[0].function" required>
+                        </div>
+                        
+                        <div class="input-group">
+                            <label for="prodYear-0">Year:</label>
+                            <input type="number" id="prodYear-0" name="characteristics[0].prodYear" min="1900" th:max="${#dates.format(#dates.createNow(), 'yyyy')}" required>
+                        </div>
+                        
+                        <div class="input-group">
+                            <label for="batch-0">Batch:</label>
+                            <input type="text" id="batch-0" name="characteristics[0].batch">
+                        </div>
+                        
+                        <div class="input-group">
+                            <label for="quality-0">Quality:</label>
+                            <select id="quality-0" name="characteristics[0].quality" required>
+                                <option value="">Select quality</option>
+                                <option value="Excellent">Excellent</option>
+                                <option value="Good">Good</option>
+                                <option value="Acceptable">Acceptable</option>
+                                <option value="Needs Revision">Needs Revision</option>
+                                <option value="Broken">Broken</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="btn-container">
+                    <button type="button" id="cancelRequestBtn">Cancel Request</button>
+                    <button type="submit">Confirm</button>
+                </div>
+            </form>
+        </section>
+    </main>
+      <script th:inline="javascript">
+        // Get all models from the server
+        const allModels = /*[[${models}]]*/ [];
+        // Get other data from the server
+        const categories = /*[[${categories}]]*/ [];
+        const natures = /*[[${natures}]]*/ [];
+        const brands = /*[[${brands}]]*/ [];
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            let sectionIndex = 0;
+            
+            // Add new characteristics section
+            document.getElementById('addCharacteristicsBtn').addEventListener('click', function() {
+                sectionIndex++;
+                const container = document.getElementById('characteristicsContainer');
+                const newSection = createCharacteristicsSection(sectionIndex);
+                container.appendChild(newSection);
+                
+                // Initialize event listeners for the new section
+                initializeEventListeners(sectionIndex);
+            });
+            
+            // Cancel request button
+            document.getElementById('cancelRequestBtn').addEventListener('click', function() {
+                window.location.href = '/home';
+            });
+            
+            // Initialize event listeners for the first section
+            initializeEventListeners(0);
+            
+            // Form submission
+            document.getElementById('requestForm').addEventListener('submit', function(event) {
+                event.preventDefault();
+                
+                // Convert form data to the format expected by the controller
+                const formData = new FormData(this);
+                const jsonData = {};
+                
+                // Group the characteristics data
+                const characteristics = [];
+                const sectionElements = document.querySelectorAll('.characteristics-section');
+                
+                sectionElements.forEach((section, i) => {
+                    const index = section.getAttribute('data-index');
+                    const charData = {};
+                    
+                    // Process category
+                    const categorySelect = document.getElementById(`category-${index}`);
+                    const categoryManual = document.getElementById(`categoryManual-${index}`);
+                    if (categorySelect.value === 'manual' && categoryManual.value) {
+                        charData.category = categoryManual.value;
+                        charData.categoryManual = categoryManual.value;
+                    } else {
+                        charData.category = categorySelect.value;
+                    }
+                    
+                    // Process nature
+                    const natureSelect = document.getElementById(`nature-${index}`);
+                    const natureManual = document.getElementById(`natureManual-${index}`);
+                    if (natureSelect.value === 'manual' && natureManual.value) {
+                        charData.nature = natureManual.value;
+                        charData.natureManual = natureManual.value;
+                    } else {
+                        charData.nature = natureSelect.value;
+                    }
+                    
+                    // Process brand
+                    const brandSelect = document.getElementById(`brand-${index}`);
+                    const brandManual = document.getElementById(`brandManual-${index}`);
+                    if (brandSelect.value === 'manual' && brandManual.value) {
+                        charData.brand = brandManual.value;
+                        charData.brandManual = brandManual.value;
+                    } else {
+                        charData.brand = brandSelect.value;
+                    }
+                    
+                    // Process model
+                    const modelSelect = document.getElementById(`model-${index}`);
+                    const modelManual = document.getElementById(`modelManual-${index}`);
+                    if (modelSelect.value === 'manual' && modelManual.value) {
+                        charData.model = modelManual.value;
+                        charData.modelManual = modelManual.value;
+                    } else {
+                        charData.model = modelSelect.value;
+                    }
+                    
+                    // Process other fields
+                    charData.mainColour = document.getElementById(`mainColour-${index}`).value;
+                    charData.function = document.getElementById(`function-${index}`).value;
+                    charData.prodYear = document.getElementById(`prodYear-${index}`).value;
+                    charData.batch = document.getElementById(`batch-${index}`).value;
+                    charData.quality = document.getElementById(`quality-${index}`).value;
+                    charData.quantity = document.getElementById(`quantity-${index}`).value;
+                    charData.maxPricePerUnit = document.getElementById(`maxPrice-${index}`).value;
+                    
+                    characteristics.push(charData);
+                });
+                
+                // Create the final data object
+                const requestData = {
+                    title: document.getElementById('title').value,
+                    characteristics: characteristics
+                };
+                
+                // Submit the form with JSON data
+                fetch('/insertRequest', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(requestData)
+                })
+                .then(response => {
+                    if (response.ok) {
+                        window.location.href = '/home';
+                    } else {
+                        console.error('Error submitting form');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+            });
+        });
+          function createCharacteristicsSection(index) {
+            const section = document.createElement('div');
+            section.className = 'characteristics-section';
+            section.setAttribute('data-index', index);
+            
+            section.innerHTML = `
+                <div class="section-header">
+                    <h3>Characteristics #${index + 1}</h3>
+                    <div>
+                        <label for="quantity-${index}">Quantity:</label>
+                        <input type="number" id="quantity-${index}" name="characteristics[${index}].quantity" min="1" value="1" required>
+                        
+                        <label for="maxPrice-${index}">Max Price per Unit:</label>
+                        <input type="number" id="maxPrice-${index}" name="characteristics[${index}].maxPricePerUnit" step="0.01" min="0" required>
+                        
+                        <button type="button" class="cancelSectionBtn" data-index="${index}">Cancel</button>
+                    </div>
+                </div>
+                
+                <div class="input-group">
+                    <label for="category-${index}">Category:</label>
+                    <select id="category-${index}" name="characteristics[${index}].category" required>
+                        <option value="">Select a category</option>
+                        <option value="manual">Enter manually</option>
+                        ${getCategoryOptionsHtml()}
+                    </select>
+                    <input type="text" id="categoryManual-${index}" name="characteristics[${index}].categoryManual" class="hidden" placeholder="Enter category name">
+                </div>
+                
+                <div class="input-group">
+                    <label for="nature-${index}">Nature:</label>
+                    <select id="nature-${index}" name="characteristics[${index}].nature" required>
+                        <option value="">Select a nature</option>
+                        <option value="manual">Enter manually</option>
+                        ${getNatureOptionsHtml()}
+                    </select>
+                    <input type="text" id="natureManual-${index}" name="characteristics[${index}].natureManual" class="hidden" placeholder="Enter nature name">
+                </div>
+                
+                <div class="input-group">
+                    <label for="brand-${index}">Brand:</label>
+                    <select id="brand-${index}" name="characteristics[${index}].brand" required>
+                        <option value="">Select a brand</option>
+                        <option value="manual">Enter manually</option>
+                        ${getBrandOptionsHtml()}
+                    </select>
+                    <input type="text" id="brandManual-${index}" name="characteristics[${index}].brandManual" class="hidden" placeholder="Enter brand name">
+                </div>
+                
+                <div class="input-group">
+                    <label for="model-${index}">Model:</label>
+                    <select id="model-${index}" name="characteristics[${index}].model" required disabled>
+                        <option value="">Select a model</option>
+                        <option value="manual">Enter manually</option>
+                    </select>
+                    <input type="text" id="modelManual-${index}" name="characteristics[${index}].modelManual" class="hidden" placeholder="Enter model name">
+                </div>
+                
+                <div class="input-group">
+                    <label for="mainColour-${index}">Colour:</label>
+                    <input type="text" id="mainColour-${index}" name="characteristics[${index}].mainColour" required>
+                </div>
+                
+                <div class="input-group">
+                    <label for="function-${index}">Function:</label>
+                    <input type="text" id="function-${index}" name="characteristics[${index}].function" required>
+                </div>
+                
+                <div class="input-group">
+                    <label for="prodYear-${index}">Year:</label>
+                    <input type="number" id="prodYear-${index}" name="characteristics[${index}].prodYear" min="1900" max="${new Date().getFullYear()}" required>
+                </div>
+                
+                <div class="input-group">
+                    <label for="batch-${index}">Batch:</label>
+                    <input type="text" id="batch-${index}" name="characteristics[${index}].batch">
+                </div>
+                
+                <div class="input-group">
+                    <label for="quality-${index}">Quality:</label>
+                    <select id="quality-${index}" name="characteristics[${index}].quality" required>
+                        <option value="">Select quality</option>
+                        <option value="Excellent">Excellent</option>
+                        <option value="Good">Good</option>
+                        <option value="Acceptable">Acceptable</option>
+                        <option value="Needs Revision">Needs Revision</option>
+                        <option value="Broken">Broken</option>
+                    </select>
+                </div>
+            `;
+            
+            return section;
+        }
+          // Helper functions to generate options HTML for dynamically created sections
+        function getCategoryOptionsHtml() {
+            let options = '';
+            if (categories && categories.length) {
+                categories.forEach(category => {
+                    options += `<option value="${category.id}">${category.id}</option>`;
+                });
+            }
+            return options;
+        }
+        
+        function getNatureOptionsHtml() {
+            let options = '';
+            if (natures && natures.length) {
+                natures.forEach(nature => {
+                    options += `<option value="${nature.id}">${nature.id}</option>`;
+                });
+            }
+            return options;
+        }
+        
+        function getBrandOptionsHtml() {
+            let options = '';
+            if (brands && brands.length) {
+                brands.forEach(brand => {
+                    options += `<option value="${brand.id}">${brand.id}</option>`;
+                });
+            }
+            return options;
+        }
+        
+        function getOptionsHtml(items, valueProperty) {
+            if (!items) return '';
+            let options = '';
+            items.forEach(item => {
+                options += `<option value="${item[valueProperty]}">${item[valueProperty]}</option>`;
+            });
+            return options;
+        }
+        
+        function initializeEventListeners(index) {
+            // Handle manual input fields toggle
+            const selectors = ['category', 'nature', 'brand', 'model'];
+            selectors.forEach(selector => {
+                const selectElement = document.getElementById(`${selector}-${index}`);
+                const manualInput = document.getElementById(`${selector}Manual-${index}`);
+                
+                if (selectElement && manualInput) {
+                    selectElement.addEventListener('change', function() {
+                        if (this.value === 'manual') {
+                            manualInput.classList.remove('hidden');
+                            manualInput.required = true;
+                        } else {
+                            manualInput.classList.add('hidden');
+                            manualInput.required = false;
+                        }
+                    });
+                }
+            });
+            
+            // Handle brand-model relationship
+            const brandSelect = document.getElementById(`brand-${index}`);
+            const brandManual = document.getElementById(`brandManual-${index}`);
+            const modelSelect = document.getElementById(`model-${index}`);
+            
+            if (brandSelect && modelSelect) {
+                brandSelect.addEventListener('change', function() {
+                    updateModelOptions(index, this.value);
+                });
+            }
+            
+            if (brandManual && modelSelect) {
+                brandManual.addEventListener('input', function() {
+                    if (brandSelect.value === 'manual' && this.value) {
+                        modelSelect.disabled = false;
+                    } else {
+                        modelSelect.disabled = true;
+                    }
+                });
+            }
+            
+            // Handle section cancellation
+            const cancelButton = document.querySelector(`.cancelSectionBtn[data-index="${index}"]`);
+            if (cancelButton) {
+                cancelButton.addEventListener('click', function() {
+                    const sectionIndex = this.getAttribute('data-index');
+                    if (sectionIndex !== '0') {  // Don't delete the first section
+                        const section = document.querySelector(`.characteristics-section[data-index="${sectionIndex}"]`);
+                        if (section) {
+                            section.remove();
+                        }
+                    }
+                });
+            }
+        }
+        
+        function updateModelOptions(index, brandValue) {
+            const modelSelect = document.getElementById(`model-${index}`);
+            
+            // Clear existing options except the first two (default and manual)
+            while (modelSelect.options.length > 2) {
+                modelSelect.remove(2);
+            }
+            
+            // If no brand is selected or "manual" is selected, disable the model dropdown
+            if (!brandValue || brandValue === '' || brandValue === 'manual') {
+                modelSelect.disabled = true;
+                return;
+            }
+            
+            // Enable the model dropdown
+            modelSelect.disabled = false;
+            
+            // Filter models by the selected brand
+            const brandModels = allModels.filter(model => model.brand && model.brand.id === brandValue);
+            
+            // Add model options
+            brandModels.forEach(model => {
+                const option = document.createElement('option');
+                option.value = model.id;
+                option.text = model.id;
+                modelSelect.add(option);
+            });
+        }
+    </script>
+</body>
+</html>

@@ -6,7 +6,8 @@ import ecycle.ecycle.repositories.Natures_Repository;
 import ecycle.ecycle.models.Nature;
 import java.util.List;
 
-@Service @RequiredArgsConstructor
+@Service
+@RequiredArgsConstructor
 public class Natures_Service {
     
     private final Natures_Repository natures_repository;

@@ -19,7 +19,7 @@ import jakarta.persistence.Column;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name="models")
-public class Model {
+public class ProductModel {
     @Id @Column(name="ID",length=50) private String id;
     @ManyToOne @JoinColumn(name="id_brand") private Brand brand;
 }

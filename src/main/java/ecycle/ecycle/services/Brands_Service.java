@@ -6,7 +6,8 @@ import ecycle.ecycle.repositories.Brands_Repository;
 import ecycle.ecycle.models.Brand;
 import java.util.List;
 
-@Service @RequiredArgsConstructor
+@Service
+@RequiredArgsConstructor
 public class Brands_Service {
         
     private final Brands_Repository brandsRepository;

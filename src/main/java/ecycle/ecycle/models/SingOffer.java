@@ -25,7 +25,7 @@ public class SingOffer {
     @Id @Column(name="ID") @GeneratedValue(strategy=GenerationType.IDENTITY) private int id;
     @Column(name="price") private float price;
     @Column(name="picture_path",length=255) private String picturePath;
-    @Column(name="description",length=255) private String description;
+    @Column(name="description",length=255) private String description;    
     @Column(name="expiration") private Date expiration;
     @Column(name="ts_deletion") private Timestamp tsDeletion;
     @ManyToOne @JoinColumn(name="id_offer") private Interaction offer;

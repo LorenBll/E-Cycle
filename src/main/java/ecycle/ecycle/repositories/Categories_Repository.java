@@ -12,5 +12,5 @@ public interface Categories_Repository extends JpaRepository<Category, String> {
 
     @NonNull Optional<Category> findById(String id);
     @NonNull List<Category> findAll();
-    
+  
 }

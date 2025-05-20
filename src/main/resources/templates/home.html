@@ -9,18 +9,118 @@
         <div>
             <img th:src="@{/images/logos/logo.png}" alt="E-Cycle Logo">
             <h1>Welcome to E-Cycle</h1>
-        </div>
+        </div>    
     </header>
-    
     <main>
         <section>
             <h2>Your E-Cycle Dashboard</h2>
             <p>Welcome to your personalized E-Cycle dashboard. From here you can manage your account and activities.</p>
             
-            <div class="action-buttons">
-                <a href="/profile" class="button">View Profile</a>
-                <!-- More buttons can be added here as more features are developed -->
+            <div>
+                <a href="/profile">View Profile</a>
+             </div>
+        </section>
+        <!-- Active Requests Section -->
+        <section>
+            <h2>Active Requests</h2>
+            <button onclick="window.location.href='/requestInsertion'">Create New Request</button>
+            <div th:if="${activeRequests.isEmpty()}">
+                <p>No Active Requests</p>
             </div>
+            <table th:if="${!activeRequests.isEmpty()}">
+                <thead>
+                    <tr>
+                        <th>Title</th>
+                        <th>Creation Date</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="request : ${activeRequests}">
+                        <td th:text="${request.title}"></td>
+                        <td th:text="${request.tsCreation}"></td>
+                        <td>
+                            <button>View</button>
+                        </td>
+                    </tr>
+                </tbody>            
+            </table>
+        </section>
+        <!-- Inactive Requests Section -->
+        <section>
+            <h2>Inactive Requests</h2>
+            <div th:if="${inactiveRequests.isEmpty()}">
+                <p>No Inactive Requests</p>
+            </div>
+            <table th:if="${!inactiveRequests.isEmpty()}">
+                <thead>
+                    <tr>
+                        <th>Title</th>
+                        <th>Creation Date</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="request : ${inactiveRequests}">
+                        <td th:text="${request.title}"></td>
+                        <td th:text="${request.tsCreation}"></td>
+                        <td>
+                            <button>View</button>
+                        </td>
+                    </tr>
+                </tbody>            
+            </table>
+        </section>
+        <!-- Active Offers Section -->
+        <section>
+            <h2>Active Offers</h2>
+            <button onclick="window.location.href='/offerInsertion'">Create New Offer</button>
+            <div th:if="${activeOffers.isEmpty()}">
+                <p>No Active Offers</p>
+            </div>
+            <table th:if="${!activeOffers.isEmpty()}">
+                <thead>
+                    <tr>
+                        <th>Title</th>
+                        <th>Creation Date</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="offer : ${activeOffers}">
+                        <td th:text="${offer.title}"></td>
+                        <td th:text="${offer.tsCreation}"></td>
+                        <td>
+                            <button>View</button>
+                        </td>
+                    </tr>
+                </tbody>            
+            </table>
+        </section>
+        <!-- Inactive Offers Section -->
+        <section>
+            <h2>Inactive Offers</h2>
+            <div th:if="${inactiveOffers.isEmpty()}">
+                <p>No Inactive Offers</p>
+            </div>
+            <table th:if="${!inactiveOffers.isEmpty()}">
+                <thead>
+                    <tr>
+                        <th>Title</th>
+                        <th>Creation Date</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="offer : ${inactiveOffers}">
+                        <td th:text="${offer.title}"></td>
+                        <td th:text="${offer.tsCreation}"></td>
+                        <td>
+                            <button>View</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
         </section>
     </main>
 </body>
