@@ -18,11 +18,17 @@ import java.security.NoSuchAlgorithmException;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import ecycle.ecycle.services.Users_Service;
+import ecycle.ecycle.services.Interactions_Service;
+import ecycle.ecycle.services.SingOffers_Service;
+import ecycle.ecycle.services.SingRequests_Service;
 
 @Controller @RequiredArgsConstructor
 public class AppController {
     
     @Autowired Users_Service usersService;
+    @Autowired Interactions_Service interactionsService;
+    @Autowired SingOffers_Service singOffersService;
+    @Autowired SingRequests_Service singRequestsService;
 
     String hashPassword(String password) {
         try {
@@ -211,7 +217,8 @@ public class AppController {
         model.addAttribute("success", "Profile updated successfully");
         return "profile";
     }
-      @DeleteMapping("/profile/delete")
+
+    @DeleteMapping("/profile/delete")
     public String deleteProfile(HttpSession session) {
         User user = (User) session.getAttribute("user");
         if (user == null) {
@@ -227,4 +234,5 @@ public class AppController {
         // Redirect to login page with a parameter indicating successful deletion
         return "redirect:/login?deleted=true";
     }
+
 }

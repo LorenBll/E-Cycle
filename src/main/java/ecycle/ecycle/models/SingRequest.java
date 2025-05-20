@@ -23,7 +23,7 @@ import java.sql.Timestamp;
 @Table(name="sing_requests")
 public class SingRequest {
     @Id @Column(name="ID") @GeneratedValue(strategy=GenerationType.IDENTITY) private int id;
-    @Column(name="max_price") private float max_price;
+    @Column(name="max_price") private float maxPrice;
     @Column(name="ts_deletion") private Timestamp tsDeletion;
     @ManyToOne @JoinColumn(name="id_request") private Interaction request;
     @ManyToOne @JoinColumn(name="id_characteristics") private Characteristics characteristics;
