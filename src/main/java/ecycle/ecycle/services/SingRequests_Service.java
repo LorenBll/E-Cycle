@@ -13,6 +13,7 @@ import java.sql.Timestamp;
 public class SingRequests_Service {
     
     private final SingRequests_Repository singRequestsRepository;
+    private final Negotiations_Service negotiationsService;
 
     public SingRequest findById(int id) {
         return singRequestsRepository.findById(id);
@@ -55,8 +56,10 @@ public class SingRequests_Service {
     public void deleteByRequest(Interaction request) {
         // find by request
         List<SingRequest> singRequests = singRequestsRepository.findByRequest(request);
-        // todo delete negotiations
-
+        // delete negotiations
+        for (SingRequest singRequest : singRequests) {
+            negotiationsService.deleteBySingRequest(singRequest);
+        }
         // delete all sing requests
         singRequestsRepository.deleteByRequest(request);
     }

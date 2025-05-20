@@ -14,6 +14,7 @@ import java.sql.Timestamp;
 public class SingOffers_Service {
     
     private final SingOffers_Repository singOffersRepository;
+    private final Negotiations_Service negotiationsService;
 
     public SingOffer findById(int id) {
         return singOffersRepository.findById(id);
@@ -54,8 +55,10 @@ public class SingOffers_Service {
     public void deleteByOffer(Interaction offer) {
         // find by offer
         List<SingOffer> singOffers = singOffersRepository.findByOffer(offer);
-        // todo delete negotiations
-
+        // delete negotiations
+        for (SingOffer singOffer : singOffers) {
+            negotiationsService.deleteBySingOffer(singOffer);
+        }
         // delete all sing offers
         singOffersRepository.deleteByOffer(offer);
     }
