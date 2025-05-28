@@ -27,8 +27,7 @@ CREATE TABLE IF NOT EXISTS `brands` (
   PRIMARY KEY (`ID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- Dump dei dati della tabella ecycle.brands: ~0 rows (circa)
-DELETE FROM `brands`;
+-- L’esportazione dei dati non era selezionata.
 
 -- Dump della struttura di tabella ecycle.categories
 DROP TABLE IF EXISTS `categories`;
@@ -37,8 +36,7 @@ CREATE TABLE IF NOT EXISTS `categories` (
   PRIMARY KEY (`ID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- Dump dei dati della tabella ecycle.categories: ~0 rows (circa)
-DELETE FROM `categories`;
+-- L’esportazione dei dati non era selezionata.
 
 -- Dump della struttura di tabella ecycle.characteristics
 DROP TABLE IF EXISTS `characteristics`;
@@ -61,8 +59,9 @@ CREATE TABLE IF NOT EXISTS `characteristics` (
   CONSTRAINT `FK_characteristics_natures` FOREIGN KEY (`id_nature`) REFERENCES `natures` (`ID`) ON DELETE NO ACTION ON UPDATE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- Dump dei dati della tabella ecycle.characteristics: ~0 rows (circa)
-DELETE FROM `characteristics`;
+TRUNCATE TABLE `characteristics`;
+
+-- L’esportazione dei dati non era selezionata.
 
 -- Dump della struttura di tabella ecycle.interactions
 DROP TABLE IF EXISTS `interactions`;
@@ -75,10 +74,11 @@ CREATE TABLE IF NOT EXISTS `interactions` (
   PRIMARY KEY (`ID`),
   KEY `id_user` (`id_user`),
   CONSTRAINT `FK_requests_users` FOREIGN KEY (`id_user`) REFERENCES `users` (`ID`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=25 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- Dump dei dati della tabella ecycle.interactions: ~0 rows (circa)
-DELETE FROM `interactions`;
+TRUNCATE TABLE `interactions`;
+
+-- L’esportazione dei dati non era selezionata.
 
 -- Dump della struttura di tabella ecycle.models
 DROP TABLE IF EXISTS `models`;
@@ -90,8 +90,7 @@ CREATE TABLE IF NOT EXISTS `models` (
   CONSTRAINT `FK_models_brands` FOREIGN KEY (`id_brand`) REFERENCES `brands` (`ID`) ON DELETE NO ACTION ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- Dump dei dati della tabella ecycle.models: ~0 rows (circa)
-DELETE FROM `models`;
+-- L’esportazione dei dati non era selezionata.
 
 -- Dump della struttura di tabella ecycle.natures
 DROP TABLE IF EXISTS `natures`;
@@ -100,26 +99,27 @@ CREATE TABLE IF NOT EXISTS `natures` (
   PRIMARY KEY (`ID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- Dump dei dati della tabella ecycle.natures: ~0 rows (circa)
-DELETE FROM `natures`;
+-- L’esportazione dei dati non era selezionata.
 
 -- Dump della struttura di tabella ecycle.negotiations
 DROP TABLE IF EXISTS `negotiations`;
 CREATE TABLE IF NOT EXISTS `negotiations` (
-  `ID` int(11) NOT NULL,
+  `ID` int(11) NOT NULL AUTO_INCREMENT,
   `ts_creation` timestamp NOT NULL DEFAULT current_timestamp(),
   `ts_closure` timestamp NULL DEFAULT NULL,
   `wasAccepted` bit(1) DEFAULT NULL,
   `id_sing_offer` int(11) NOT NULL,
   `id_sing_request` int(11) NOT NULL,
+  PRIMARY KEY (`ID`),
   KEY `id_sing_request` (`id_sing_request`),
   KEY `id_sing_offer` (`id_sing_offer`),
   CONSTRAINT `FK_negotiations_sing_offer` FOREIGN KEY (`id_sing_offer`) REFERENCES `sing_offers` (`ID`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `FK_negotiations_sing_requests` FOREIGN KEY (`id_sing_request`) REFERENCES `sing_requests` (`ID`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- Dump dei dati della tabella ecycle.negotiations: ~0 rows (circa)
-DELETE FROM `negotiations`;
+TRUNCATE TABLE `negotiations`;
+
+-- L’esportazione dei dati non era selezionata.
 
 -- Dump della struttura di tabella ecycle.sing_offers
 DROP TABLE IF EXISTS `sing_offers`;
@@ -137,10 +137,11 @@ CREATE TABLE IF NOT EXISTS `sing_offers` (
   KEY `id_characteristics` (`id_characteristics`),
   CONSTRAINT `FK_sing_offer_characteristics` FOREIGN KEY (`id_characteristics`) REFERENCES `characteristics` (`ID`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `FK_sing_offer_interactions` FOREIGN KEY (`id_offer`) REFERENCES `interactions` (`ID`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=51 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- Dump dei dati della tabella ecycle.sing_offers: ~0 rows (circa)
-DELETE FROM `sing_offers`;
+TRUNCATE TABLE `sing_offers`;
+
+-- L’esportazione dei dati non era selezionata.
 
 -- Dump della struttura di tabella ecycle.sing_requests
 DROP TABLE IF EXISTS `sing_requests`;
@@ -155,10 +156,11 @@ CREATE TABLE IF NOT EXISTS `sing_requests` (
   KEY `id_characteristics` (`id_characteristics`),
   CONSTRAINT `FK_sing_request_characteristics` FOREIGN KEY (`id_characteristics`) REFERENCES `characteristics` (`ID`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `FK_sing_request_requests` FOREIGN KEY (`id_request`) REFERENCES `interactions` (`ID`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- Dump dei dati della tabella ecycle.sing_requests: ~0 rows (circa)
-DELETE FROM `sing_requests`;
+TRUNCATE TABLE `sing_requests`;
+
+-- L’esportazione dei dati non era selezionata.
 
 -- Dump della struttura di tabella ecycle.users
 DROP TABLE IF EXISTS `users`;
@@ -176,10 +178,11 @@ CREATE TABLE IF NOT EXISTS `users` (
   `street` varchar(100) NOT NULL,
   `civic` varchar(10) NOT NULL,
   PRIMARY KEY (`ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- Dump dei dati della tabella ecycle.users: ~0 rows (circa)
-DELETE FROM `users`;
+TRUNCATE TABLE `users`;
+
+-- L’esportazione dei dati non era selezionata.
 
 /*!40103 SET TIME_ZONE=IFNULL(@OLD_TIME_ZONE, 'system') */;
 /*!40101 SET SQL_MODE=IFNULL(@OLD_SQL_MODE, '') */;

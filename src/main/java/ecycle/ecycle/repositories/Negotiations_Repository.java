@@ -19,8 +19,8 @@ public interface Negotiations_Repository extends JpaRepository<Negotiation, Inte
     Negotiation findBySingOfferAndWasAccepted(SingOffer singOffer, boolean wasAccepted);
     Negotiation findBySingRequestAndWasAccepted(SingRequest singRequest, boolean wasAccepted);
     // to see negotiations that are still open
-    List<Negotiation> findBySingOfferAndTsClosureIsNull(SingOffer singOffer);
-    List<Negotiation> findBySingRequestAndTsClosureIsNull(SingRequest singRequest);
+    Negotiation findBySingOfferAndTsClosureIsNull(SingOffer singOffer);
+    Negotiation findBySingRequestAndTsClosureIsNull(SingRequest singRequest);
     // to see all negotiations that have been closed (whether accepted or not)
     List<Negotiation> findBySingOfferAndTsClosureIsNotNull(SingOffer singOffer);
     List<Negotiation> findBySingRequestAndTsClosureIsNotNull(SingRequest singRequest);

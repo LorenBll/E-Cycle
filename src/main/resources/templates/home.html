@@ -40,7 +40,6 @@
                         <td th:text="${request.title}"></td>
                         <td th:text="${request.tsCreation}"></td>
                         <td>
-                            <button>View</button>
                         </td>
                     </tr>
                 </tbody>            
@@ -65,7 +64,6 @@
                         <td th:text="${request.title}"></td>
                         <td th:text="${request.tsCreation}"></td>
                         <td>
-                            <button>View</button>
                         </td>
                     </tr>
                 </tbody>            
@@ -91,7 +89,7 @@
                         <td th:text="${offer.title}"></td>
                         <td th:text="${offer.tsCreation}"></td>
                         <td>
-                            <button>View</button>
+                            <a th:href="@{/viewOfferDetails(offerId=${offer.id})}"><button>View</button></a>
                         </td>
                     </tr>
                 </tbody>            
@@ -116,7 +114,7 @@
                         <td th:text="${offer.title}"></td>
                         <td th:text="${offer.tsCreation}"></td>
                         <td>
-                            <button>View</button>
+                            <a th:href="@{/viewOfferDetails(offerId=${offer.id})}"><button>View</button></a>
                         </td>
                     </tr>
                 </tbody>

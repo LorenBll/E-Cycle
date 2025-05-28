@@ -7,7 +7,6 @@ import org.springframework.transaction.annotation.Transactional;
 import ecycle.ecycle.models.Interaction;
 import ecycle.ecycle.models.SingOffer;
 import java.util.List;
-import ecycle.ecycle.models.Characteristics;
 import ecycle.ecycle.models.Negotiation;
 import java.sql.Date;
 import java.sql.Timestamp;
@@ -53,12 +52,12 @@ public class SingOffers_Service {
         return singOffersRepository.findByOfferAndTsDeletionIsNull(offer);
     }
 
-    public List<SingOffer> findByOfferAndTsDeletionIsNotNull(Interaction offer) {
-        return singOffersRepository.findByOfferAndTsDeletionIsNotNull(offer);
+    public List<SingOffer> findByOfferAndTsDeletionIsNotNullOrExpirationBefore(Interaction offer, Date expiration) {
+        return singOffersRepository.findByOfferAndTsDeletionIsNotNullOrExpirationBefore(offer, expiration);
     }
 
-    public List<SingOffer> findByTsDeletionIsNullAndExpirationAfterAndCharacteristics(Date expiration, Characteristics characteristics) {
-        return singOffersRepository.findByTsDeletionIsNullAndExpirationAfterAndCharacteristics(expiration, characteristics);
+    public List<SingOffer> findByOfferAndTsDeletionIsNullAndExpirationAfter(Interaction offer, Date expiration) {
+        return singOffersRepository.findByOfferAndTsDeletionIsNullAndExpirationAfter(offer, expiration);
     }
 
     public List<SingOffer> findAll () {

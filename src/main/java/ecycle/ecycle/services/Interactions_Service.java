@@ -99,19 +99,6 @@ public class Interactions_Service {
     // delete interaction by user
     @Transactional
     public void deleteByUser(User user) {
-        // find by user
-        List<Interaction> interactions = interactionsRepository.findByUser(user);
-        for (Interaction interaction : interactions) {
-            if (interaction.getIsOffer()) {
-                // delete all sing requests
-                singRequestsService.deleteByRequest(interaction);
-            }
-            else {
-                // delete all sing requests
-                singRequestsService.deleteByRequest(interaction);
-            }
-        }
-        // delete all interactions
         interactionsRepository.deleteByUser(user);
     }
 

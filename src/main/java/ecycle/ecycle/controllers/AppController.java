@@ -5,6 +5,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.ui.Model;
@@ -23,8 +24,8 @@ import ecycle.ecycle.models.bodies.*;
 
 @Controller
 @RequiredArgsConstructor
-public class AppController {    
-    
+public class AppController {
+
     @Autowired Users_Service usersService;
     @Autowired Interactions_Service interactionsService;
     @Autowired SingOffers_Service singOffersService; 
@@ -53,27 +54,106 @@ public class AppController {
         }
     }
 
-    private void lookFor_possibleNegotiations() {
+    private void routineCheck () {
         
+        /* 
+        * in the routine check, the program does the following:
+        * - [done] unaccept negotiations that have been pending for more than 24 hours
+        * - [done] unaccept negotiations of which singOffers or singRequests have tsDeletion set
+        * - [done] checks if singOffers and singNegotiations with the same characteristics
+        * - [done] checks if the user of the singOffer is not the same as the user of the singRequest
+        * - [done] checks if both singOffer and singRequest do not have ts_deletion set (if is active)
+        * - [done] checks if singOffer's expiration is after the current date (if is active)
+        * - [done] checks if the singOffer or SingRequest have been associated negotiation that has been accepted (if is active)
+        * - [done] checks if the singOffer or the singRequest is already present in pending negotiations
+        * - [done] checks if the singOffer and the singRequest have been associated in a previous negotiation
+        * - [done] checks if the pricePerUnit of SingOffer is less than or equal to the maxPrice of singRequest
+        */
+        
+        List<Negotiation> negotiations = negotiationsService.findAll();
+        for (Negotiation negotiation : negotiations) {
+            boolean isNegotiationOlderThan24Hours = 
+                negotiation.getTsClosure() == null && 
+                negotiation.getTsCreation().getTime() < System.currentTimeMillis() - 24 * 60 * 60 * 1000;
+            boolean isNegotiationRelatedToDeletedSingOfferOrRequest = 
+                (negotiation.getSingOffer() != null && negotiation.getSingOffer().getTsDeletion() != null) || 
+                (negotiation.getSingRequest() != null && negotiation.getSingRequest().getTsDeletion() != null);
+            if (isNegotiationOlderThan24Hours || isNegotiationRelatedToDeletedSingOfferOrRequest) {
+                // unaccept the negotiation
+                negotiation.setWasAccepted(false);
+                negotiation.setTsClosure(new java.sql.Timestamp(System.currentTimeMillis()));
+                negotiationsService.save(negotiation);
+            }
+        }
+
         List<SingOffer> singOffers = singOffersService.findAll();
         List<SingRequest> singRequests = singRequestsService.findAll();
 
-        /* 
-         * in the research for possible negotiations, the does does the following:
-         * - checks if singOffers and singNegotiations with the same characteristics
-         * - checks if the singOffer or SingRequest have been associated negotiation that has been accepted
-         * - checks if the singOffer or the singRequest is already present in pending negotiations
-         * - checks if the singOffer or the singRequest have been associated in a previous negotiation
-         * - checks if the 
-         * - checks if the price of unitarySingOffer is less than or equal to the maxPrice of singRequest
-         * - checks if both singOffer and singRequest do not have ts_deletion set
-         * - checks if singOffer's expiration is after the current date
-        */
+        for (SingOffer singOffer : singOffers) {
+            for (SingRequest singRequest : singRequests) {
+                
+                // check if the characteristics are the same
+                if (!singOffer.getCharacteristics().equals(singRequest.getCharacteristics())) {
+                    continue;
+                }
+                
+                // check that the user of the singOffer is not the same as the user of the singRequest
+                if (singOffer.getOffer().getUser().equals(singRequest.getRequest().getUser())) {
+                    continue;
+                }
+
+                // check if both singOffer and singRequest do not have ts_deletion set
+                if (singOffer.getTsDeletion() != null || singRequest.getTsDeletion() != null) {
+                    continue;
+                }
+
+                /* 
+                check if the singOffer or the singRequest are inactive:
+                - singOffer's expiration is after the current date
+                - singOffer or SingRequest have been associated negotiation that has been accepted
+                - singOffer or the singRequest is already present in pending negotiations
+                */
+                if (!singOffersService.isSingOfferActive(singOffer) || 
+                    !singRequestsService.isSingRequestActive(singRequest)) {
+                    continue;
+                }
+
+                // check if the singOffer are already present in pending negotiations
+                Negotiation pendingNegotiationsOffer = negotiationsService.findBySingOfferAndTsClosureIsNull(singOffer);
+                if (pendingNegotiationsOffer != null) {
+                    continue;
+                }
+                Negotiation pendingNegotiationsRequest = negotiationsService.findBySingRequestAndTsClosureIsNull(singRequest);
+                if (pendingNegotiationsRequest != null) {
+                    continue;
+                }
+
+                // check if the singOffer and the singRequest have been associated in a previous negotiation
+                List<Negotiation> previousNegotiations = negotiationsService.findBySingOfferAndSingRequest(singOffer, singRequest);
+                if (!previousNegotiations.isEmpty()) {
+                    continue;
+                }
+
+                // check if the pricePerUnit of SingOffer is less than or equal to the maxPrice of singRequest
+                if (singOffer.getPrice() > singRequest.getMaxPrice()) {
+                    continue;
+                }
+
+                // if all checks passed, create a new negotiation
+                Negotiation negotiation = new Negotiation();
+                negotiation.setTsCreation(new java.sql.Timestamp(System.currentTimeMillis()));
+                negotiation.setSingOffer(singOffer);
+                negotiation.setSingRequest(singRequest);
+                negotiationsService.save(negotiation);
+
+            }
+        }
 
     }
 
     @GetMapping("/")
     public String index () {
+        this.routineCheck(); // todo remember to remove this line in production
         return "index";
     }
 
@@ -204,12 +284,12 @@ public class AppController {
             return "redirect:/registration?error=civic_too_long";
         }
 
-        String hashedPassword = this.hashPassword(registrationRequest.getPassword());
         User user = new User();
         user.setUsername(registrationRequest.getUsername());
         user.setName(registrationRequest.getName());
         user.setSurname(registrationRequest.getSurname());
         user.setEmail(registrationRequest.getEmail());
+        String hashedPassword = this.hashPassword(registrationRequest.getPassword());
         user.setPassword(hashedPassword);
         user.setState(registrationRequest.getState());
         user.setRegion(registrationRequest.getRegion());
@@ -279,7 +359,7 @@ public class AppController {
         return "profile";
     }    
     
-    @PostMapping("/profile/edit")
+    @PutMapping("/profile/edit")
     public String editProfile (
         @RequestBody ProfileEditRequest profileEditRequest,
         HttpSession session, 
@@ -598,7 +678,7 @@ public class AppController {
         }
 
         // look for possible negotiations
-        this.lookFor_possibleNegotiations();
+        this.routineCheck();
 
         return "redirect:/home?requestSuccess=true";
     }
@@ -858,9 +938,121 @@ public class AppController {
         }
 
         // look for possible negotiations
-        this.lookFor_possibleNegotiations();
+        this.routineCheck();
 
         return "redirect:/home?offerSuccess=true";
+    }
+
+    @GetMapping("/viewOfferDetails")
+    public String viewOfferDetails (
+        @RequestParam(name="offerId") int offerId,
+        HttpSession session, 
+        Model model
+    ) {
+        // get the offer (of class interaction) by id
+        Interaction offer = interactionsService.findById(offerId);
+        if (offer == null || !offer.getIsOffer()) {
+            return "redirect:/home?error=offer_not_found";
+        }
+        // check if user is logged in
+        User user = (User) session.getAttribute("user");
+        if (user == null) {
+            return "redirect:/login";
+        }
+        // check that the logged in user is the owner of the offer
+        if (!(offer.getUser().getId() == user.getId())) {
+            return "redirect:/home?error=not_authorized";
+        }        
+        
+        //. active singOffers
+        // get all the singOffers associated with the offer
+        List<SingOffer> activeSingOffers = singOffersService.findByOffer(offer);
+        // remove all inactive singOffers from the list
+        for (int i = activeSingOffers.size() - 1; i >= 0; i--) {
+            SingOffer singOffer = activeSingOffers.get(i);
+            if (!singOffersService.isSingOfferActive(singOffer)) {
+                activeSingOffers.remove(i);
+            }
+        }
+
+        List<String> activeStatusesList = new ArrayList<>();
+        for (SingOffer singOffer : activeSingOffers) {
+            boolean pendingNegotiation = (negotiationsService.findBySingOfferAndTsClosureIsNull(singOffer) != null);                        
+            // add the status of the singOffer to the list
+            if (pendingNegotiation) {
+                activeStatusesList.add("Pending Negotiation");
+            } else {
+                activeStatusesList.add("Yet to be Met");
+            }
+        }        
+        
+        //. inactive singOffers
+        // get all the inactive singOffers associated with the offer
+        List<SingOffer> rawInactiveSingOffers = singOffersService.findByOffer(offer);
+        // remove all active singOffers from the list
+        for (int i = rawInactiveSingOffers.size() - 1; i >= 0; i--) {
+            SingOffer singOffer = rawInactiveSingOffers.get(i);
+            if (singOffersService.isSingOfferActive(singOffer)) {
+                rawInactiveSingOffers.remove(i);
+            }
+        }
+
+        List<String> inactiveStatusesList = new ArrayList<>();
+        for (SingOffer singOffer : rawInactiveSingOffers) {
+            boolean wasAccepted = (negotiationsService.findBySingOfferAndWasAccepted(singOffer, true) != null);
+            boolean hasExpired = (singOffer.getExpiration() != null && singOffer.getExpiration().before(new java.sql.Date(System.currentTimeMillis())));
+            // add the status of the singOffer to the list
+            if (wasAccepted) {
+                inactiveStatusesList.add("Accepted");
+            } else if (hasExpired) {
+                inactiveStatusesList.add("Expired");
+            } else {
+                inactiveStatusesList.add("Deleted");
+            }
+        }        
+        
+        model.addAttribute("user", user);
+        model.addAttribute("offer", offer);
+        model.addAttribute("singOffers", activeSingOffers);
+        model.addAttribute("statuses", activeStatusesList);
+        model.addAttribute("inactiveSingOffers", rawInactiveSingOffers);
+        model.addAttribute("inactiveStatuses", inactiveStatusesList);
+        return "viewOfferDetails";
+    }
+
+    @PutMapping("/deleteSingOffer")
+    public String deleteSingOffer (
+        @RequestParam(name="singOfferId") int singOfferId,
+        HttpSession session, 
+        Model model
+    ) {
+ 
+        // check if the singOffer exists
+        SingOffer singOffer = singOffersService.findById(singOfferId);
+        if (singOffer == null) {
+            return "redirect:/home?error=singOffer_not_found";
+        }
+        // check if user is logged in
+        User user = (User) session.getAttribute("user");
+        if (user == null) {
+            return "redirect:/login";
+        }
+        // check if the logged in user is the owner of the singOffer
+        if (!(singOffer.getOffer().getUser().getId() == user.getId())) {
+            return "redirect:/home?error=not_authorized";
+        }
+    
+        // delete the singOffer
+        singOffersService.delete(singOffer);
+
+        // delete all the negotiations associated with the singOffer
+        Negotiation negotiation = negotiationsService.findBySingOfferAndTsClosureIsNull(singOffer);
+        negotiation.setWasAccepted(false);
+        negotiation.setTsClosure(new java.sql.Timestamp(System.currentTimeMillis()));
+        negotiationsService.save(negotiation);
+        this.routineCheck();
+        return "redirect:/home?singOfferDeleted=true";
+
     }
 
 }
