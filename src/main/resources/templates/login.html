@@ -1,8 +1,9 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head>    
-    <title>E-Cycle - Login</title>    
+<head>
+    <title>E-Cycle - Login</title>
     <link rel="icon" th:href="@{/images/logos/logoIcon.png}" type="image/png">
+    <link rel="stylesheet" th:href="@{/css/login.css}">
     <style>
         .password-container {
             position: relative;
@@ -23,10 +24,17 @@
     </style>
 </head>
 <body>
-    <section>
-        <div>
-            <img th:src="@{/images/logos/logo.png}" alt="E-Cycle Logo">            
-            <h2>Login</h2>            <form id="loginForm" onsubmit="submitLoginForm(event)">
+    <div class="header-links">
+        <a href="/" title="Torna alla Home">Home</a>
+        <a href="/registration" title="Registrati">Registrati</a>
+    </div>
+    <div class="center-container">
+        <div class="logo-bg">
+            <img th:src="@{/images/logos/logo.png}" alt="E-Cycle Logo">
+        </div>
+        <div class="form-box">
+            <h2>Login</h2>
+            <form id="loginForm" onsubmit="submitLoginForm(event)">
                 <div>
                     <label for="username">Username</label>
                     <input type="text" id="username" name="username" required>                
@@ -84,15 +92,10 @@
                     });
                 }
             </script>
-            <div>
-                <p><a href="/registration">Don't have an account? Register</a></p>
-                <p><a href="/">Back to the Initial Page</a></p>
-            </div>
-        </div>    
-    </section>
+        </div>
+    </div>
     
     <script>        
-
         function togglePassword() {
             const passwordInput = document.getElementById('password');
             const openEye = document.getElementById('eye-icon-open');
@@ -139,7 +142,6 @@
             
             return true;
         }
-        
     </script>
 </body>
 </html>
