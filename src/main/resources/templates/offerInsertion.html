@@ -3,6 +3,7 @@
 <head>    
     <title>E-Cycle - Offer Insertion</title>
     <link rel="icon" th:href="@{/images/logos/logoIcon.png}" type="image/png">
+    <link rel="stylesheet" href="/css/offerinsertion.css">
     <style>
         .characteristics-section {
             border: 1px solid #ddd;
@@ -31,134 +32,132 @@
     </style>
 </head>
 <body>
-    <header>
-        <div>
-            <img th:src="@{/images/logos/logo.png}" alt="E-Cycle Logo">
-        </div>    
-    </header>
-    <main>
-        <section>
-            <h2>Insert New Offer</h2>
-            <form id="offerForm" action="/insertOffer" method="post">
+    <div class="offerinsertion-container">
+        <!-- Logo background centrale -->
+        <img src="/images/logos/logo.png" alt="E-Cycle Logo" class="offerinsertion-bg-logo">
+        <!-- Header con bottoni in alto a sinistra -->
+        <div class="offerinsertion-header">
+            <button type="button" class="offerinsertion-btn" id="cancelOfferBtn">Back</button>
+            <button type="submit" form="offerForm" class="offerinsertion-btn">Confirm</button>
+        </div>
+        <!-- Titolo -->
+        <div class="offerinsertion-title">Insert New Offer</div>
+        <!-- Form principale -->
+        <form id="offerForm" action="/insertOffer" method="post" class="offerinsertion-form">
+            <div class="offerinsertion-form-row">
                 <div class="input-group">
                     <label for="title">Offer Title:</label>
                     <input type="text" id="title" name="title" required maxlength="50">
                 </div>
-                
-                <button type="button" id="addCharacteristicsBtn">Add Another Characteristics Section</button>
-                
-                <div id="characteristicsContainer">
-                    <div class="characteristics-section" data-index="0">
-                        <div class="section-header">
-                            <h3>Characteristics</h3>
-                            <button type="button" class="cancelSectionBtn" data-index="0" disabled>Cancel</button>
-                        </div>
-                        
-                        <div class="input-group">
-                            <label for="category-0">Category:</label>
-                            <select id="category-0" name="category-0" required>
-                                <option value="">-- Select Category --</option>
-                                <option value="manual">Manual Entry</option>
-                                <option th:each="category : ${categories}" th:value="${category.id}" th:text="${category.id}"></option>
-                            </select>
-                            <input type="text" id="categoryManual-0" name="categoryManual-0" placeholder="Enter category manually" class="hidden" maxlength="50">
-                        </div>
-                        
-                        <div class="input-group">
-                            <label for="nature-0">Nature:</label>
-                            <select id="nature-0" name="nature-0" required>
-                                <option value="">-- Select Nature --</option>
-                                <option value="manual">Manual Entry</option>
-                                <option th:each="nature : ${natures}" th:value="${nature.id}" th:text="${nature.id}"></option>
-                            </select>
-                            <input type="text" id="natureManual-0" name="natureManual-0" placeholder="Enter nature manually" class="hidden" maxlength="50">
-                        </div>
-                        
-                        <div class="input-group">
-                            <label for="brand-0">Brand:</label>
-                            <select id="brand-0" name="brand-0" required>
-                                <option value="">-- Select Brand --</option>
-                                <option value="manual">Manual Entry</option>
-                                <option th:each="brand : ${brands}" th:value="${brand.id}" th:text="${brand.id}"></option>
-                            </select>
-                            <input type="text" id="brandManual-0" name="brandManual-0" placeholder="Enter brand manually" class="hidden" maxlength="50">
-                        </div>
-                        
-                        <div class="input-group">
-                            <label for="model-0">Model:</label>
-                            <select id="model-0" name="model-0" required disabled>
-                                <option value="">-- Select Model --</option>
-                                <option value="manual">Manual Entry</option>
-                            </select>
-                            <input type="text" id="modelManual-0" name="modelManual-0" placeholder="Enter model manually" class="hidden" maxlength="50">
-                        </div>
-                        
-                        <div class="input-group">
-                            <label for="mainColour-0">Main Colour:</label>
-                            <input type="text" id="mainColour-0" name="mainColour-0" maxlength="50">
-                        </div>
-                        
-                        <div class="input-group">
-                            <label for="function-0">Function:</label>
-                            <input type="text" id="function-0" name="function-0" maxlength="50">
-                        </div>
-                        
-                        <div class="input-group">
-                            <label for="prodYear-0">Production Year:</label>
-                            <input type="number" id="prodYear-0" name="prodYear-0" min="1900" max="2100">
-                        </div>
-                        
-                        <div class="input-group">
-                            <label for="batch-0">Batch:</label>
-                            <input type="text" id="batch-0" name="batch-0" maxlength="50">
-                        </div>
-                        
-                        <div class="input-group">
-                            <label for="quality-0">Quality:</label>
-                            <select id="quality-0" name="quality-0" required>
-                                <option value="">-- Select Quality --</option>
-                                <option value="Excellent">Excellent</option>
-                                <option value="Good">Good</option>
-                                <option value="Acceptable">Acceptable</option>
-                                <option value="Needs Revision">Needs Revision</option>
-                                <option value="Broken">Broken</option>
-                            </select>
-                        </div>
-                        
-                        <div class="input-group">
-                            <label for="quantity-0">Quantity:</label>
-                            <input type="number" id="quantity-0" name="quantity-0" min="1" required>
-                        </div>
-                        
-                        <div class="input-group">
-                            <label for="pricePerUnit-0">Price per Unit:</label>
-                            <input type="number" id="pricePerUnit-0" name="pricePerUnit-0" step="0.01" min="0" required>
-                        </div>
-                        
-                        <div class="input-group">
-                            <label for="description-0">Description:</label>
-                            <textarea id="description-0" name="description-0" rows="4" maxlength="500"></textarea>
-                        </div>
-                        
-                        <div class="input-group">
-                            <label for="expirationDate-0">Offer Expiration Date:</label>
-                            <input type="date" id="expirationDate-0" name="expirationDate-0">
-                        </div>
-                        
-                        <div class="input-group">
-                            <label for="picture-0">Picture (Currently Disabled):</label>
-                            <input type="file" id="picture-0" name="picture-0" disabled>
-                        </div>
+                <button type="button" id="addCharacteristicsBtn" class="offerinsertion-add-btn">Add Characteristics</button>
+            </div>
+            <!-- Box caratteristiche -->
+            <div id="characteristicsContainer" class="characteristics-grid">
+                <div class="characteristics-section" data-index="0">
+                    <div class="section-header">
+                        <h3>Characteristics</h3>
+                        <button type="button" class="cancelSectionBtn" data-index="0" disabled>Cancel</button>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="category-0">Category:</label>
+                        <select id="category-0" name="category-0" required>
+                            <option value="">-- Select Category --</option>
+                            <option value="manual">Manual Entry</option>
+                            <option th:each="category : ${categories}" th:value="${category.id}" th:text="${category.id}"></option>
+                        </select>
+                        <input type="text" id="categoryManual-0" name="categoryManual-0" placeholder="Enter category manually" class="hidden" maxlength="50">
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="nature-0">Nature:</label>
+                        <select id="nature-0" name="nature-0" required>
+                            <option value="">-- Select Nature --</option>
+                            <option value="manual">Manual Entry</option>
+                            <option th:each="nature : ${natures}" th:value="${nature.id}" th:text="${nature.id}"></option>
+                        </select>
+                        <input type="text" id="natureManual-0" name="natureManual-0" placeholder="Enter nature manually" class="hidden" maxlength="50">
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="brand-0">Brand:</label>
+                        <select id="brand-0" name="brand-0" required>
+                            <option value="">-- Select Brand --</option>
+                            <option value="manual">Manual Entry</option>
+                            <option th:each="brand : ${brands}" th:value="${brand.id}" th:text="${brand.id}"></option>
+                        </select>
+                        <input type="text" id="brandManual-0" name="brandManual-0" placeholder="Enter brand manually" class="hidden" maxlength="50">
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="model-0">Model:</label>
+                        <select id="model-0" name="model-0" required disabled>
+                            <option value="">-- Select Model --</option>
+                            <option value="manual">Manual Entry</option>
+                        </select>
+                        <input type="text" id="modelManual-0" name="modelManual-0" placeholder="Enter model manually" class="hidden" maxlength="50">
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="mainColour-0">Main Colour:</label>
+                        <input type="text" id="mainColour-0" name="mainColour-0" maxlength="50">
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="function-0">Function:</label>
+                        <input type="text" id="function-0" name="function-0" maxlength="50">
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="prodYear-0">Production Year:</label>
+                        <input type="number" id="prodYear-0" name="prodYear-0" min="1900" max="2100">
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="batch-0">Batch:</label>
+                        <input type="text" id="batch-0" name="batch-0" maxlength="50">
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="quality-0">Quality:</label>
+                        <select id="quality-0" name="quality-0" required>
+                            <option value="">-- Select Quality --</option>
+                            <option value="Excellent">Excellent</option>
+                            <option value="Good">Good</option>
+                            <option value="Acceptable">Acceptable</option>
+                            <option value="Needs Revision">Needs Revision</option>
+                            <option value="Broken">Broken</option>
+                        </select>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="quantity-0">Quantity:</label>
+                        <input type="number" id="quantity-0" name="quantity-0" min="1" required>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="pricePerUnit-0">Price per Unit:</label>
+                        <input type="number" id="pricePerUnit-0" name="pricePerUnit-0" step="0.01" min="0" required>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="description-0">Description:</label>
+                        <textarea id="description-0" name="description-0" rows="4" maxlength="500"></textarea>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="expirationDate-0">Offer Expiration Date:</label>
+                        <input type="date" id="expirationDate-0" name="expirationDate-0">
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="picture-0">Picture (Currently Disabled):</label>
+                        <input type="file" id="picture-0" name="picture-0" disabled>
                     </div>
                 </div>
-                
-                <div class="btn-container">
-                    <button type="button" id="cancelOfferBtn">Cancel Offer</button>
-                    <button type="submit">Confirm</button>
-                </div>
-            </form>
-        </section>
-    </main>
+            </div>
+        </form>
+    </div>
     <script th:inline="javascript">
         // Get all models from the server
         const allModels = /*[[${models}]]*/ [];
