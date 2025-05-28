@@ -44,7 +44,7 @@ DELETE FROM `categories`;
 DROP TABLE IF EXISTS `characteristics`;
 CREATE TABLE IF NOT EXISTS `characteristics` (
   `ID` int(11) NOT NULL AUTO_INCREMENT,
-  `main_colour` varchar(10) NOT NULL,
+  `main_colour` varchar(50) NOT NULL,
   `function` varchar(50) NOT NULL,
   `quality` varchar(50) DEFAULT NULL,
   `prod_year` int(11) DEFAULT NULL,
@@ -59,7 +59,7 @@ CREATE TABLE IF NOT EXISTS `characteristics` (
   CONSTRAINT `FK_characteristics_categories` FOREIGN KEY (`id_category`) REFERENCES `categories` (`ID`) ON DELETE NO ACTION ON UPDATE CASCADE,
   CONSTRAINT `FK_characteristics_models` FOREIGN KEY (`id_model`) REFERENCES `models` (`ID`) ON DELETE NO ACTION ON UPDATE CASCADE,
   CONSTRAINT `FK_characteristics_natures` FOREIGN KEY (`id_nature`) REFERENCES `natures` (`ID`) ON DELETE NO ACTION ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- Dump dei dati della tabella ecycle.characteristics: ~0 rows (circa)
 DELETE FROM `characteristics`;
@@ -75,7 +75,7 @@ CREATE TABLE IF NOT EXISTS `interactions` (
   PRIMARY KEY (`ID`),
   KEY `id_user` (`id_user`),
   CONSTRAINT `FK_requests_users` FOREIGN KEY (`id_user`) REFERENCES `users` (`ID`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=25 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- Dump dei dati della tabella ecycle.interactions: ~0 rows (circa)
 DELETE FROM `interactions`;
@@ -137,7 +137,7 @@ CREATE TABLE IF NOT EXISTS `sing_offers` (
   KEY `id_characteristics` (`id_characteristics`),
   CONSTRAINT `FK_sing_offer_characteristics` FOREIGN KEY (`id_characteristics`) REFERENCES `characteristics` (`ID`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `FK_sing_offer_interactions` FOREIGN KEY (`id_offer`) REFERENCES `interactions` (`ID`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=51 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- Dump dei dati della tabella ecycle.sing_offers: ~0 rows (circa)
 DELETE FROM `sing_offers`;
@@ -155,7 +155,7 @@ CREATE TABLE IF NOT EXISTS `sing_requests` (
   KEY `id_characteristics` (`id_characteristics`),
   CONSTRAINT `FK_sing_request_characteristics` FOREIGN KEY (`id_characteristics`) REFERENCES `characteristics` (`ID`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `FK_sing_request_requests` FOREIGN KEY (`id_request`) REFERENCES `interactions` (`ID`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- Dump dei dati della tabella ecycle.sing_requests: ~0 rows (circa)
 DELETE FROM `sing_requests`;
@@ -176,7 +176,7 @@ CREATE TABLE IF NOT EXISTS `users` (
   `street` varchar(100) NOT NULL,
   `civic` varchar(10) NOT NULL,
   PRIMARY KEY (`ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- Dump dei dati della tabella ecycle.users: ~0 rows (circa)
 DELETE FROM `users`;

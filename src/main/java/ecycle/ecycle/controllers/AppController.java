@@ -6,13 +6,14 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.servlet.ModelAndView;
 import org.springframework.ui.Model;
 import org.springframework.beans.factory.annotation.Autowired;
 import ecycle.ecycle.models.User;
-import jakarta.servlet.http.HttpServletRequest;
+import ecycle.ecycle.models.bodies.RequestRequest;
+import ecycle.ecycle.models.bodies.LoginRequest;
+import ecycle.ecycle.models.bodies.ProfileEditRequest;
+import ecycle.ecycle.models.bodies.RegistrationRequest;
 import jakarta.servlet.http.HttpSession;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -22,6 +23,7 @@ import java.util.Map;
 import java.util.ArrayList;
 import ecycle.ecycle.models.*;
 import ecycle.ecycle.services.*;
+import ecycle.ecycle.models.bodies.*;
 
 
 @Controller
@@ -37,6 +39,7 @@ public class AppController {
     @Autowired Natures_Service naturesService;
     @Autowired Categories_Service categoriesService;
     @Autowired Characteristics_Service characteristicsService;
+    @Autowired Negotiations_Service negotiationsService;
 
     String hashPassword(String password) {
         try {
@@ -49,7 +52,8 @@ public class AppController {
                 hexString.append(hex);
             }
             return hexString.toString();
-        } catch (NoSuchAlgorithmException e) {
+        } 
+        catch (NoSuchAlgorithmException e) {
             throw new RuntimeException(e);
         }
     }
@@ -70,6 +74,7 @@ public class AppController {
         @RequestParam(name="deleted",required=false) String deleted,
         Model model
     ) {        
+        // error handling
         if (error != null) {
             if (error.equals("missing")) {
                 model.addAttribute("error", "Username and password are required");
@@ -80,23 +85,24 @@ public class AppController {
         if (deleted != null) {
             model.addAttribute("success", "Your account has been successfully deleted");
         }
+
         return "login";
     }
-    
+
     @PostMapping("/login")
     public String login (
-        @RequestParam(name="username", required=false) String username,
-        @RequestParam(name="password", required=false) String password,
+        @RequestBody LoginRequest loginRequest,
         HttpSession session,
         Model model
     ) {
-        // Check if username or password is missing
-        if (username == null || username.isEmpty() || password == null || password.isEmpty()) {
+        // check if request body or username or password is missing
+        if (loginRequest == null || loginRequest.getUsername() == null || loginRequest.getUsername().isEmpty() 
+            || loginRequest.getPassword() == null || loginRequest.getPassword().isEmpty()) {
             return "redirect:/login?error=missing";
         }
+        String hashedPassword = hashPassword(loginRequest.getPassword());
         
-        String hashedPassword = hashPassword(password);
-        User user = usersService.findByUsernameAndPassword(username, hashedPassword);
+        User user = usersService.findByUsernameAndPassword(loginRequest.getUsername(), hashedPassword);
         if (user != null) {
             session.setAttribute("user", user);
             return "redirect:/home";
@@ -112,48 +118,91 @@ public class AppController {
     }
     
     @GetMapping("/registration")
-    public String registration () {
-        return "registration";
-    }
-
-    @PostMapping("/register")
     public String registration (
-        @RequestParam(name="username") String username,
-        @RequestParam(name="name",required=false) String name,
-        @RequestParam(name="surname",required=false) String surname,
-        @RequestParam(name="email") String email,
-        @RequestParam(name="password") String password,
-        @RequestParam(name="state") String state,
-        @RequestParam(name="region") String region,
-        @RequestParam(name="province") String province,
-        @RequestParam(name="city") String city,
-        @RequestParam(name="street") String street,
-        @RequestParam(name="civic") String civic,
+        @RequestParam(name="error",required=false) String error,
         HttpSession session,
         Model model
     ) {
-        if (usersService.findByUsername(username) != null) {
-            model.addAttribute("error", "Username is already taken");
-            return "redirect:/registration";
-        }
-        if (usersService.findByEmail(email) != null) {
-            model.addAttribute("error", "Email is already taken");
-            return "redirect:/registration";
+        // error handling
+        if (error != null) {
+            if (error.equals("username")) {
+                model.addAttribute("error", "Username already exists");
+            } else if (error.equals("email")) {
+                model.addAttribute("error", "Email already exists");
+            }
         }
 
-        String hashedPassword = hashPassword(password);
+        return "registration";
+    }    
+    
+    @PostMapping("/register")
+    public String registration (
+        @RequestBody RegistrationRequest registrationRequest,
+        HttpSession session,
+        Model model
+    ) {
+        // error handling
+        if (usersService.findByUsername(registrationRequest.getUsername()) != null) {
+            return "redirect:/registration?error=username";
+        }
+        if (usersService.findByEmail(registrationRequest.getEmail()) != null) {
+            return "redirect:/registration?error=email";
+        }
+        
+        // Server-side validation for field lengths
+        if (registrationRequest.getUsername() != null && registrationRequest.getUsername().length() > 50) {
+            return "redirect:/registration?error=username_too_long";
+        }
+        
+        if (registrationRequest.getName() != null && registrationRequest.getName().length() > 50) {
+            return "redirect:/registration?error=name_too_long";
+        }
+        
+        if (registrationRequest.getSurname() != null && registrationRequest.getSurname().length() > 50) {
+            return "redirect:/registration?error=surname_too_long";
+        }
+        
+        if (registrationRequest.getEmail() != null && registrationRequest.getEmail().length() > 100) {
+            return "redirect:/registration?error=email_too_long";
+        }
+        
+        if (registrationRequest.getState() != null && registrationRequest.getState().length() > 50) {
+            return "redirect:/registration?error=state_too_long";
+        }
+        
+        if (registrationRequest.getRegion() != null && registrationRequest.getRegion().length() > 50) {
+            return "redirect:/registration?error=region_too_long";
+        }
+        
+        if (registrationRequest.getProvince() != null && registrationRequest.getProvince().length() > 50) {
+            return "redirect:/registration?error=province_too_long";
+        }
+        
+        if (registrationRequest.getCity() != null && registrationRequest.getCity().length() > 50) {
+            return "redirect:/registration?error=city_too_long";
+        }
+        
+        if (registrationRequest.getStreet() != null && registrationRequest.getStreet().length() > 100) {
+            return "redirect:/registration?error=street_too_long";
+        }
+        
+        if (registrationRequest.getCivic() != null && registrationRequest.getCivic().length() > 50) {
+            return "redirect:/registration?error=civic_too_long";
+        }
+
+        String hashedPassword = hashPassword(registrationRequest.getPassword());
         User user = new User();
-        user.setUsername(username);
-        user.setName(name);
-        user.setSurname(surname);
-        user.setEmail(email);
+        user.setUsername(registrationRequest.getUsername());
+        user.setName(registrationRequest.getName());
+        user.setSurname(registrationRequest.getSurname());
+        user.setEmail(registrationRequest.getEmail());
         user.setPassword(hashedPassword);
-        user.setState(state);
-        user.setRegion(region);
-        user.setProvince(province);
-        user.setCity(city);
-        user.setStreet(street);
-        user.setCivic(civic);
+        user.setState(registrationRequest.getState());
+        user.setRegion(registrationRequest.getRegion());
+        user.setProvince(registrationRequest.getProvince());
+        user.setCity(registrationRequest.getCity());
+        user.setStreet(registrationRequest.getStreet());
+        user.setCivic(registrationRequest.getCivic());
         usersService.save(user);
 
         session.setAttribute("user", user);
@@ -165,6 +214,7 @@ public class AppController {
         HttpSession session, 
         Model model
     ) {
+        // check if user is logged in
         User user = (User) session.getAttribute("user");
         if (user == null) {
             return "redirect:/login";
@@ -179,88 +229,134 @@ public class AppController {
         List<Interaction> activeOffers = interactionsService.findByUserAndIsOfferAndIsActive(user, true, true);
         // get the user inactive offers
         List<Interaction> inactiveOffers = interactionsService.findByUserAndIsOfferAndIsActive(user, true, false);
+        
         model.addAttribute("activeRequests", activeRequests);
         model.addAttribute("inactiveRequests", inactiveRequests);
         model.addAttribute("activeOffers", activeOffers);
         model.addAttribute("inactiveOffers", inactiveOffers); 
-
         return "home";
     }
 
     @GetMapping("/profile")
     public String profile (
+        @RequestParam(name="success",required=false) String success,
+        @RequestParam(name="error",required=false) String error,
         HttpSession session, 
         Model model
     ) {
+        // check if user is logged in
         User user = (User) session.getAttribute("user");
         if (user == null) {
             return "redirect:/login";
         }
+        // error handling
+        if (success != null) {
+            model.addAttribute("success", "Profile updated successfully");
+        }
+        if (error != null) {
+            if (error.equals("username")) {
+                model.addAttribute("error", "Username already exists");
+            } else if (error.equals("email")) {
+                model.addAttribute("error", "Email already exists");
+            }
+        }
+        
         model.addAttribute("user", user);
         return "profile";
-    }
-
+    }    
+    
     @PostMapping("/profile/edit")
     public String editProfile (
-        @RequestParam(name="username") String username,
-        @RequestParam(name="name",required=false) String name,
-        @RequestParam(name="surname",required=false) String surname,
-        @RequestParam(name="email") String email,
-        @RequestParam(name="password",required=false) String password,
-        @RequestParam(name="state") String state,
-        @RequestParam(name="region") String region,
-        @RequestParam(name="province") String province,
-        @RequestParam(name="city") String city,
-        @RequestParam(name="street") String street,
-        @RequestParam(name="civic") String civic,
+        @RequestBody ProfileEditRequest profileEditRequest,
         HttpSession session, 
         Model model
     ) {
+        // check if user is logged in
         User user = (User) session.getAttribute("user");
         if (user == null) {
             return "redirect:/login";
         }
-
-        if (usersService.findByUsername(username) != null && !user.getUsername().equals(username)) {
-            model.addAttribute("error", "Username is already taken");
-            return "redirect:/profile";
+        // error handling
+        if (usersService.findByUsername(profileEditRequest.getUsername()) != null && !user.getUsername().equals(profileEditRequest.getUsername())) {
+            return "redirect:/profile?error=username";
         }
-        if (usersService.findByEmail(email) != null && !user.getEmail().equals(email)) {
-            model.addAttribute("error", "Email is already taken");
-            return "redirect:/profile";
+        if (usersService.findByEmail(profileEditRequest.getEmail()) != null && !user.getEmail().equals(profileEditRequest.getEmail())) {
+            return "redirect:/profile?error=email";
         }
-        if (password != null && !password.isEmpty()) {
-            String hashedPassword = hashPassword(password);
+        
+        // Server-side validation for field lengths
+        if (profileEditRequest.getUsername() != null && profileEditRequest.getUsername().length() > 50) {
+            return "redirect:/profile?error=username_too_long";
+        }
+        
+        if (profileEditRequest.getName() != null && profileEditRequest.getName().length() > 50) {
+            return "redirect:/profile?error=name_too_long";
+        }
+        
+        if (profileEditRequest.getSurname() != null && profileEditRequest.getSurname().length() > 50) {
+            return "redirect:/profile?error=surname_too_long";
+        }
+        
+        if (profileEditRequest.getEmail() != null && profileEditRequest.getEmail().length() > 100) {
+            return "redirect:/profile?error=email_too_long";
+        }
+        
+        if (profileEditRequest.getState() != null && profileEditRequest.getState().length() > 50) {
+            return "redirect:/profile?error=state_too_long";
+        }
+        
+        if (profileEditRequest.getRegion() != null && profileEditRequest.getRegion().length() > 50) {
+            return "redirect:/profile?error=region_too_long";
+        }
+        
+        if (profileEditRequest.getProvince() != null && profileEditRequest.getProvince().length() > 50) {
+            return "redirect:/profile?error=province_too_long";
+        }
+        
+        if (profileEditRequest.getCity() != null && profileEditRequest.getCity().length() > 50) {
+            return "redirect:/profile?error=city_too_long";
+        }
+        
+        if (profileEditRequest.getStreet() != null && profileEditRequest.getStreet().length() > 100) {
+            return "redirect:/profile?error=street_too_long";
+        }
+        
+        if (profileEditRequest.getCivic() != null && profileEditRequest.getCivic().length() > 50) {
+            return "redirect:/profile?error=civic_too_long";
+        }
+        
+        if (profileEditRequest.getPassword() != null && !profileEditRequest.getPassword().isEmpty()) {
+            String hashedPassword = hashPassword(profileEditRequest.getPassword());
             user.setPassword(hashedPassword);
         }
-        
-        user.setName(name);
-        user.setSurname(surname);
-        user.setEmail(email);
-        user.setState(state);
-        user.setRegion(region);
-        user.setProvince(province);
-        user.setCity(city);        user.setStreet(street);
-        user.setCivic(civic);
-        
+
+        user.setUsername(profileEditRequest.getUsername());
+        user.setName(profileEditRequest.getName());
+        user.setSurname(profileEditRequest.getSurname());
+        user.setEmail(profileEditRequest.getEmail());
+        user.setState(profileEditRequest.getState());
+        user.setRegion(profileEditRequest.getRegion());
+        user.setProvince(profileEditRequest.getProvince());
+        user.setCity(profileEditRequest.getCity());
+        user.setStreet(profileEditRequest.getStreet());
+        user.setCivic(profileEditRequest.getCivic());
         usersService.save(user);
 
         model.addAttribute("user", user);
-        model.addAttribute("success", "Profile updated successfully");
-        return "redirect:/profile";
+        return "redirect:/profile?success=true";
     }
 
     @DeleteMapping("/profile/delete")
     public String deleteProfile(HttpSession session) {
+        // check if user is logged in
         User user = (User) session.getAttribute("user");
         if (user == null) {
             return "redirect:/login";
         }
         
-        session.invalidate();
         usersService.delete(user);        
+        session.invalidate();
         
-        // Redirect to login page with a parameter indicating successful deletion
         return "redirect:/login?deleted=true";
     }
 
@@ -269,10 +365,12 @@ public class AppController {
         HttpSession session, 
         Model model
     ) {
+        // check if user is logged in
         User user = (User) session.getAttribute("user");
         if (user == null) {
             return "redirect:/login";
         }
+
         model.addAttribute("user", user);
         model.addAttribute("categories", categoriesService.findAll());
         model.addAttribute("natures", naturesService.findAll());
@@ -287,52 +385,134 @@ public class AppController {
         HttpSession session, 
         Model model
     ) {
+        // check if user is logged in
         User user = (User) session.getAttribute("user");
         if (user == null) {
             return "redirect:/login";
         }
+
         String title = (String) requestData.get("title");
+        
+        // server-side validation for title length
+        if (title != null && title.length() > 50) {
+            return "redirect:/requestInsertion?error=title_too_long";
+        }
+        
         @SuppressWarnings("unchecked")
         List<Map<String, Object>> characteristicsData = (List<Map<String, Object>>) requestData.get("characteristics");
-        List<CharacteristicsRequest> characteristicsRequests = new ArrayList<>();
+        List<RequestRequest> requestRequests = new ArrayList<>();
         
         for (Map<String, Object> charData : characteristicsData) {
-            CharacteristicsRequest charRequest = new CharacteristicsRequest();
             
-            // Process category
+            RequestRequest charRequest = new RequestRequest();
+            
+            // process category
             String category = (String) charData.get("category");
             String categoryManual = (String) charData.get("categoryManual");
+            if (categoryManual != null && categoryManual.length() > 50) {
+                return "redirect:/requestInsertion?error=category_too_long";
+            }
             charRequest.setCategory(category);
             charRequest.setCategoryManual(categoryManual);
             
-            // Process nature
+            // process nature
             String nature = (String) charData.get("nature");
             String natureManual = (String) charData.get("natureManual");
+            if (natureManual != null && natureManual.length() > 50) {
+                return "redirect:/requestInsertion?error=nature_too_long";
+            }
             charRequest.setNature(nature);
             charRequest.setNatureManual(natureManual);
             
-            // Process brand
+            // process brand
             String brand = (String) charData.get("brand");
             String brandManual = (String) charData.get("brandManual");
+            if (brandManual != null && brandManual.length() > 50) {
+                return "redirect:/requestInsertion?error=brand_too_long";
+            }
             charRequest.setBrand(brand);
             charRequest.setBrandManual(brandManual);
             
-            // Process model
+            // process model
             String modelValue = (String) charData.get("model");
             String modelManual = (String) charData.get("modelManual");
+            if (modelManual != null && modelManual.length() > 50) {
+                return "redirect:/requestInsertion?error=model_too_long";
+            }
             charRequest.setModel(modelValue);
             charRequest.setModelManual(modelManual);
             
-            // Process other fields
-            charRequest.setMainColour((String) charData.get("mainColour"));
-            charRequest.setFunction((String) charData.get("function"));
-            charRequest.setProdYear(Integer.parseInt(charData.get("prodYear").toString()));
-            charRequest.setBatch((String) charData.get("batch"));
-            charRequest.setQuality((String) charData.get("quality"));
-            charRequest.setQuantity(Integer.parseInt(charData.get("quantity").toString()));
-            charRequest.setMaxPricePerUnit(Float.parseFloat(charData.get("maxPricePerUnit").toString()));
+            // process mainColour            
+            String mainColour = (String) charData.get("mainColour");
+            if (mainColour != null && mainColour.length() > 50) {
+                return "redirect:/requestInsertion?error=mainColour_too_long";
+            }
+            charRequest.setMainColour(mainColour);
             
-            characteristicsRequests.add(charRequest);
+            // process function
+            String function = (String) charData.get("function");
+            if (function != null && function.length() > 50) {
+                return "redirect:/requestInsertion?error=function_too_long";
+            }
+            charRequest.setFunction(function);
+            
+            // process batch
+            String batch = (String) charData.get("batch");
+            if (batch != null && batch.length() > 50) {
+                return "redirect:/requestInsertion?error=batch_too_long";
+            }
+            charRequest.setBatch(batch);
+            
+            // process year
+            int prodYear;
+            try {
+                prodYear = Integer.parseInt(charData.get("prodYear").toString());
+                if (prodYear < 0) {
+                    return "redirect:/requestInsertion?error=invalid_year";
+                }
+            } catch (NumberFormatException e) {
+                return "redirect:/requestInsertion?error=invalid_year_format";
+            }
+            charRequest.setProdYear(prodYear);
+            
+            // process quality
+            String quality = (String) charData.get("quality");
+            if (quality == null || 
+                (!quality.equals("Excellent") && 
+                 !quality.equals("Good") && 
+                 !quality.equals("Acceptable") && 
+                 !quality.equals("Needs Revision") && 
+                 !quality.equals("Broken"))) {
+                return "redirect:/requestInsertion?error=invalid_quality";
+            }
+            charRequest.setQuality(quality);
+            
+            // process quantity
+            int quantity;
+            try {
+                quantity = Integer.parseInt(charData.get("quantity").toString());
+                if (quantity < 1) {
+                    return "redirect:/requestInsertion?error=quantity_must_be_at_least_1";
+                }
+            } catch (NumberFormatException e) {
+                return "redirect:/requestInsertion?error=invalid_quantity_format";
+            }
+            charRequest.setQuantity(quantity);
+            
+            // process price
+            float maxPricePerUnit;
+            try {
+                maxPricePerUnit = Float.parseFloat(charData.get("maxPricePerUnit").toString());
+                if (maxPricePerUnit < 0) {
+                    return "redirect:/requestInsertion?error=price_cannot_be_negative";
+                }
+            } catch (NumberFormatException e) {
+                return "redirect:/requestInsertion?error=invalid_price_format";
+            }
+            charRequest.setMaxPricePerUnit(maxPricePerUnit);
+            
+            requestRequests.add(charRequest);
+        
         }
 
         Interaction interaction = new Interaction();
@@ -341,7 +521,8 @@ public class AppController {
         interaction.setIsOffer(false);
         interaction.setUser(user);
         interactionsService.save(interaction);
-        for (CharacteristicsRequest characteristicsRequest : characteristicsRequests) {
+        
+        for (RequestRequest characteristicsRequest : requestRequests) {
     
             Characteristics characteristics = new Characteristics();
 
@@ -388,20 +569,284 @@ public class AppController {
 
             if (!characteristicsService.isDuplicate(characteristics)) {
                 characteristicsService.save(characteristics);
+            } else {
+                characteristics = characteristicsService.findDuplicate(characteristics);
             }
-            
+
             for (int i = 0; i < characteristicsRequest.getQuantity(); i++) {
                 SingRequest singRequest = new SingRequest();
                 singRequest.setRequest(interaction);
                 singRequest.setCharacteristics(characteristics);
                 singRequest.setMaxPrice(characteristicsRequest.getMaxPricePerUnit());
-                singRequestsService.save(singRequest);
+                singRequestsService.save(singRequest);            
             }
 
         }
 
-        // todo research for possible negotiations
+        // look for possible negotiations
+        negotiationsService.lookFor_possibleNegotiations();
+
         return "redirect:/home?requestSuccess=true";
+    }
+
+    @GetMapping("/offerInsertion")
+    public String offerInsertion (
+        HttpSession session, 
+        Model model
+    ) {
+        // check if user is logged in
+        User user = (User) session.getAttribute("user");
+        if (user == null) {
+            return "redirect:/login";
+        }
+
+        model.addAttribute("user", user);
+        model.addAttribute("categories", categoriesService.findAll());
+        model.addAttribute("natures", naturesService.findAll());
+        model.addAttribute("brands", brandsService.findAll());
+        model.addAttribute("models", modelsService.findAll());
+        return "offerInsertion";
+    }       
+    
+    @PostMapping("/insertOffer")
+    public String insertOffer (
+        @RequestBody Map<String, Object> offerData,
+        HttpSession session, 
+        Model model
+    ) {
+        // check if the user is logged in
+        User user = (User) session.getAttribute("user");
+        if (user == null) {
+            return "redirect:/login";
+        }
+
+        String title = (String) offerData.get("title");
+
+        // server-side validation for title length
+        if (title != null && title.length() > 50) {
+            return "redirect:/offerInsertion?error=title_too_long";
+        }
+
+        @SuppressWarnings("unchecked")
+        List<Map<String, Object>> characteristicsData = (List<Map<String, Object>>) offerData.get("characteristics");
+        List<OfferRequest> offerRequests = new ArrayList<>();
+
+        for (Map<String, Object> charData : characteristicsData) {
+            
+            OfferRequest charOffer = new OfferRequest();
+            
+            // process category
+            String category = (String) charData.get("category");
+            String categoryManual = (String) charData.get("categoryManual");
+            if (categoryManual != null && categoryManual.length() > 50) {
+                return "redirect:/offerInsertion?error=category_too_long";
+            }
+            charOffer.setCategory(category);
+            charOffer.setCategoryManual(categoryManual);
+            
+            // process nature
+            String nature = (String) charData.get("nature");
+            String natureManual = (String) charData.get("natureManual");
+            if (natureManual != null && natureManual.length() > 50) {
+                return "redirect:/offerInsertion?error=nature_too_long";
+            }
+            charOffer.setNature(nature);
+            charOffer.setNatureManual(natureManual);
+            
+            // process brand
+            String brand = (String) charData.get("brand");
+            String brandManual = (String) charData.get("brandManual");
+            if (brandManual != null && brandManual.length() > 50) {
+                return "redirect:/offerInsertion?error=brand_too_long";
+            }
+            charOffer.setBrand(brand);
+            charOffer.setBrandManual(brandManual);
+            
+            // process model
+            String modelValue = (String) charData.get("model");
+            String modelManual = (String) charData.get("modelManual");
+            if (modelManual != null && modelManual.length() > 50) {
+                return "redirect:/offerInsertion?error=model_too_long";
+            }
+            charOffer.setModel(modelValue);
+            charOffer.setModelManual(modelManual);
+            
+            // process mainColour            
+            String mainColour = (String) charData.get("mainColour");
+            if (mainColour != null && mainColour.length() > 50) {
+                return "redirect:/offerInsertion?error=mainColour_too_long";
+            }
+            charOffer.setMainColour(mainColour);
+            
+            // process function
+            String function = (String) charData.get("function");
+            if (function != null && function.length() > 50) {
+                return "redirect:/offerInsertion?error=function_too_long";
+            }
+            charOffer.setFunction(function);
+            
+            // process batch
+            String batch = (String) charData.get("batch");
+            if (batch != null && batch.length() > 50) {
+                return "redirect:/offerInsertion?error=batch_too_long";
+            }
+            charOffer.setBatch(batch);
+
+            // process year
+            int prodYear;
+            try {
+                prodYear = Integer.parseInt(charData.get("prodYear").toString());
+                if (prodYear < 0) {
+                    return "redirect:/offerInsertion?error=invalid_year";
+                }
+            } catch (NumberFormatException e) {
+                return "redirect:/offerInsertion?error=invalid_year_format";
+            }
+            charOffer.setProdYear(prodYear);
+
+            // process quality
+            String quality = (String) charData.get("quality");
+            if (quality == null || 
+                (!quality.equals("Excellent") && 
+                 !quality.equals("Good") && 
+                 !quality.equals("Acceptable") && 
+                 !quality.equals("Needs Revision") && 
+                 !quality.equals("Broken"))) {
+                return "redirect:/offerInsertion?error=invalid_quality";
+            }
+            charOffer.setQuality(quality);
+
+            // process quantity
+            int quantity;
+            try {
+                quantity = Integer.parseInt(charData.get("quantity").toString());
+                if (quantity < 1) {
+                    return "redirect:/offerInsertion?error=quantity_must_be_at_least_1";
+                }
+            } catch (NumberFormatException e) {
+                return "redirect:/offerInsertion?error=invalid_quantity_format";
+            }
+            charOffer.setQuantity(quantity);
+
+            // process price
+            float pricePerUnit;
+            try {
+                pricePerUnit = Float.parseFloat(charData.get("pricePerUnit").toString());
+                if (pricePerUnit < 0) {
+                    return "redirect:/offerInsertion?error=price_cannot_be_negative";
+                }
+            } catch (NumberFormatException e) {
+                return "redirect:/offerInsertion?error=invalid_price_format";
+            }
+            charOffer.setPricePerUnit(pricePerUnit);
+
+            // process description
+            String description = (String) charData.get("description");
+            if (description != null && description.length() > 255) {
+                return "redirect:/offerInsertion?error=description_too_long";
+            }
+            charOffer.setDescription(description);
+            
+            // process expiration
+            String expirationStr = (String) charData.get("expirationDate");
+            java.sql.Date expiration = null;
+            if (expirationStr != null && !expirationStr.isEmpty()) {
+                try {
+                    expiration = java.sql.Date.valueOf(expirationStr);
+                } catch (IllegalArgumentException e) {
+                    return "redirect:/offerInsertion?error=invalid_expiration_date";
+                }
+            }
+            charOffer.setExpiration(expiration);
+
+            // tocheck process file path of the picture
+            /* 
+            String filePath = (String) charData.get("filePath");
+            if (filePath != null && filePath.length() > 255) {
+                return "redirect:/offerInsertion?error=file_path_too_long";
+            } 
+            */
+            charOffer.setFilePath("test");
+
+            offerRequests.add(charOffer);
+
+        }
+
+        Interaction interaction = new Interaction();
+        interaction.setTitle(title);
+        interaction.setTsCreation(new java.sql.Timestamp(System.currentTimeMillis()));
+        interaction.setIsOffer(true);
+        interaction.setUser(user);
+        interactionsService.save(interaction);
+
+        for (OfferRequest characteristicsRequest : offerRequests) {
+    
+            Characteristics characteristics = new Characteristics();
+
+            // check if there is already an omonymous category
+            Category category = categoriesService.findById(characteristicsRequest.getCategory());
+            if (category == null) {
+                category = new Category();
+                category.setId(characteristicsRequest.getCategory());
+                categoriesService.save(category);
+            }
+            characteristics.setCategory(category);
+
+            // check if there is already an omonymous nature
+            Nature nature = naturesService.findById(characteristicsRequest.getNature());
+            if (nature == null) {
+                nature = new Nature();
+                nature.setId(characteristicsRequest.getNature());
+                naturesService.save(nature);
+            }
+            characteristics.setNature(nature);
+
+            // check if there is already an omonymous brand
+            Brand brand = brandsService.findById(characteristicsRequest.getBrand());
+            if (brand == null) {
+                brand = new Brand();
+                brand.setId(characteristicsRequest.getBrand());
+                brandsService.save(brand);
+            }
+            // check if there is already an omonymous model
+            ProductModel productModel = modelsService.findById(characteristicsRequest.getModel());
+            if (productModel == null) {
+                productModel = new ProductModel();
+                productModel.setId(characteristicsRequest.getModel());
+                productModel.setBrand(brand);
+                modelsService.save(productModel);
+            }
+            characteristics.setModel(productModel);
+
+            characteristics.setMainColour(characteristicsRequest.getMainColour());
+            characteristics.setFunction(characteristicsRequest.getFunction());
+            characteristics.setQuality(characteristicsRequest.getQuality());
+            characteristics.setProdYear(characteristicsRequest.getProdYear());
+            characteristics.setBatch(characteristicsRequest.getBatch());
+
+            if (!characteristicsService.isDuplicate(characteristics)) {
+                characteristicsService.save(characteristics);
+            } else {
+                characteristics = characteristicsService.findDuplicate(characteristics);
+            }
+
+            for (int i = 0; i < characteristicsRequest.getQuantity(); i++) {
+                SingOffer singOffer = new SingOffer();
+                singOffer.setOffer(interaction);
+                singOffer.setCharacteristics(characteristics);
+                singOffer.setPrice(characteristicsRequest.getPricePerUnit());
+                singOffer.setDescription(characteristicsRequest.getDescription());
+                singOffer.setExpiration(characteristicsRequest.getExpiration());
+                singOffer.setPicturePath(characteristicsRequest.getFilePath());
+                singOffersService.save(singOffer);
+            }
+
+        }
+
+        // look for possible negotiations
+        negotiationsService.lookFor_possibleNegotiations();
+
+        return "redirect:/home?offerSuccess=true";
     }
 
 }

@@ -12,8 +12,6 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Column;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.FetchType;
 
 @Entity
 @Getter
@@ -23,7 +21,7 @@ import jakarta.persistence.FetchType;
 @Table(name="characteristics")
 public class Characteristics { 
     @Id @Column(name="ID") @GeneratedValue(strategy=GenerationType.IDENTITY) private int id;
-    @Column(name="main_colour",length=10) private String mainColour;
+    @Column(name="main_colour",length=50) private String mainColour;
     @Column(name="function",length=50) private String function;
     @Column(name="quality",length=50) private String quality;    
     @Column(name="prod_year") private int prodYear;

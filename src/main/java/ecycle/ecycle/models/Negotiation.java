@@ -13,8 +13,6 @@ import jakarta.persistence.Column;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.JoinColumn;
 import java.sql.Timestamp;
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.FetchType;
 
 @Entity
 @Getter

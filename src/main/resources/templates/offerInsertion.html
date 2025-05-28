@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>    
+    <title>E-Cycle - Offer Insertion</title>
+    <link rel="icon" th:href="@{/images/logos/logoIcon.png}" type="image/png">
+    <style>
+        .characteristics-section {
+            border: 1px solid #ddd;
+            padding: 15px;
+            margin-bottom: 15px;
+            position: relative;
+        }
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+        .input-group {
+            margin-bottom: 10px;
+        }
+        .input-group label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        .btn-container {
+            margin: 20px 0;
+        }
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div>
+            <img th:src="@{/images/logos/logo.png}" alt="E-Cycle Logo">
+        </div>    
+    </header>
+    <main>
+        <section>
+            <h2>Insert New Offer</h2>
+            <form id="offerForm" action="/insertOffer" method="post">
+                <div class="input-group">
+                    <label for="title">Offer Title:</label>
+                    <input type="text" id="title" name="title" required maxlength="50">
+                </div>
+                
+                <button type="button" id="addCharacteristicsBtn">Add Another Characteristics Section</button>
+                
+                <div id="characteristicsContainer">
+                    <div class="characteristics-section" data-index="0">
+                        <div class="section-header">
+                            <h3>Characteristics</h3>
+                            <button type="button" class="cancelSectionBtn" data-index="0" disabled>Cancel</button>
+                        </div>
+                        
+                        <div class="input-group">
+                            <label for="category-0">Category:</label>
+                            <select id="category-0" name="category-0" required>
+                                <option value="">-- Select Category --</option>
+                                <option value="manual">Manual Entry</option>
+                                <option th:each="category : ${categories}" th:value="${category.id}" th:text="${category.id}"></option>
+                            </select>
+                            <input type="text" id="categoryManual-0" name="categoryManual-0" placeholder="Enter category manually" class="hidden" maxlength="50">
+                        </div>
+                        
+                        <div class="input-group">
+                            <label for="nature-0">Nature:</label>
+                            <select id="nature-0" name="nature-0" required>
+                                <option value="">-- Select Nature --</option>
+                                <option value="manual">Manual Entry</option>
+                                <option th:each="nature : ${natures}" th:value="${nature.id}" th:text="${nature.id}"></option>
+                            </select>
+                            <input type="text" id="natureManual-0" name="natureManual-0" placeholder="Enter nature manually" class="hidden" maxlength="50">
+                        </div>
+                        
+                        <div class="input-group">
+                            <label for="brand-0">Brand:</label>
+                            <select id="brand-0" name="brand-0" required>
+                                <option value="">-- Select Brand --</option>
+                                <option value="manual">Manual Entry</option>
+                                <option th:each="brand : ${brands}" th:value="${brand.id}" th:text="${brand.id}"></option>
+                            </select>
+                            <input type="text" id="brandManual-0" name="brandManual-0" placeholder="Enter brand manually" class="hidden" maxlength="50">
+                        </div>
+                        
+                        <div class="input-group">
+                            <label for="model-0">Model:</label>
+                            <select id="model-0" name="model-0" required disabled>
+                                <option value="">-- Select Model --</option>
+                                <option value="manual">Manual Entry</option>
+                            </select>
+                            <input type="text" id="modelManual-0" name="modelManual-0" placeholder="Enter model manually" class="hidden" maxlength="50">
+                        </div>
+                        
+                        <div class="input-group">
+                            <label for="mainColour-0">Main Colour:</label>
+                            <input type="text" id="mainColour-0" name="mainColour-0" maxlength="50">
+                        </div>
+                        
+                        <div class="input-group">
+                            <label for="function-0">Function:</label>
+                            <input type="text" id="function-0" name="function-0" maxlength="50">
+                        </div>
+                        
+                        <div class="input-group">
+                            <label for="prodYear-0">Production Year:</label>
+                            <input type="number" id="prodYear-0" name="prodYear-0" min="1900" max="2100">
+                        </div>
+                        
+                        <div class="input-group">
+                            <label for="batch-0">Batch:</label>
+                            <input type="text" id="batch-0" name="batch-0" maxlength="50">
+                        </div>
+                        
+                        <div class="input-group">
+                            <label for="quality-0">Quality:</label>
+                            <select id="quality-0" name="quality-0" required>
+                                <option value="">-- Select Quality --</option>
+                                <option value="Excellent">Excellent</option>
+                                <option value="Good">Good</option>
+                                <option value="Acceptable">Acceptable</option>
+                                <option value="Needs Revision">Needs Revision</option>
+                                <option value="Broken">Broken</option>
+                            </select>
+                        </div>
+                        
+                        <div class="input-group">
+                            <label for="quantity-0">Quantity:</label>
+                            <input type="number" id="quantity-0" name="quantity-0" min="1" required>
+                        </div>
+                        
+                        <div class="input-group">
+                            <label for="pricePerUnit-0">Price per Unit:</label>
+                            <input type="number" id="pricePerUnit-0" name="pricePerUnit-0" step="0.01" min="0" required>
+                        </div>
+                        
+                        <div class="input-group">
+                            <label for="description-0">Description:</label>
+                            <textarea id="description-0" name="description-0" rows="4" maxlength="500"></textarea>
+                        </div>
+                        
+                        <div class="input-group">
+                            <label for="expirationDate-0">Offer Expiration Date:</label>
+                            <input type="date" id="expirationDate-0" name="expirationDate-0">
+                        </div>
+                        
+                        <div class="input-group">
+                            <label for="picture-0">Picture (Currently Disabled):</label>
+                            <input type="file" id="picture-0" name="picture-0" disabled>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="btn-container">
+                    <button type="button" id="cancelOfferBtn">Cancel Offer</button>
+                    <button type="submit">Confirm</button>
+                </div>
+            </form>
+        </section>
+    </main>
+    <script th:inline="javascript">
+        // Get all models from the server
+        const allModels = /*[[${models}]]*/ [];
+        // Get other data from the server
+        const categories = /*[[${categories}]]*/ [];
+        const natures = /*[[${natures}]]*/ [];
+        const brands = /*[[${brands}]]*/ [];
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            let sectionIndex = 0;
+            
+            // Add new characteristics section
+            document.getElementById('addCharacteristicsBtn').addEventListener('click', function() {
+                sectionIndex++;
+                const container = document.getElementById('characteristicsContainer');
+                const newSection = createCharacteristicsSection(sectionIndex);
+                container.appendChild(newSection);
+                
+                // Initialize event listeners for the new section
+                initializeEventListeners(sectionIndex);
+            });
+            
+            // Cancel offer button
+            document.getElementById('cancelOfferBtn').addEventListener('click', function() {
+                window.location.href = '/home';
+            });
+            
+            // Initialize event listeners for the first section
+            initializeEventListeners(0);
+            
+            // Form submission
+            document.getElementById('offerForm').addEventListener('submit', function(event) {
+                event.preventDefault();
+                
+                // Validate field lengths
+                const title = document.getElementById('title').value;
+                if (title.length > 50) {
+                    alert('Title must be less than 50 characters');
+                    return;
+                }
+                
+                // Check all characteristic sections for field lengths and validity
+                const sections = document.querySelectorAll('.characteristics-section');
+                let isValid = true;
+                
+                sections.forEach(section => {
+                    const index = section.getAttribute('data-index');
+                    
+                    // Check manual input fields
+                    const manualFields = [
+                        { id: `categoryManual-${index}`, length: 50 },
+                        { id: `natureManual-${index}`, length: 50 },
+                        { id: `brandManual-${index}`, length: 50 },
+                        { id: `modelManual-${index}`, length: 50 },
+                        { id: `mainColour-${index}`, length: 50 },
+                        { id: `function-${index}`, length: 50 },
+                        { id: `batch-${index}`, length: 50 },
+                        { id: `description-${index}`, length: 500 }
+                    ];
+                    
+                    manualFields.forEach(field => {
+                        const element = document.getElementById(field.id);
+                        if (element && element.value && element.value.length > field.length) {
+                            alert(`${field.id} must be less than ${field.length} characters`);
+                            isValid = false;
+                        }
+                    });
+                    
+                    // Check numeric fields
+                    const numericFields = [
+                        { id: `prodYear-${index}`, min: 1900, max: 2100 },
+                        { id: `quantity-${index}`, min: 1 },
+                        { id: `pricePerUnit-${index}`, min: 0 }
+                    ];
+                    
+                    numericFields.forEach(field => {
+                        const element = document.getElementById(field.id);
+                        if (element) {
+                            const value = parseFloat(element.value);
+                            if (isNaN(value) || value < field.min || (field.max && value > field.max)) {
+                                alert(`${field.id} must be a valid number between ${field.min} and ${field.max || 'infinity'}`);
+                                isValid = false;
+                            }
+                        }
+                    });
+                    
+                    // Check required selects
+                    const requiredSelects = [
+                        `category-${index}`,
+                        `nature-${index}`,
+                        `brand-${index}`,
+                        `model-${index}`,
+                        `quality-${index}`
+                    ];
+                    
+                    requiredSelects.forEach(id => {
+                        const element = document.getElementById(id);
+                        if (element && element.value === '' && !document.getElementById(`${id.split('-')[0]}Manual-${index}`).value) {
+                            alert(`Please select a ${id.split('-')[0]}`);
+                            isValid = false;
+                        }
+                    });
+                });
+                
+                if (!isValid) {
+                    return;
+                }
+                
+                // Convert form data to the format expected by the controller
+                const formData = new FormData(this);
+                const jsonData = {};
+                
+                // Add title
+                jsonData.title = formData.get('title');
+                
+                // Group the characteristics data
+                const characteristics = [];
+                const sectionElements = document.querySelectorAll('.characteristics-section');
+                
+                sectionElements.forEach((section, i) => {
+                    const index = section.getAttribute('data-index');
+                    const charData = {};
+                    
+                    // Process dropdowns and manual entries
+                    ['category', 'nature', 'brand', 'model'].forEach(field => {
+                        const selectValue = formData.get(`${field}-${index}`);
+                        const manualValue = formData.get(`${field}Manual-${index}`);
+                        
+                        if (selectValue === 'manual' && manualValue) {
+                            // Check if manual value exists in dropdown options
+                            const options = [...document.getElementById(`${field}-${index}`).options]
+                                .map(opt => opt.value.toLowerCase());
+                            
+                            if (options.includes(manualValue.toLowerCase()) && manualValue.toLowerCase() !== 'manual') {
+                                // Manual value exists in dropdown, use that instead
+                                charData[field] = manualValue;
+                            } else {
+                                charData[field] = '';
+                                charData[`${field}Manual`] = manualValue;
+                            }
+                        } else {
+                            charData[field] = selectValue;
+                            charData[`${field}Manual`] = '';
+                        }
+                    });
+                    
+                    // Process text and number inputs
+                    charData.mainColour = formData.get(`mainColour-${index}`) || '';
+                    charData.function = formData.get(`function-${index}`) || '';
+                    charData.batch = formData.get(`batch-${index}`) || '';
+                    charData.prodYear = parseInt(formData.get(`prodYear-${index}`)) || 0;
+                    charData.quality = formData.get(`quality-${index}`) || '';
+                    charData.quantity = parseInt(formData.get(`quantity-${index}`)) || 0;
+                    charData.pricePerUnit = parseFloat(formData.get(`pricePerUnit-${index}`)) || 0;
+                    charData.description = formData.get(`description-${index}`) || '';
+                    charData.expirationDate = formData.get(`expirationDate-${index}`) || '';
+                    
+                    characteristics.push(charData);
+                });
+                
+                // Create the final data object
+                const offerData = {
+                    title: jsonData.title,
+                    characteristics: characteristics
+                };
+                
+                // Submit the form with JSON data
+                fetch('/insertOffer', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(offerData)
+                })
+                .then(response => {
+                    if (response.ok || response.redirected) {
+                        window.location.href = '/home?offerSuccess=true';
+                    } else {
+                        alert('There was an error submitting your offer. Please try again.');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('There was an error submitting your offer. Please try again.');
+                });
+            });
+        });
+        
+        function createCharacteristicsSection(index) {
+            const section = document.createElement('div');
+            section.className = 'characteristics-section';
+            section.setAttribute('data-index', index);
+            
+            section.innerHTML = `
+                <div class="section-header">
+                    <h3>Characteristics</h3>
+                    <button type="button" class="cancelSectionBtn" data-index="${index}">Cancel</button>
+                </div>
+                
+                <div class="input-group">
+                    <label for="category-${index}">Category:</label>
+                    <select id="category-${index}" name="category-${index}" required>
+                        <option value="">-- Select Category --</option>
+                        <option value="manual">Manual Entry</option>
+                        ${getCategoryOptionsHtml()}
+                    </select>
+                    <input type="text" id="categoryManual-${index}" name="categoryManual-${index}" placeholder="Enter category manually" class="hidden" maxlength="50">
+                </div>
+                
+                <div class="input-group">
+                    <label for="nature-${index}">Nature:</label>
+                    <select id="nature-${index}" name="nature-${index}" required>
+                        <option value="">-- Select Nature --</option>
+                        <option value="manual">Manual Entry</option>
+                        ${getNatureOptionsHtml()}
+                    </select>
+                    <input type="text" id="natureManual-${index}" name="natureManual-${index}" placeholder="Enter nature manually" class="hidden" maxlength="50">
+                </div>
+                
+                <div class="input-group">
+                    <label for="brand-${index}">Brand:</label>
+                    <select id="brand-${index}" name="brand-${index}" required>
+                        <option value="">-- Select Brand --</option>
+                        <option value="manual">Manual Entry</option>
+                        ${getBrandOptionsHtml()}
+                    </select>
+                    <input type="text" id="brandManual-${index}" name="brandManual-${index}" placeholder="Enter brand manually" class="hidden" maxlength="50">
+                </div>
+                
+                <div class="input-group">
+                    <label for="model-${index}">Model:</label>
+                    <select id="model-${index}" name="model-${index}" required disabled>
+                        <option value="">-- Select Model --</option>
+                        <option value="manual">Manual Entry</option>
+                    </select>
+                    <input type="text" id="modelManual-${index}" name="modelManual-${index}" placeholder="Enter model manually" class="hidden" maxlength="50">
+                </div>
+                
+                <div class="input-group">
+                    <label for="mainColour-${index}">Main Colour:</label>
+                    <input type="text" id="mainColour-${index}" name="mainColour-${index}" maxlength="50">
+                </div>
+                
+                <div class="input-group">
+                    <label for="function-${index}">Function:</label>
+                    <input type="text" id="function-${index}" name="function-${index}" maxlength="50">
+                </div>
+                
+                <div class="input-group">
+                    <label for="prodYear-${index}">Production Year:</label>
+                    <input type="number" id="prodYear-${index}" name="prodYear-${index}" min="1900" max="2100">
+                </div>
+                
+                <div class="input-group">
+                    <label for="batch-${index}">Batch:</label>
+                    <input type="text" id="batch-${index}" name="batch-${index}" maxlength="50">
+                </div>
+                
+                <div class="input-group">
+                    <label for="quality-${index}">Quality:</label>
+                    <select id="quality-${index}" name="quality-${index}" required>
+                        <option value="">-- Select Quality --</option>
+                        <option value="Excellent">Excellent</option>
+                        <option value="Good">Good</option>
+                        <option value="Acceptable">Acceptable</option>
+                        <option value="Needs Revision">Needs Revision</option>
+                        <option value="Broken">Broken</option>
+                    </select>
+                </div>
+                
+                <div class="input-group">
+                    <label for="quantity-${index}">Quantity:</label>
+                    <input type="number" id="quantity-${index}" name="quantity-${index}" min="1" required>
+                </div>
+                
+                <div class="input-group">
+                    <label for="pricePerUnit-${index}">Price per Unit:</label>
+                    <input type="number" id="pricePerUnit-${index}" name="pricePerUnit-${index}" step="0.01" min="0" required>
+                </div>
+                
+                <div class="input-group">
+                    <label for="description-${index}">Description:</label>
+                    <textarea id="description-${index}" name="description-${index}" rows="4" maxlength="500"></textarea>
+                </div>
+                
+                <div class="input-group">
+                    <label for="expirationDate-${index}">Offer Expiration Date:</label>
+                    <input type="date" id="expirationDate-${index}" name="expirationDate-${index}">
+                </div>
+                
+                <div class="input-group">
+                    <label for="picture-${index}">Picture (Currently Disabled):</label>
+                    <input type="file" id="picture-${index}" name="picture-${index}" disabled>
+                </div>
+            `;
+            
+            return section;
+        }
+        
+        // Helper functions to generate options HTML for dynamically created sections
+        function getCategoryOptionsHtml() {
+            let options = '';
+            if (categories && categories.length) {
+                categories.forEach(category => {
+                    options += `<option value="${category.id}">${category.id}</option>`;
+                });
+            }
+            return options;
+        }
+        
+        function getNatureOptionsHtml() {
+            let options = '';
+            if (natures && natures.length) {
+                natures.forEach(nature => {
+                    options += `<option value="${nature.id}">${nature.id}</option>`;
+                });
+            }
+            return options;
+        }
+        
+        function getBrandOptionsHtml() {
+            let options = '';
+            if (brands && brands.length) {
+                brands.forEach(brand => {
+                    options += `<option value="${brand.id}">${brand.id}</option>`;
+                });
+            }
+            return options;
+        }
+        
+        function getOptionsHtml(items, valueProperty) {
+            if (!items) return '';
+            let options = '';
+            items.forEach(item => {
+                options += `<option value="${item[valueProperty]}">${item[valueProperty]}</option>`;
+            });
+            return options;
+        }
+        
+        function initializeEventListeners(index) {
+            // Handle manual input fields toggle
+            const selectors = ['category', 'nature', 'brand', 'model'];
+            selectors.forEach(selector => {
+                const selectElement = document.getElementById(`${selector}-${index}`);
+                const manualInput = document.getElementById(`${selector}Manual-${index}`);
+                
+                if (selectElement && manualInput) {
+                    selectElement.addEventListener('change', function() {
+                        if (this.value === 'manual') {
+                            manualInput.classList.remove('hidden');
+                            manualInput.required = true;
+                        } else {
+                            manualInput.classList.add('hidden');
+                            manualInput.required = false;
+                            manualInput.value = '';
+                        }
+                    });
+                }
+            });
+            
+            // Handle brand-model relationship
+            const brandSelect = document.getElementById(`brand-${index}`);
+            const brandManual = document.getElementById(`brandManual-${index}`);
+            const modelSelect = document.getElementById(`model-${index}`);
+            
+            if (brandSelect && modelSelect) {
+                brandSelect.addEventListener('change', function() {
+                    updateModelOptions(index, this.value);
+                });
+            }
+            
+            if (brandManual && modelSelect) {
+                brandManual.addEventListener('input', function() {
+                    // If entering a manual brand, disable model dropdown
+                    if (this.value) {
+                        modelSelect.disabled = true;
+                    } else {
+                        modelSelect.disabled = false;
+                    }
+                });
+            }
+            
+            // Handle section cancellation
+            const cancelButton = document.querySelector(`.cancelSectionBtn[data-index="${index}"]`);
+            if (cancelButton) {
+                cancelButton.addEventListener('click', function() {
+                    // We don't remove the first section
+                    if (index === 0) return;
+                    
+                    const section = document.querySelector(`.characteristics-section[data-index="${index}"]`);
+                    if (section) {
+                        section.remove();
+                    }
+                });
+            }
+        }
+        
+        function updateModelOptions(index, brandValue) {
+            const modelSelect = document.getElementById(`model-${index}`);
+            
+            // Clear existing options except the first two (default and manual)
+            while (modelSelect.options.length > 2) {
+                modelSelect.remove(2);
+            }
+            
+            // If no brand is selected or "manual" is selected, disable the model dropdown
+            if (!brandValue || brandValue === '' || brandValue === 'manual') {
+                modelSelect.disabled = true;
+                return;
+            }
+            
+            // Enable the model dropdown
+            modelSelect.disabled = false;
+            
+            // Filter models by the selected brand
+            const brandModels = allModels.filter(model => model.brand && model.brand.id === brandValue);
+            
+            // Add model options
+            brandModels.forEach(model => {
+                const option = document.createElement('option');
+                option.value = model.id;
+                option.text = model.id;
+                modelSelect.add(option);
+            });
+        }
+    </script>
+</body>
+</html>

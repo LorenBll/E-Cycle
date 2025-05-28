@@ -11,7 +11,7 @@ import org.springframework.lang.NonNull;
 @Repository
 public interface ProductModels_Repository extends JpaRepository<ProductModel, String> {
 
-    @NonNull Optional<ProductModel> findById(String id);
+    @NonNull Optional<ProductModel> findById(@NonNull String id);
     List<ProductModel> findByBrand(Brand brand);
     @NonNull List<ProductModel> findAll();
 

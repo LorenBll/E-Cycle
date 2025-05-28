@@ -31,23 +31,22 @@
     <section>
         <div>
             <img th:src="@{/images/logos/logo.png}" alt="E-Cycle Logo">
-            <h2>Registration</h2>
-            <form id="registrationForm" method="post" action="/register" onsubmit="return validateForm()">
+            <h2>Registration</h2>            <form id="registrationForm" onsubmit="submitRegistrationForm(event)">
                 <div>
                     <label for="username">Username*</label>
-                    <input type="text" id="username" name="username" required>
+                    <input type="text" id="username" name="username" required maxlength="50">
                 </div>
                 <div>
                     <label for="name">Name</label>
-                    <input type="text" id="name" name="name">
+                    <input type="text" id="name" name="name" maxlength="50">
                 </div>
                 <div>
                     <label for="surname">Surname</label>
-                    <input type="text" id="surname" name="surname">
+                    <input type="text" id="surname" name="surname" maxlength="50">
                 </div>
                 <div>
                     <label for="email">Email*</label>
-                    <input type="email" id="email" name="email" required>                
+                    <input type="email" id="email" name="email" required maxlength="100">                
                 </div>
                 <div class="password-container">
                     <label for="password">Password*</label>
@@ -70,26 +69,27 @@
                 </div>
                 <div>
                     <label for="state">State*</label>
-                    <input type="text" id="state" name="state" required>
+                    <input type="text" id="state" name="state" required maxlength="50">
                 </div>
                 <div>
                     <label for="region">Region*</label>
-                    <input type="text" id="region" name="region" required>
+                    <input type="text" id="region" name="region" required maxlength="50">
                 </div>
                 <div>
                     <label for="province">Province*</label>
-                    <input type="text" id="province" name="province" required>
+                    <input type="text" id="province" name="province" required maxlength="50">
                 </div>
                 <div>
                     <label for="city">City*</label>
-                    <input type="text" id="city" name="city" required>
+                    <input type="text" id="city" name="city" required maxlength="50">
                 </div>
                 <div>
                     <label for="street">Street*</label>
-                    <input type="text" id="street" name="street" required>
-                </div>                <div>
+                    <input type="text" id="street" name="street" required maxlength="100">
+                </div>                
+                <div>
                     <label for="civic">Civic Number*</label>
-                    <input type="text" id="civic" name="civic" required>
+                    <input type="text" id="civic" name="civic" required maxlength="50">
                 </div>
                 <div id="password-validation-error" class="error-message" style="display: none;">
                     <p id="password-validation-message"></p>
@@ -101,6 +101,49 @@
                     <button type="submit">Register</button>
                 </div>
             </form>
+            
+            <script>
+                function submitRegistrationForm(event) {
+                    event.preventDefault();
+                    if (!validateForm()) {
+                        return;
+                    }
+                    
+                    const formData = {
+                        username: document.getElementById('username').value,
+                        name: document.getElementById('name').value,
+                        surname: document.getElementById('surname').value,
+                        email: document.getElementById('email').value,
+                        password: document.getElementById('password').value,
+                        state: document.getElementById('state').value,
+                        region: document.getElementById('region').value,
+                        province: document.getElementById('province').value,
+                        city: document.getElementById('city').value,
+                        street: document.getElementById('street').value,
+                        civic: document.getElementById('civic').value
+                    };
+                      fetch('/register', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(formData)
+                    })
+                    .then(response => {
+                        if (response.redirected) {
+                            window.location.href = response.url;
+                        } else if (response.ok) {
+                            window.location.href = '/home';
+                        } else {
+                            console.error('Registration failed');
+                            // Handle error response
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                    });
+                }
+            </script>
             <div>                
                 <p><a href="/login">Already have an account? Login</a></p>
                 <p><a href="/">Back to the Initial Page</a></p>
@@ -197,6 +240,77 @@
             const errorDiv = document.getElementById('password-validation-error');
             const errorMessage = document.getElementById('password-validation-message');
             
+            // Check field lengths
+            const username = document.getElementById('username').value;
+            if (username.length > 50) {
+                errorDiv.style.display = 'block';
+                errorMessage.textContent = 'Username cannot exceed 50 characters!';
+                return false;
+            }
+            
+            const email = document.getElementById('email').value;
+            if (email.length > 100) {
+                errorDiv.style.display = 'block';
+                errorMessage.textContent = 'Email cannot exceed 100 characters!';
+                return false;
+            }
+            
+            const name = document.getElementById('name').value;
+            if (name && name.length > 50) {
+                errorDiv.style.display = 'block';
+                errorMessage.textContent = 'Name cannot exceed 50 characters!';
+                return false;
+            }
+            
+            const surname = document.getElementById('surname').value;
+            if (surname && surname.length > 50) {
+                errorDiv.style.display = 'block';
+                errorMessage.textContent = 'Surname cannot exceed 50 characters!';
+                return false;
+            }
+            
+            const state = document.getElementById('state').value;
+            if (state.length > 50) {
+                errorDiv.style.display = 'block';
+                errorMessage.textContent = 'State cannot exceed 50 characters!';
+                return false;
+            }
+            
+            const region = document.getElementById('region').value;
+            if (region.length > 50) {
+                errorDiv.style.display = 'block';
+                errorMessage.textContent = 'Region cannot exceed 50 characters!';
+                return false;
+            }
+            
+            const province = document.getElementById('province').value;
+            if (province.length > 50) {
+                errorDiv.style.display = 'block';
+                errorMessage.textContent = 'Province cannot exceed 50 characters!';
+                return false;
+            }
+            
+            const city = document.getElementById('city').value;
+            if (city.length > 50) {
+                errorDiv.style.display = 'block';
+                errorMessage.textContent = 'City cannot exceed 50 characters!';
+                return false;
+            }
+            
+            const street = document.getElementById('street').value;
+            if (street.length > 100) {
+                errorDiv.style.display = 'block';
+                errorMessage.textContent = 'Street cannot exceed 100 characters!';
+                return false;
+            }
+            
+            const civic = document.getElementById('civic').value;
+            if (civic.length > 50) {
+                errorDiv.style.display = 'block';
+                errorMessage.textContent = 'Civic Number cannot exceed 50 characters!';
+                return false;
+            }
+            
             // Check if passwords match
             if (password !== confirmPassword) {
                 errorDiv.style.display = 'block';
@@ -229,6 +343,7 @@
             errorDiv.style.display = 'none';            
             return true;
         }
+        
     </script>
 </body>
 </html>

@@ -2,12 +2,12 @@ package ecycle.ecycle.services;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ecycle.ecycle.repositories.Interactions_Repository;
 import ecycle.ecycle.models.Interaction;
 import ecycle.ecycle.models.SingOffer;
 import ecycle.ecycle.models.SingRequest;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 import ecycle.ecycle.models.User;
 
@@ -18,7 +18,6 @@ public class Interactions_Service {
     private final Interactions_Repository interactionsRepository;
     private final SingRequests_Service singRequestsService;
     private final SingOffers_Service singOffersService;
-    private final Negotiations_Service negotiationsService;
     
 
     private List<Interaction> sort ( List<Interaction> interactions) {
@@ -89,14 +88,14 @@ public class Interactions_Service {
     // register a new interaction
     public Interaction save(Interaction interaction) {
         return interactionsRepository.save(interaction);
-    }
-
-    // delete interaction
+    }    // delete interaction
+    @Transactional
     public void delete(Interaction interaction) {
         interactionsRepository.deleteById(interaction.getId());
     }
-    
+      
     // delete interaction by user
+    @Transactional
     public void deleteByUser(User user) {
         // find by user
         List<Interaction> interactions = interactionsRepository.findByUser(user);

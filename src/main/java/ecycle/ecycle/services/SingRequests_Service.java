@@ -2,6 +2,7 @@ package ecycle.ecycle.services;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ecycle.ecycle.repositories.SingRequests_Repository;
 import ecycle.ecycle.models.Interaction;
 import ecycle.ecycle.models.SingRequest;
@@ -73,9 +74,10 @@ public class SingRequests_Service {
     public void delete(SingRequest singRequest) {
         singRequest.setTsDeletion(new Timestamp(System.currentTimeMillis()));
         singRequestsRepository.save(singRequest);
-    }
-
+    }    
+    
     // delete sing request by request (hard delete)
+    @Transactional
     public void deleteByRequest(Interaction request) {
         // find by request
         List<SingRequest> singRequests = singRequestsRepository.findByRequest(request);

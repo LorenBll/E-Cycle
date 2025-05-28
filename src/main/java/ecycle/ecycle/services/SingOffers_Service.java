@@ -3,6 +3,7 @@ package ecycle.ecycle.services;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ecycle.ecycle.repositories.SingOffers_Repository;
+import org.springframework.transaction.annotation.Transactional;
 import ecycle.ecycle.models.Interaction;
 import ecycle.ecycle.models.SingOffer;
 import java.util.List;
@@ -70,12 +71,14 @@ public class SingOffers_Service {
     }
 
     // delete sing offer (soft delete, update tsDeletion)
+    @Transactional
     public void delete(SingOffer singOffer) {
         singOffer.setTsDeletion(new Timestamp(System.currentTimeMillis()));
         singOffersRepository.save(singOffer);
     }
 
     // delete sing offer by offer (hard delete)
+    @Transactional
     public void deleteByOffer(Interaction offer) {
         // find by offer
         List<SingOffer> singOffers = singOffersRepository.findByOffer(offer);

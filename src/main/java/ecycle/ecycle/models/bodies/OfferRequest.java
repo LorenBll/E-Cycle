@@ -1,18 +1,16 @@
-package ecycle.ecycle.controllers;
+package ecycle.ecycle.models.bodies;
 
 import lombok.Getter;
 import lombok.Setter;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
+import java.sql.Date;
 
-/**
- * This class is used to handle form data for characteristics in requests.
- */
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class CharacteristicsRequest {
+public class OfferRequest {
     private String category;
     private String categoryManual;
     private String nature;
@@ -23,9 +21,13 @@ public class CharacteristicsRequest {
     private String modelManual;
     private String mainColour;
     private String function;
-    private int prodYear;
+    private Integer prodYear;
     private String batch;
     private String quality;
-    private int quantity;
-    private float maxPricePerUnit;
+    private Integer quantity;
+    private Float pricePerUnit;
+    private String description;
+    private Date expiration;
+    
+    private String filePath; // tocheck
 }

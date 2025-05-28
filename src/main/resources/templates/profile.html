@@ -21,20 +21,34 @@
         <section id="edit-profile-form">
             <h2>Edit Profile</h2>
             
-            <form method="post" action="/profile/edit">
+            <form id="profileEditForm">
                 <div class="profile-section">
-                    <h3>Account Information</h3>
+                    <h3>Account Information</h3>                    
                     <div class="form-row">
                         <div class="form-col">
                             <div class="form-group">
                                 <label for="username">Username:</label>
-                                <input type="text" id="username" name="username" th:value="${user.username}" required>
+                                <input type="text" id="username" name="username" th:value="${user.username}" required maxlength="50">
                             </div>
                         </div>
                         <div class="form-col">
                             <div class="form-group">
                                 <label for="email">Email:</label>
-                                <input type="email" id="email" name="email" th:value="${user.email}" required>
+                                <input type="email" id="email" name="email" th:value="${user.email}" required maxlength="100">
+                            </div>
+                        </div>                    
+                    </div>
+                    <div class="form-row">
+                        <div class="form-col">
+                            <div class="form-group">
+                                <label for="name">Name:</label>
+                                <input type="text" id="name" name="name" th:value="${user.name}" maxlength="50">
+                            </div>
+                        </div>
+                        <div class="form-col">
+                            <div class="form-group">
+                                <label for="surname">Surname:</label>
+                                <input type="text" id="surname" name="surname" th:value="${user.surname}" maxlength="50">
                             </div>
                         </div>                    
                     </div>
@@ -69,13 +83,13 @@
                         <div class="form-col">
                             <div class="form-group">
                                 <label for="state">State:</label>
-                                <input type="text" id="state" name="state" th:value="${user.state}" required>
+                                <input type="text" id="state" name="state" th:value="${user.state}" required maxlength="50">
                             </div>
                         </div>
                         <div class="form-col">
                             <div class="form-group">
                                 <label for="region">Region:</label>
-                                <input type="text" id="region" name="region" th:value="${user.region}" required>
+                                <input type="text" id="region" name="region" th:value="${user.region}" required maxlength="50">
                             </div>
                         </div>
                     </div>
@@ -83,13 +97,13 @@
                         <div class="form-col">
                             <div class="form-group">
                                 <label for="province">Province:</label>
-                                <input type="text" id="province" name="province" th:value="${user.province}" required>
+                                <input type="text" id="province" name="province" th:value="${user.province}" required maxlength="50">
                             </div>
                         </div>
                         <div class="form-col">
                             <div class="form-group">
                                 <label for="city">City:</label>
-                                <input type="text" id="city" name="city" th:value="${user.city}" required>
+                                <input type="text" id="city" name="city" th:value="${user.city}" required maxlength="50">
                             </div>
                         </div>
                     </div>
@@ -97,13 +111,13 @@
                         <div class="form-col">
                             <div class="form-group">
                                 <label for="street">Street:</label>
-                                <input type="text" id="street" name="street" th:value="${user.street}" required>
+                                <input type="text" id="street" name="street" th:value="${user.street}" required maxlength="100">
                             </div>
                         </div>
                         <div class="form-col">
                             <div class="form-group">
                                 <label for="civic">Civic Number:</label>
-                                <input type="text" id="civic" name="civic" th:value="${user.civic}" required>                            
+                                <input type="text" id="civic" name="civic" th:value="${user.civic}" required maxlength="50">                            
                             </div>
                         </div>
                     </div>
@@ -261,7 +275,9 @@
             }
             
             return true;
-        }        document.addEventListener('DOMContentLoaded', function() {
+        }        
+        
+        document.addEventListener('DOMContentLoaded', function() {
             const editProfileForm = document.getElementById('edit-profile-form');
             const cancelEditBtn = document.getElementById('cancel-edit-btn');
             const successMessage = document.querySelector('.success-message');
@@ -283,51 +299,154 @@
             // Check if passwords match when user types in either field
             passwordInput.addEventListener('input', checkPasswordsMatch);
             confirmPasswordInput.addEventListener('input', checkPasswordsMatch);
-            
-            // Form validation with password confirmation
-            const form = document.querySelector('form');
+              // Form validation with password confirmation
+            const form = document.getElementById('profileEditForm');
             form.addEventListener('submit', function(event) {
+                event.preventDefault();
+                
                 const password = document.getElementById('password').value;
                 const confirmPassword = document.getElementById('confirm_password').value;
                 const username = document.getElementById('username').value;
                 const email = document.getElementById('email').value;
-                  if (!username.trim()) {
-                    const errorDiv = document.getElementById('dynamic-error-message');
-                    const errorMessage = document.getElementById('error-message-text');
+                const errorDiv = document.getElementById('dynamic-error-message');
+                const errorMessage = document.getElementById('error-message-text');
+                
+                // Check for empty username
+                if (!username.trim()) {
                     errorDiv.style.display = 'block';
                     errorMessage.textContent = 'Username cannot be empty!';
-                    event.preventDefault();
                     return;
                 }
                 
+                // Check username length
+                if (username.length > 50) {
+                    errorDiv.style.display = 'block';
+                    errorMessage.textContent = 'Username cannot exceed 50 characters!';
+                    return;
+                }
+                
+                // Check email validity
                 if (!email.trim() || !email.includes('@')) {
-                    const errorDiv = document.getElementById('dynamic-error-message');
-                    const errorMessage = document.getElementById('error-message-text');
                     errorDiv.style.display = 'block';
                     errorMessage.textContent = 'Please enter a valid email address!';
-                    event.preventDefault();
+                    return;
+                }
+                
+                // Check email length
+                if (email.length > 100) {
+                    errorDiv.style.display = 'block';
+                    errorMessage.textContent = 'Email cannot exceed 100 characters!';
+                    return;
+                }
+                
+                // Check other field lengths
+                const name = document.getElementById('name').value;
+                if (name.length > 50) {
+                    errorDiv.style.display = 'block';
+                    errorMessage.textContent = 'Name cannot exceed 50 characters!';
+                    return;
+                }
+                
+                const surname = document.getElementById('surname').value;
+                if (surname.length > 50) {
+                    errorDiv.style.display = 'block';
+                    errorMessage.textContent = 'Surname cannot exceed 50 characters!';
+                    return;
+                }
+                
+                const state = document.getElementById('state').value;
+                if (state.length > 50) {
+                    errorDiv.style.display = 'block';
+                    errorMessage.textContent = 'State cannot exceed 50 characters!';
+                    return;
+                }
+                
+                const region = document.getElementById('region').value;
+                if (region.length > 50) {
+                    errorDiv.style.display = 'block';
+                    errorMessage.textContent = 'Region cannot exceed 50 characters!';
+                    return;
+                }
+                
+                const province = document.getElementById('province').value;
+                if (province.length > 50) {
+                    errorDiv.style.display = 'block';
+                    errorMessage.textContent = 'Province cannot exceed 50 characters!';
+                    return;
+                }
+                
+                const city = document.getElementById('city').value;
+                if (city.length > 50) {
+                    errorDiv.style.display = 'block';
+                    errorMessage.textContent = 'City cannot exceed 50 characters!';
+                    return;
+                }
+                
+                const street = document.getElementById('street').value;
+                if (street.length > 100) {
+                    errorDiv.style.display = 'block';
+                    errorMessage.textContent = 'Street cannot exceed 100 characters!';
+                    return;
+                }
+                
+                const civic = document.getElementById('civic').value;
+                if (civic.length > 50) {
+                    errorDiv.style.display = 'block';
+                    errorMessage.textContent = 'Civic Number cannot exceed 50 characters!';
                     return;
                 }
                 
                 // Only validate passwords if user is trying to change password
                 if (password || confirmPassword) {
                     if (password !== confirmPassword) {
-                        const errorDiv = document.getElementById('dynamic-error-message');
-                        const errorMessage = document.getElementById('error-message-text');
                         errorDiv.style.display = 'block';
                         errorMessage.textContent = 'Passwords do not match!';
-                        event.preventDefault();
                         return;
                     }
                     
                     // Password validation rules
                     if (password) {
                         if (!validatePassword(password)) {
-                            event.preventDefault();
                             return;
                         }
                     }
                 }
+                
+                // Create JSON data from form inputs
+                const formData = {
+                    username: document.getElementById('username').value,
+                    name: document.getElementById('name').value,
+                    surname: document.getElementById('surname').value,
+                    email: document.getElementById('email').value,
+                    password: document.getElementById('password').value,
+                    state: document.getElementById('state').value,
+                    region: document.getElementById('region').value,
+                    province: document.getElementById('province').value,
+                    city: document.getElementById('city').value,
+                    street: document.getElementById('street').value,
+                    civic: document.getElementById('civic').value
+                };
+                
+                // Submit form data as JSON
+                fetch('/profile/edit', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(formData)
+                })
+                .then(response => {
+                    if (response.redirected) {
+                        window.location.href = response.url;
+                    } else if (response.ok) {
+                        window.location.href = '/profile';
+                    } else {
+                        console.error('Profile update failed');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
             });
         });
         

@@ -10,7 +10,7 @@ import org.springframework.lang.NonNull;
 @Repository
 public interface Categories_Repository extends JpaRepository<Category, String> {
 
-    @NonNull Optional<Category> findById(String id);
+    @NonNull Optional<Category> findById(@NonNull String id);
     @NonNull List<Category> findAll();
   
 }

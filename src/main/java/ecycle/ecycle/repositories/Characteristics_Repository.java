@@ -5,7 +5,6 @@ import ecycle.ecycle.models.Characteristics;
 import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 import org.springframework.lang.NonNull;
-import java.util.Optional;
 
 @Repository
 public interface Characteristics_Repository extends JpaRepository<Characteristics, Integer> {

@@ -42,22 +42,15 @@
             <form id="requestForm" action="/insertRequest" method="post">
                 <div class="input-group">
                     <label for="title">Request Title:</label>
-                    <input type="text" id="title" name="title" required>
+                    <input type="text" id="title" name="title" required maxlength="50">
                 </div>
                 
                 <button type="button" id="addCharacteristicsBtn">Add Another Characteristics Section</button>
                 
                 <div id="characteristicsContainer">
-                    <div class="characteristics-section" data-index="0">
-                        <div class="section-header">
+                    <div class="characteristics-section" data-index="0">                        <div class="section-header">
                             <h3>Characteristics #1</h3>
                             <div>
-                                <label for="quantity-0">Quantity:</label>
-                                <input type="number" id="quantity-0" name="characteristics[0].quantity" min="1" value="1" required>
-                                
-                                <label for="maxPrice-0">Max Price per Unit:</label>
-                                <input type="number" id="maxPrice-0" name="characteristics[0].maxPricePerUnit" step="0.01" min="0" required>
-                                
                                 <button type="button" class="cancelSectionBtn" data-index="0" disabled>Cancel</button>
                             </div>
                         </div>
@@ -69,7 +62,7 @@
                                 <option value="manual">Enter manually</option>
                                 <option th:each="category : ${categories}" th:value="${category.id}" th:text="${category.id}"></option>
                             </select>
-                            <input type="text" id="categoryManual-0" name="characteristics[0].categoryManual" class="hidden" placeholder="Enter category name">
+                            <input type="text" id="categoryManual-0" name="characteristics[0].categoryManual" class="hidden" placeholder="Enter category name" maxlength="50">
                         </div>
                         
                         <div class="input-group">
@@ -79,7 +72,7 @@
                                 <option value="manual">Enter manually</option>
                                 <option th:each="nature : ${natures}" th:value="${nature.id}" th:text="${nature.id}"></option>
                             </select>
-                            <input type="text" id="natureManual-0" name="characteristics[0].natureManual" class="hidden" placeholder="Enter nature name">
+                            <input type="text" id="natureManual-0" name="characteristics[0].natureManual" class="hidden" placeholder="Enter nature name" maxlength="50">
                         </div>
                         
                         <div class="input-group">
@@ -89,7 +82,7 @@
                                 <option value="manual">Enter manually</option>
                                 <option th:each="brand : ${brands}" th:value="${brand.id}" th:text="${brand.id}"></option>
                             </select>
-                            <input type="text" id="brandManual-0" name="characteristics[0].brandManual" class="hidden" placeholder="Enter brand name">
+                            <input type="text" id="brandManual-0" name="characteristics[0].brandManual" class="hidden" placeholder="Enter brand name" maxlength="50">
                         </div>
                         
                         <div class="input-group">
@@ -98,17 +91,17 @@
                                 <option value="">Select a model</option>
                                 <option value="manual">Enter manually</option>
                             </select>
-                            <input type="text" id="modelManual-0" name="characteristics[0].modelManual" class="hidden" placeholder="Enter model name">
+                            <input type="text" id="modelManual-0" name="characteristics[0].modelManual" class="hidden" placeholder="Enter model name" maxlength="50">
                         </div>
                         
                         <div class="input-group">
                             <label for="mainColour-0">Colour:</label>
-                            <input type="text" id="mainColour-0" name="characteristics[0].mainColour" required>
+                            <input type="text" id="mainColour-0" name="characteristics[0].mainColour" required maxlength="50">
                         </div>
                         
                         <div class="input-group">
                             <label for="function-0">Function:</label>
-                            <input type="text" id="function-0" name="characteristics[0].function" required>
+                            <input type="text" id="function-0" name="characteristics[0].function" required maxlength="50">
                         </div>
                         
                         <div class="input-group">
@@ -118,10 +111,9 @@
                         
                         <div class="input-group">
                             <label for="batch-0">Batch:</label>
-                            <input type="text" id="batch-0" name="characteristics[0].batch">
+                            <input type="text" id="batch-0" name="characteristics[0].batch" maxlength="50">
                         </div>
-                        
-                        <div class="input-group">
+                          <div class="input-group">
                             <label for="quality-0">Quality:</label>
                             <select id="quality-0" name="characteristics[0].quality" required>
                                 <option value="">Select quality</option>
@@ -131,6 +123,16 @@
                                 <option value="Needs Revision">Needs Revision</option>
                                 <option value="Broken">Broken</option>
                             </select>
+                        </div>
+                        
+                        <div class="input-group">
+                            <label for="quantity-0">Quantity:</label>
+                            <input type="number" id="quantity-0" name="characteristics[0].quantity" min="1" value="1" required>
+                        </div>
+                        
+                        <div class="input-group">
+                            <label for="maxPrice-0">Max Price per Unit:</label>
+                            <input type="number" id="maxPrice-0" name="characteristics[0].maxPricePerUnit" step="0.01" min="0" required>
                         </div>
                     </div>
                 </div>
@@ -175,6 +177,107 @@
             // Form submission
             document.getElementById('requestForm').addEventListener('submit', function(event) {
                 event.preventDefault();
+                
+                // Validate field lengths
+                const title = document.getElementById('title').value;
+                if (title.length > 50) {
+                    alert('Title must be 50 characters or less.');
+                    return;
+                }
+                  // Check all characteristic sections for field lengths and validity
+                const sections = document.querySelectorAll('.characteristics-section');
+                let isValid = true;
+                
+                sections.forEach(section => {
+                    const index = section.getAttribute('data-index');
+                    
+                    // Validate quantity
+                    const quantity = document.getElementById(`quantity-${index}`).value;
+                    if (quantity < 1) {
+                        alert(`Quantity in section #${Number(index) + 1} must be at least 1.`);
+                        isValid = false;
+                        return;
+                    }
+                    
+                    // Validate price
+                    const price = document.getElementById(`maxPrice-${index}`).value;
+                    if (parseFloat(price) < 0) {
+                        alert(`Price in section #${Number(index) + 1} cannot be negative.`);
+                        isValid = false;
+                        return;
+                    }
+                    
+                    // Validate year
+                    const year = document.getElementById(`prodYear-${index}`).value;
+                    if (parseInt(year) < 0) {
+                        alert(`Year in section #${Number(index) + 1} cannot be negative.`);
+                        isValid = false;
+                        return;
+                    }
+                    
+                    // Validate quality
+                    const quality = document.getElementById(`quality-${index}`).value;
+                    const validQualities = ["Excellent", "Good", "Acceptable", "Needs Revision", "Broken"];
+                    if (!validQualities.includes(quality)) {
+                        alert(`Quality in section #${Number(index) + 1} must be one of: Excellent, Good, Acceptable, Needs Revision, or Broken.`);
+                        isValid = false;
+                        return;
+                    }
+                    
+                    const mainColour = document.getElementById(`mainColour-${index}`).value;
+                    if (mainColour.length > 50) {
+                        alert(`Colour in section #${Number(index) + 1} must be 50 characters or less.`);
+                        isValid = false;
+                        return;
+                    }
+                    
+                    const functionVal = document.getElementById(`function-${index}`).value;
+                    if (functionVal.length > 50) {
+                        alert(`Function in section #${Number(index) + 1} must be 50 characters or less.`);
+                        isValid = false;
+                        return;
+                    }
+                    
+                    const batch = document.getElementById(`batch-${index}`).value;
+                    if (batch && batch.length > 50) {
+                        alert(`Batch in section #${Number(index) + 1} must be 50 characters or less.`);
+                        isValid = false;
+                        return;
+                    }
+                    
+                    // Check manual input fields if they are visible and have content
+                    const categoryManual = document.getElementById(`categoryManual-${index}`);
+                    if (!categoryManual.classList.contains('hidden') && categoryManual.value.length > 50) {
+                        alert(`Category in section #${Number(index) + 1} must be 50 characters or less.`);
+                        isValid = false;
+                        return;
+                    }
+                    
+                    const natureManual = document.getElementById(`natureManual-${index}`);
+                    if (!natureManual.classList.contains('hidden') && natureManual.value.length > 50) {
+                        alert(`Nature in section #${Number(index) + 1} must be 50 characters or less.`);
+                        isValid = false;
+                        return;
+                    }
+                    
+                    const brandManual = document.getElementById(`brandManual-${index}`);
+                    if (!brandManual.classList.contains('hidden') && brandManual.value.length > 50) {
+                        alert(`Brand in section #${Number(index) + 1} must be 50 characters or less.`);
+                        isValid = false;
+                        return;
+                    }
+                    
+                    const modelManual = document.getElementById(`modelManual-${index}`);
+                    if (!modelManual.classList.contains('hidden') && modelManual.value.length > 50) {
+                        alert(`Model in section #${Number(index) + 1} must be 50 characters or less.`);
+                        isValid = false;
+                        return;
+                    }
+                });
+                
+                if (!isValid) {
+                    return;
+                }
                 
                 // Convert form data to the format expected by the controller
                 const formData = new FormData(this);
@@ -270,17 +373,9 @@
             const section = document.createElement('div');
             section.className = 'characteristics-section';
             section.setAttribute('data-index', index);
-            
-            section.innerHTML = `
-                <div class="section-header">
+              section.innerHTML = `                <div class="section-header">
                     <h3>Characteristics #${index + 1}</h3>
                     <div>
-                        <label for="quantity-${index}">Quantity:</label>
-                        <input type="number" id="quantity-${index}" name="characteristics[${index}].quantity" min="1" value="1" required>
-                        
-                        <label for="maxPrice-${index}">Max Price per Unit:</label>
-                        <input type="number" id="maxPrice-${index}" name="characteristics[${index}].maxPricePerUnit" step="0.01" min="0" required>
-                        
                         <button type="button" class="cancelSectionBtn" data-index="${index}">Cancel</button>
                     </div>
                 </div>
@@ -292,7 +387,7 @@
                         <option value="manual">Enter manually</option>
                         ${getCategoryOptionsHtml()}
                     </select>
-                    <input type="text" id="categoryManual-${index}" name="characteristics[${index}].categoryManual" class="hidden" placeholder="Enter category name">
+                    <input type="text" id="categoryManual-${index}" name="characteristics[${index}].categoryManual" class="hidden" placeholder="Enter category name" maxlength="50">
                 </div>
                 
                 <div class="input-group">
@@ -302,7 +397,7 @@
                         <option value="manual">Enter manually</option>
                         ${getNatureOptionsHtml()}
                     </select>
-                    <input type="text" id="natureManual-${index}" name="characteristics[${index}].natureManual" class="hidden" placeholder="Enter nature name">
+                    <input type="text" id="natureManual-${index}" name="characteristics[${index}].natureManual" class="hidden" placeholder="Enter nature name" maxlength="50">
                 </div>
                 
                 <div class="input-group">
@@ -312,7 +407,7 @@
                         <option value="manual">Enter manually</option>
                         ${getBrandOptionsHtml()}
                     </select>
-                    <input type="text" id="brandManual-${index}" name="characteristics[${index}].brandManual" class="hidden" placeholder="Enter brand name">
+                    <input type="text" id="brandManual-${index}" name="characteristics[${index}].brandManual" class="hidden" placeholder="Enter brand name" maxlength="50">
                 </div>
                 
                 <div class="input-group">
@@ -321,30 +416,28 @@
                         <option value="">Select a model</option>
                         <option value="manual">Enter manually</option>
                     </select>
-                    <input type="text" id="modelManual-${index}" name="characteristics[${index}].modelManual" class="hidden" placeholder="Enter model name">
+                    <input type="text" id="modelManual-${index}" name="characteristics[${index}].modelManual" class="hidden" placeholder="Enter model name" maxlength="50">
                 </div>
                 
                 <div class="input-group">
                     <label for="mainColour-${index}">Colour:</label>
-                    <input type="text" id="mainColour-${index}" name="characteristics[${index}].mainColour" required>
+                    <input type="text" id="mainColour-${index}" name="characteristics[${index}].mainColour" required maxlength="50">
                 </div>
                 
                 <div class="input-group">
                     <label for="function-${index}">Function:</label>
-                    <input type="text" id="function-${index}" name="characteristics[${index}].function" required>
+                    <input type="text" id="function-${index}" name="characteristics[${index}].function" required maxlength="50">
                 </div>
-                
-                <div class="input-group">
+                  <div class="input-group">
                     <label for="prodYear-${index}">Year:</label>
-                    <input type="number" id="prodYear-${index}" name="characteristics[${index}].prodYear" min="1900" max="${new Date().getFullYear()}" required>
+                    <input type="number" id="prodYear-${index}" name="characteristics[${index}].prodYear" min="0" max="${new Date().getFullYear()}" required>
                 </div>
                 
                 <div class="input-group">
                     <label for="batch-${index}">Batch:</label>
-                    <input type="text" id="batch-${index}" name="characteristics[${index}].batch">
+                    <input type="text" id="batch-${index}" name="characteristics[${index}].batch" maxlength="50">
                 </div>
-                
-                <div class="input-group">
+                  <div class="input-group">
                     <label for="quality-${index}">Quality:</label>
                     <select id="quality-${index}" name="characteristics[${index}].quality" required>
                         <option value="">Select quality</option>
@@ -354,6 +447,16 @@
                         <option value="Needs Revision">Needs Revision</option>
                         <option value="Broken">Broken</option>
                     </select>
+                </div>
+                
+                <div class="input-group">
+                    <label for="quantity-${index}">Quantity:</label>
+                    <input type="number" id="quantity-${index}" name="characteristics[${index}].quantity" min="1" value="1" required>
+                </div>
+                
+                <div class="input-group">
+                    <label for="maxPrice-${index}">Max Price per Unit:</label>
+                    <input type="number" id="maxPrice-${index}" name="characteristics[${index}].maxPricePerUnit" step="0.01" min="0" required>
                 </div>
             `;
             

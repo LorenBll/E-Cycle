@@ -10,7 +10,7 @@ import org.springframework.lang.NonNull;
 @Repository
 public interface Natures_Repository extends JpaRepository<Nature, String> {
 
-    @NonNull Optional<Nature> findById(String id);
+    @NonNull Optional<Nature> findById(@NonNull String id);
     @NonNull List<Nature> findAll();
     
 }

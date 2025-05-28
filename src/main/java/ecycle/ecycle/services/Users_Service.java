@@ -4,8 +4,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ecycle.ecycle.repositories.Users_Repository;
 import ecycle.ecycle.models.User;
-import ecycle.ecycle.services.Interactions_Service;
 import java.util.List;
+import org.springframework.transaction.annotation.Transactional;
+
 
 @Service
 @RequiredArgsConstructor
@@ -49,6 +50,7 @@ public class Users_Service {
     }
 
     // delete user
+    @Transactional
     public void delete(User user) {
         interactionsService.deleteByUser(user);
         usersRepository.deleteById(user.getId());
