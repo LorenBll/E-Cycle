@@ -1,0 +1,319 @@
+/* E-Cycle Request Insertion Page CSS - Versione Finale */
+
+body {
+    background: #fff;
+    font-family: 'Segoe UI', Arial, sans-serif;
+    margin: 0;
+    min-height: 100vh;
+    position: relative;
+}
+
+.requestinsertion-container {
+    width: 100%;
+    min-height: 100vh;
+    margin: 0;
+    padding: 20px 0;
+    background: transparent;
+    position: relative;
+    box-sizing: border-box;
+}
+
+.requestinsertion-bg-logo {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    opacity: 0.10;
+    z-index: 0;
+    width: 600px;
+    max-width: 90vw;
+    pointer-events: none;
+}
+
+.requestinsertion-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 18px;
+    margin: 32px 0 32px 30px;
+    position: relative;
+    z-index: 2;
+}
+
+.requestinsertion-btn {
+    background: linear-gradient(90deg, #43c047 0%, #2e8b57 100%);
+    color: #fff;
+    border: none;
+    padding: 8px 24px;
+    border-radius: 18px;
+    font-weight: 700;
+    font-size: 1.05rem;
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(67, 192, 71, 0.10);
+    transition: background 0.2s, transform 0.2s;
+    margin-right: 12px;
+    text-decoration: none;
+    min-width: 80px;
+    letter-spacing: 0.2px;
+    position: relative;
+    z-index: 3;
+}
+
+.requestinsertion-btn:last-child {
+    margin-right: 0;
+}
+
+.requestinsertion-btn:hover {
+    background: linear-gradient(90deg, #2e8b57 0%, #43c047 100%);
+    transform: translateY(-2px) scale(1.04);
+}
+
+.requestinsertion-title {
+    color: #218c3a;
+    font-size: 2.5rem;
+    font-weight: 800;
+    margin: 0 0 28px 30px;
+    letter-spacing: 1px;
+    background: #fff;
+    display: inline-block;
+    padding: 0 12px;
+    position: relative;
+    z-index: 2;
+}
+
+.requestinsertion-form {
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    padding: 0;
+    margin: 0 0 0 30px;
+    max-width: 100%;
+    position: relative;
+    z-index: 2;
+}
+
+.requestinsertion-form-row {
+    display: flex;
+    align-items: flex-end;
+    gap: 24px;
+    margin-bottom: 18px;
+    position: relative;
+    z-index: 2;
+    flex-wrap: wrap;
+}
+
+.input-group {
+    margin-bottom: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    position: relative;
+    z-index: 2;
+}
+
+.input-group label {
+    color: #2ecc40;
+    font-weight: 700;
+    font-size: 1.1rem;
+    margin-bottom: 4px;
+    display: block;
+    background: #fff;
+    padding: 0 8px 0 0;
+}
+
+.input-group input[type="text"],
+.input-group input[type="number"],
+.input-group select {
+    width: 90%;
+    min-width: 0;
+    max-width: 100%;
+    padding: 6px 8px;
+    border-radius: 7px;
+    border: none;
+    border-bottom: 2px solid #43c047;
+    font-size: 0.98rem;
+    background: #fff;
+    margin-top: 2px;
+    margin-bottom: 2px;
+    transition: border 0.2s, box-shadow 0.2s;
+    outline: none;
+    box-shadow: 0 1px 6px rgba(44,204,64,0.04);
+}
+
+.input-group input:focus,
+.input-group select:focus {
+    border-bottom: 2px solid #218c3a;
+    box-shadow: 0 2px 12px rgba(44,204,64,0.10);
+}
+
+.requestinsertion-add-btn {
+    margin: 0 0 0 auto;
+    background: linear-gradient(90deg, #43c047 0%, #2e8b57 100%);
+    color: #fff;
+    border: none;
+    padding: 10px 28px;
+    border-radius: 18px;
+    font-weight: 700;
+    font-size: 1.05rem;
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(67, 192, 71, 0.10);
+    transition: background 0.2s, transform 0.2s;
+    min-width: 160px;
+    letter-spacing: 0.2px;
+    position: relative;
+    z-index: 2;
+}
+
+.requestinsertion-add-btn:hover {
+    background: linear-gradient(90deg, #2e8b57 0%, #43c047 100%);
+    transform: translateY(-2px) scale(1.04);
+}
+
+/* Characteristics Grid */
+.characteristics-container {
+    width: 100%;
+    position: relative;
+    z-index: 2;
+    padding-right: 30px;
+    box-sizing: border-box;
+}
+
+.characteristics-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 36px;
+    margin: 0 0 32px 30px;
+    position: relative;
+    z-index: 2;
+    width: calc(100% - 30px);
+    max-width: calc(4 * (320px + 36px));
+}
+
+.characteristics-section {
+    background: #fff;
+    border-radius: 14px;
+    box-shadow: 0 2px 8px rgba(44, 204, 64, 0.10);
+    border: 2.5px solid #b2f2c9;
+    padding: 28px 22px 18px 22px;
+    min-width: 320px;
+    max-width: 340px;
+    position: relative;
+    z-index: 3;
+    display: flex;
+    flex-direction: column;
+    transition: box-shadow 0.2s, border 0.2s;
+    box-sizing: border-box;
+}
+
+.characteristics-section:hover {
+    box-shadow: 0 4px 18px rgba(44,204,64,0.13);
+    border: 2px solid #43c047;
+}
+
+.section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+}
+
+.section-header h3 {
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin: 0;
+    color: #218c3a;
+}
+
+.section-header .cancelSectionBtn {
+    background: #43c047;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 6px 12px;
+    font-weight: 700;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.section-header .cancelSectionBtn:hover {
+    background: #218c3a;
+}
+
+/* Media Queries */
+@media (max-width: 1400px) {
+    .characteristics-grid {
+        max-width: calc(3 * (280px + 24px));
+    }
+}
+
+@media (max-width: 1100px) {
+    .characteristics-grid {
+        max-width: calc(2 * (280px + 24px));
+    }
+}
+
+@media (max-width: 900px) {
+    .requestinsertion-bg-logo {
+        width: 320px;
+    }
+    
+    .requestinsertion-header,
+    .requestinsertion-title,
+    .requestinsertion-form,
+    .characteristics-grid {
+        margin-left: 24px;
+    }
+    
+    .characteristics-grid {
+        width: calc(100% - 24px);
+    }
+    
+    .requestinsertion-form-row {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+    }
+    
+    .requestinsertion-add-btn {
+        margin: 12px 0 0 0;
+    }
+}
+
+@media (max-width: 600px) {
+    .requestinsertion-bg-logo {
+        width: 180px;
+    }
+    
+    .requestinsertion-header {
+        flex-direction: column;
+        gap: 12px;
+        margin-left: 20px;
+    }
+    
+    .requestinsertion-title {
+        font-size: 1.8rem;
+        margin-left: 20px;
+    }
+    
+    .requestinsertion-form,
+    .characteristics-grid {
+        margin-left: 20px;
+    }
+    
+    .characteristics-grid {
+        grid-template-columns: 1fr;
+        gap: 16px;
+        width: calc(100% - 40px);
+        max-width: 100%;
+    }
+    
+    .characteristics-section {
+        min-width: 100%;
+    }
+    
+    .input-group input[type="text"],
+    .input-group input[type="number"],
+    .input-group select {
+        width: 100%;
+    }
+}

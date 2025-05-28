@@ -1,0 +1,59 @@
+body {
+    min-height: 100vh;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #f6f8f6;
+    font-family: 'Segoe UI', Arial, sans-serif;
+}
+
+section {
+    width: 100vw;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+}
+
+.logo-container {
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    margin-bottom: 32px;
+    margin-top: -80px; /* sposta il logo più in alto del centro */
+}
+
+.logo-container img {
+    max-width: 350px;
+    height: auto;
+}
+
+.button-group {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    align-items: center;
+}
+
+.button-group a {
+    display: inline-block;
+    min-width: 180px;
+    padding: 14px 0;
+    background: linear-gradient(90deg, #43c047 0%, #2e8b57 100%);
+    color: #fff;
+    text-align: center;
+    border: none;
+    border-radius: 28px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: background 0.2s, transform 0.2s;
+    box-shadow: 0 2px 8px rgba(67, 192, 71, 0.08);
+    cursor: pointer;
+}
+
+.button-group a:hover {
+    background: linear-gradient(90deg, #2e8b57 0%, #43c047 100%);
+    transform: translateY(-2px) scale(1.04);
+}
