@@ -7,6 +7,8 @@ import ecycle.ecycle.repositories.Negotiations_Repository;
 import ecycle.ecycle.models.Negotiation;
 import ecycle.ecycle.models.SingOffer;
 import ecycle.ecycle.models.SingRequest;
+
+import java.sql.Date;
 import java.util.List;
 
 @Service
@@ -14,8 +16,28 @@ import java.util.List;
 public class Negotiations_Service {
         
     private final Negotiations_Repository negotiationsRepository;
-    private final SingOffers_Service singOffersService;
-    private final SingRequests_Service singRequestsService;
+
+    public boolean isSingOfferActive(SingOffer singOffer) {
+        
+        // check if the sing offer has been deleted or has expired
+        boolean isActive = (
+            singOffer.getTsDeletion() == null && 
+            singOffer.getExpiration().after(new Date(System.currentTimeMillis()))
+        );
+
+        // check if there are any negotiations with the offer that have been accepted
+        if (isActive) {
+        
+            Negotiation negotiation = this.findBySingOfferAndWasAccepted(singOffer , true);
+            if (negotiation != null) {
+                isActive = false;
+            }
+
+        }
+
+        return isActive;
+
+    }
 
     public Negotiation findById(int id) {
         return negotiationsRepository.findById(id);
@@ -59,18 +81,6 @@ public class Negotiations_Service {
 
     public List<Negotiation> findAll() {
         return negotiationsRepository.findAll();
-    }
-
-    public void lookFor_possibleNegotiations() {
-        
-        List<SingOffer> singOffers = singOffersService.findAll();
-        List<SingRequest> singRequests = singRequestsService.findAll();
-
-        /* 
-         * in the research for possible negotiation, the program searches for
-         * - singOffers and singNegotiations
-        */
-
     }
 
     public void deleteById(int id) {

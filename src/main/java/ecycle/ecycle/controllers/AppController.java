@@ -9,11 +9,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.ui.Model;
 import org.springframework.beans.factory.annotation.Autowired;
-import ecycle.ecycle.models.User;
-import ecycle.ecycle.models.bodies.RequestRequest;
-import ecycle.ecycle.models.bodies.LoginRequest;
-import ecycle.ecycle.models.bodies.ProfileEditRequest;
-import ecycle.ecycle.models.bodies.RegistrationRequest;
 import jakarta.servlet.http.HttpSession;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -41,7 +36,7 @@ public class AppController {
     @Autowired Characteristics_Service characteristicsService;
     @Autowired Negotiations_Service negotiationsService;
 
-    String hashPassword(String password) {
+    private String hashPassword(String password) {
         try {
             MessageDigest digest = MessageDigest.getInstance("SHA-256");
             byte[] hash = digest.digest(password.getBytes(StandardCharsets.UTF_8));
@@ -56,6 +51,25 @@ public class AppController {
         catch (NoSuchAlgorithmException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private void lookFor_possibleNegotiations() {
+        
+        List<SingOffer> singOffers = singOffersService.findAll();
+        List<SingRequest> singRequests = singRequestsService.findAll();
+
+        /* 
+         * in the research for possible negotiations, the does does the following:
+         * - checks if singOffers and singNegotiations with the same characteristics
+         * - checks if the singOffer or SingRequest have been associated negotiation that has been accepted
+         * - checks if the singOffer or the singRequest is already present in pending negotiations
+         * - checks if the singOffer or the singRequest have been associated in a previous negotiation
+         * - checks if the 
+         * - checks if the price of unitarySingOffer is less than or equal to the maxPrice of singRequest
+         * - checks if both singOffer and singRequest do not have ts_deletion set
+         * - checks if singOffer's expiration is after the current date
+        */
+
     }
 
     @GetMapping("/")
@@ -100,7 +114,7 @@ public class AppController {
             || loginRequest.getPassword() == null || loginRequest.getPassword().isEmpty()) {
             return "redirect:/login?error=missing";
         }
-        String hashedPassword = hashPassword(loginRequest.getPassword());
+        String hashedPassword = this.hashPassword(loginRequest.getPassword());
         
         User user = usersService.findByUsernameAndPassword(loginRequest.getUsername(), hashedPassword);
         if (user != null) {
@@ -190,7 +204,7 @@ public class AppController {
             return "redirect:/registration?error=civic_too_long";
         }
 
-        String hashedPassword = hashPassword(registrationRequest.getPassword());
+        String hashedPassword = this.hashPassword(registrationRequest.getPassword());
         User user = new User();
         user.setUsername(registrationRequest.getUsername());
         user.setName(registrationRequest.getName());
@@ -584,7 +598,7 @@ public class AppController {
         }
 
         // look for possible negotiations
-        negotiationsService.lookFor_possibleNegotiations();
+        this.lookFor_possibleNegotiations();
 
         return "redirect:/home?requestSuccess=true";
     }
@@ -844,7 +858,7 @@ public class AppController {
         }
 
         // look for possible negotiations
-        negotiationsService.lookFor_possibleNegotiations();
+        this.lookFor_possibleNegotiations();
 
         return "redirect:/home?offerSuccess=true";
     }

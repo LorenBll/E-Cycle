@@ -88,7 +88,9 @@ public class Interactions_Service {
     // register a new interaction
     public Interaction save(Interaction interaction) {
         return interactionsRepository.save(interaction);
-    }    // delete interaction
+    }    
+    
+    // delete interaction
     @Transactional
     public void delete(Interaction interaction) {
         interactionsRepository.deleteById(interaction.getId());
