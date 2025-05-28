@@ -40,6 +40,7 @@
                         <td th:text="${request.title}"></td>
                         <td th:text="${request.tsCreation}"></td>
                         <td>
+                            <a th:href="@{/viewRequestDetails(requestId=${request.id})}"><button>View</button></a>
                         </td>
                     </tr>
                 </tbody>            
@@ -64,6 +65,7 @@
                         <td th:text="${request.title}"></td>
                         <td th:text="${request.tsCreation}"></td>
                         <td>
+                            <a th:href="@{/viewRequestDetails(requestId=${request.id})}"><button>View</button></a>
                         </td>
                     </tr>
                 </tbody>            

@@ -46,6 +46,13 @@
         .inactive-table {
             opacity: 0.8;
         }
+        .revenue-summary {
+            margin: 20px 0;
+            padding: 15px;
+            background-color: #f9f9f9;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+        }
     </style>
 </head>
 <body>
@@ -113,6 +120,13 @@
                 </div>
             </div>
             
+            <!-- Revenue Summary Section -->
+            <h3 class="section-title">Revenue Summary</h3>
+            <div class="revenue-summary" style="margin: 20px 0; padding: 15px; background-color: #f9f9f9; border-radius: 5px; border: 1px solid #ddd;">
+                <p><strong>Total Revenue from Accepted Offers:</strong> <span th:text="${revenue != null ? '$' + #numbers.formatDecimal(revenue, 1, 2) : '$0.00'}">$0.00</span></p>
+                <p><em>This total includes all offers with "Accepted" status</em></p>
+            </div>
+            
             <!-- Inactive Offers Section -->
             <h3 class="section-title">Inactive Offers</h3>
             <div th:if="${inactiveSingOffers.isEmpty()}">
@@ -156,11 +170,10 @@
             </div>
         </section>
     </main>
-    
-    <script>
+      <script>
         document.addEventListener('DOMContentLoaded', function() {
             // Sort active table when clicking on headers
-            document.querySelectorAll('#singOffersTable th').forEach(header => {
+            document.querySelectorAll('#singOffersTable th').forEach((header, index) => {
                 if (!header.classList.contains('checkbox-column')) {
                     header.addEventListener('click', function() {
                         sortTable(this, 'singOffersTable');
@@ -175,6 +188,16 @@
                 });
             });
             
+            // Auto-sort tables on page load (starting with category column)
+            const sortActiveTableHeader = document.querySelector('#singOffersTable th:nth-child(2)'); // Category column
+            if (sortActiveTableHeader) {
+                sortTable(sortActiveTableHeader, 'singOffersTable');
+            }
+            
+            const sortInactiveTableHeader = document.querySelector('#inactiveSingOffersTable th:first-child'); // Category column
+            if (sortInactiveTableHeader) {
+                sortTable(sortInactiveTableHeader, 'inactiveSingOffersTable');
+            }
             // Handle delete button click with double-click confirmation
             const deleteButton = document.getElementById('deleteButton');
             let isConfirmMode = false;
@@ -224,8 +247,7 @@
                 isConfirmMode = false;
             });
         });
-        
-        // Table sorting function
+          // Table sorting function
         function sortTable(header, tableId) {
             const table = document.getElementById(tableId);
             const tbody = table.querySelector('tbody');
@@ -257,6 +279,32 @@
                 
                 if (aValue < bValue) return sortDirection === 'asc' ? -1 : 1;
                 if (aValue > bValue) return sortDirection === 'asc' ? 1 : -1;
+                
+                // If values are equal, sort by next columns (left to right)
+                if (aValue === bValue) {
+                    const columns = header.parentNode.children.length;
+                    for (let nextCol = columnIndex + 1; nextCol < columns; nextCol++) {
+                        // Skip checkbox column if present
+                        if (header.parentNode.children[nextCol].classList.contains('checkbox-column')) {
+                            continue;
+                        }
+                        
+                        aValue = a.children[nextCol].textContent.trim();
+                        bValue = b.children[nextCol].textContent.trim();
+                        
+                        const isNextColNumeric = ['Price', 'Expiration'].includes(
+                            header.parentNode.children[nextCol].textContent);
+                        
+                        if (isNextColNumeric) {
+                            aValue = parseFloat(aValue) || 0;
+                            bValue = parseFloat(bValue) || 0;
+                        }
+                        
+                        if (aValue < bValue) return sortDirection === 'asc' ? -1 : 1;
+                        if (aValue > bValue) return sortDirection === 'asc' ? 1 : -1;
+                    }
+                }
+                
                 return 0;
             });
             

@@ -98,7 +98,7 @@ public class AppController {
                 }
                 
                 // check that the user of the singOffer is not the same as the user of the singRequest
-                if (singOffer.getOffer().getUser().equals(singRequest.getRequest().getUser())) {
+                if (singOffer.getOffer().getUser().getId() == singRequest.getRequest().getUser().getId()) {
                     continue;
                 }
 
@@ -106,6 +106,8 @@ public class AppController {
                 if (singOffer.getTsDeletion() != null || singRequest.getTsDeletion() != null) {
                     continue;
                 }
+
+                // check if both singOffer and singRequest are active
 
                 /* 
                 check if the singOffer or the singRequest are inactive:
@@ -153,7 +155,6 @@ public class AppController {
 
     @GetMapping("/")
     public String index () {
-        this.routineCheck(); // todo remember to remove this line in production
         return "index";
     }
 
@@ -988,17 +989,17 @@ public class AppController {
         
         //. inactive singOffers
         // get all the inactive singOffers associated with the offer
-        List<SingOffer> rawInactiveSingOffers = singOffersService.findByOffer(offer);
+        List<SingOffer> inactiveSingOffers = singOffersService.findByOffer(offer);
         // remove all active singOffers from the list
-        for (int i = rawInactiveSingOffers.size() - 1; i >= 0; i--) {
-            SingOffer singOffer = rawInactiveSingOffers.get(i);
+        for (int i = inactiveSingOffers.size() - 1; i >= 0; i--) {
+            SingOffer singOffer = inactiveSingOffers.get(i);
             if (singOffersService.isSingOfferActive(singOffer)) {
-                rawInactiveSingOffers.remove(i);
+                inactiveSingOffers.remove(i);
             }
         }
 
         List<String> inactiveStatusesList = new ArrayList<>();
-        for (SingOffer singOffer : rawInactiveSingOffers) {
+        for (SingOffer singOffer : inactiveSingOffers) {
             boolean wasAccepted = (negotiationsService.findBySingOfferAndWasAccepted(singOffer, true) != null);
             boolean hasExpired = (singOffer.getExpiration() != null && singOffer.getExpiration().before(new java.sql.Date(System.currentTimeMillis())));
             // add the status of the singOffer to the list
@@ -1009,14 +1010,22 @@ public class AppController {
             } else {
                 inactiveStatusesList.add("Deleted");
             }
-        }        
+        }
+        
+        float revenue = 0;
+        for (SingOffer singOffer : inactiveSingOffers ) {
+            if (negotiationsService.findBySingOfferAndWasAccepted(singOffer, true) != null) {
+                revenue += singOffer.getPrice();
+            }
+        }
         
         model.addAttribute("user", user);
         model.addAttribute("offer", offer);
         model.addAttribute("singOffers", activeSingOffers);
         model.addAttribute("statuses", activeStatusesList);
-        model.addAttribute("inactiveSingOffers", rawInactiveSingOffers);
+        model.addAttribute("inactiveSingOffers", inactiveSingOffers);
         model.addAttribute("inactiveStatuses", inactiveStatusesList);
+        model.addAttribute("revenue", revenue);
         return "viewOfferDetails";
     }
 
@@ -1026,7 +1035,6 @@ public class AppController {
         HttpSession session, 
         Model model
     ) {
- 
         // check if the singOffer exists
         SingOffer singOffer = singOffersService.findById(singOfferId);
         if (singOffer == null) {
@@ -1045,14 +1053,202 @@ public class AppController {
         // delete the singOffer
         singOffersService.delete(singOffer);
 
-        // delete all the negotiations associated with the singOffer
+        // reject the negotiation associated with the singOffer
         Negotiation negotiation = negotiationsService.findBySingOfferAndTsClosureIsNull(singOffer);
+        if (negotiation == null) {
+            return "redirect:/home?offerDeleted=true";
+        }
         negotiation.setWasAccepted(false);
         negotiation.setTsClosure(new java.sql.Timestamp(System.currentTimeMillis()));
         negotiationsService.save(negotiation);
         this.routineCheck();
         return "redirect:/home?singOfferDeleted=true";
+    }
 
+    @GetMapping("/viewRequestDetails")
+    public String viewRequestDetails (
+        @RequestParam(name="requestId") int requestId,
+        HttpSession session, 
+        Model model
+    ) {
+        // get the request (of class interaction) by id
+        Interaction request = interactionsService.findById(requestId);
+        if (request == null || request.getIsOffer()) {
+            return "redirect:/home?error=request_not_found";
+        }
+        // check if user is logged in
+        User user = (User) session.getAttribute("user");
+        if (user == null) {
+            return "redirect:/login";
+        }
+        // check that the logged in user is the owner of the request
+        if (!(request.getUser().getId() == user.getId())) {
+            return "redirect:/home?error=not_authorized";
+        }
+
+        //. active singRequests
+        // get all the singRequests associated with the request
+        List<SingRequest> activeSingRequests = singRequestsService.findByRequest(request);
+        // remove all inactive singRequests from the list
+        for (int i = activeSingRequests.size() - 1; i >= 0; i--) {
+            SingRequest singRequest = activeSingRequests.get(i);
+            if (!singRequestsService.isSingRequestActive(singRequest)) {
+                activeSingRequests.remove(i);
+            }
+        }
+
+        List<String> activeStatusesList = new ArrayList<>();
+        for (SingRequest singRequest : activeSingRequests) {
+            boolean pendingNegotiation = (negotiationsService.findBySingRequestAndTsClosureIsNull(singRequest) != null);                        
+            // add the status of the singRequest to the list
+            if (pendingNegotiation) {
+                activeStatusesList.add("Pending Negotiation");
+            } else {
+                activeStatusesList.add("Yet to be Met");
+            }
+        }
+
+        List<Negotiation> activeNegotiations = new ArrayList<>();
+        for (SingRequest singRequest : activeSingRequests) {
+            Negotiation negotiation = negotiationsService.findBySingRequestAndTsClosureIsNull(singRequest);
+            activeNegotiations.add(negotiation);
+        }
+
+        //. inactive singRequests
+        // get all the inactive singRequests associated with the request
+        List<SingRequest> inactiveSingRequests = singRequestsService.findByRequest(request);
+        // remove all active singRequests from the list
+        for (int i = inactiveSingRequests.size() - 1; i >= 0; i--) {
+            SingRequest singRequest = inactiveSingRequests.get(i);
+            if (singRequestsService.isSingRequestActive(singRequest)) {
+                inactiveSingRequests.remove(i);
+            }
+        }
+
+        List<String> inactiveStatusesList = new ArrayList<>();
+        for (SingRequest singRequest : inactiveSingRequests) {
+            boolean wasAccepted = (negotiationsService.findBySingRequestAndWasAccepted(singRequest, true) != null);
+            // add the status of the singRequest to the list
+            if (wasAccepted) {
+                inactiveStatusesList.add("Accepted");
+            } else {
+                inactiveStatusesList.add("Deleted");
+            }
+        }
+
+        List<Negotiation> inactiveNegotiations = new ArrayList<>();
+        for (SingRequest singRequest : inactiveSingRequests) {
+            Negotiation negotiation = negotiationsService.findBySingRequestAndWasAccepted(singRequest, true);
+            inactiveNegotiations.add(negotiation);
+        }
+
+        model.addAttribute("user", user);
+        model.addAttribute("request", request);
+        model.addAttribute("singRequests", activeSingRequests);
+        model.addAttribute("statuses", activeStatusesList);
+        model.addAttribute("activeNegotiations", activeNegotiations);
+        model.addAttribute("inactiveSingRequests", inactiveSingRequests);
+        model.addAttribute("inactiveStatuses", inactiveStatusesList);
+        model.addAttribute("inactiveNegotiations", inactiveNegotiations);
+        return "viewRequestDetails";
+    }
+
+    @PutMapping("/deleteSingRequest")
+    public String deleteSingRequest (
+        @RequestParam(name="singRequestId") int singRequestId,
+        HttpSession session, 
+        Model model
+    ) {
+        // check if the singRequest exists
+        SingRequest singRequest = singRequestsService.findById(singRequestId);
+        if (singRequest == null) {
+            return "redirect:/home?error=singRequest_not_found";
+        }
+        // check if user is logged in
+        User user = (User) session.getAttribute("user");
+        if (user == null) {
+            return "redirect:/login";
+        }
+        // check if the logged in user is the owner of the singRequest
+        if (!(singRequest.getRequest().getUser().getId() == user.getId())) {
+            return "redirect:/home?error=not_authorized";
+        }
+
+        // delete the singRequest
+        singRequestsService.delete(singRequest);
+
+        // reject the negotiation associated with the singRequest
+        Negotiation negotiation = negotiationsService.findBySingRequestAndTsClosureIsNull(singRequest);
+        if (negotiation == null) {
+            return "redirect:/home?singRequestDeleted=true";
+        }
+        negotiation.setWasAccepted(false);
+        negotiation.setTsClosure(new java.sql.Timestamp(System.currentTimeMillis()));
+        negotiationsService.save(negotiation);
+        this.routineCheck();
+        return "redirect:/home?singRequestDeleted=true";
+    }
+
+    @PutMapping("/acceptNegotiation")
+    public String acceptNegotiation (
+        @RequestParam(name="negotiationId") int negotiationId,
+        HttpSession session, 
+        Model model
+    ) {
+        // check if the negotiation exists
+        Negotiation negotiation = negotiationsService.findById(negotiationId);
+        if (negotiation == null) {
+            return "redirect:/home?error=negotiation_not_found";
+        }
+        // check if user is logged in
+        User user = (User) session.getAttribute("user");
+        if (user == null) {
+            return "redirect:/login";
+        }
+        // check if the logged in user is the owner of the negotiation
+        if (!(negotiation.getSingRequest().getRequest().getUser().getId() == user.getId())) {
+            return "redirect:/home?error=not_authorized";
+        }
+
+        // accept the negotiation
+        negotiation.setWasAccepted(true);
+        negotiation.setTsClosure(new java.sql.Timestamp(System.currentTimeMillis()));
+        negotiationsService.save(negotiation);
+
+        this.routineCheck();
+        
+        return "redirect:/home?negotiationAccepted=true";
+    }
+
+    @PutMapping("/rejectNegotiation")
+    public String rejectNegotiation (
+        @RequestParam(name="negotiationId") int negotiationId,
+        HttpSession session, 
+        Model model
+    ) {
+        // check if the negotiation exists
+        Negotiation negotiation = negotiationsService.findById(negotiationId);
+        if (negotiation == null) {
+            return "redirect:/home?error=negotiation_not_found";
+        }
+        // check if user is logged in
+        User user = (User) session.getAttribute("user");
+        if (user == null) {
+            return "redirect:/login";
+        }
+        // check if the logged in user is the owner of the negotiation
+        if (!(negotiation.getSingRequest().getRequest().getUser().getId() == user.getId())) {
+            return "redirect:/home?error=not_authorized";
+        }
+
+        // reject the negotiation
+        negotiation.setWasAccepted(false);
+        negotiation.setTsClosure(new java.sql.Timestamp(System.currentTimeMillis()));
+        negotiationsService.save(negotiation);
+
+        this.routineCheck();
+        
+        return "redirect:/home?negotiationRejected=true";
     }
 
 }
