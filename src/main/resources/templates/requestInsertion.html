@@ -30,8 +30,7 @@
         }
     </style>
 </head>
-<body>
-    <header>
+<body>    <header>
         <div>
             <img th:src="@{/images/logos/logo.png}" alt="E-Cycle Logo">
         </div>    
@@ -39,6 +38,10 @@
     <main>
         <section>
             <h2>Insert New Request</h2>
+            <!-- Error message container for displaying validation errors -->
+            <div id="error-message-container" class="error-message" style="display: none; color: red; margin-bottom: 15px; padding: 10px; border: 1px solid #f5c6cb; border-radius: 4px; background-color: #f8d7da;">
+                <p id="error-message-text"></p>
+            </div>
             <form id="requestForm" action="/insertRequest" method="post">
                 <div class="input-group">
                     <label for="title">Request Title:</label>
@@ -177,11 +180,23 @@
             // Form submission
             document.getElementById('requestForm').addEventListener('submit', function(event) {
                 event.preventDefault();
+                  // Function to show error message in page instead of alert
+                function showError(message) {
+                    const errorContainer = document.getElementById('error-message-container');
+                    const errorText = document.getElementById('error-message-text');
+                    errorText.textContent = message;
+                    errorContainer.style.display = 'block';
+                    // Scroll to error message
+                    errorContainer.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+                
+                // Clear previous error messages
+                document.getElementById('error-message-container').style.display = 'none';
                 
                 // Validate field lengths
                 const title = document.getElementById('title').value;
                 if (title.length > 50) {
-                    alert('Title must be 50 characters or less.');
+                    showError('Title must be 50 characters or less.');
                     return;
                 }
                   // Check all characteristic sections for field lengths and validity
@@ -190,11 +205,10 @@
                 
                 sections.forEach(section => {
                     const index = section.getAttribute('data-index');
-                    
-                    // Validate quantity
+                      // Validate quantity
                     const quantity = document.getElementById(`quantity-${index}`).value;
                     if (quantity < 1) {
-                        alert(`Quantity in section #${Number(index) + 1} must be at least 1.`);
+                        showError(`Quantity in section #${Number(index) + 1} must be at least 1.`);
                         isValid = false;
                         return;
                     }
@@ -202,7 +216,7 @@
                     // Validate price
                     const price = document.getElementById(`maxPrice-${index}`).value;
                     if (parseFloat(price) < 0) {
-                        alert(`Price in section #${Number(index) + 1} cannot be negative.`);
+                        showError(`Price in section #${Number(index) + 1} cannot be negative.`);
                         isValid = false;
                         return;
                     }
@@ -210,7 +224,7 @@
                     // Validate year
                     const year = document.getElementById(`prodYear-${index}`).value;
                     if (parseInt(year) < 0) {
-                        alert(`Year in section #${Number(index) + 1} cannot be negative.`);
+                        showError(`Year in section #${Number(index) + 1} cannot be negative.`);
                         isValid = false;
                         return;
                     }
@@ -219,28 +233,27 @@
                     const quality = document.getElementById(`quality-${index}`).value;
                     const validQualities = ["Excellent", "Good", "Acceptable", "Needs Revision", "Broken"];
                     if (!validQualities.includes(quality)) {
-                        alert(`Quality in section #${Number(index) + 1} must be one of: Excellent, Good, Acceptable, Needs Revision, or Broken.`);
+                        showError(`Quality in section #${Number(index) + 1} must be one of: Excellent, Good, Acceptable, Needs Revision, or Broken.`);
                         isValid = false;
                         return;
                     }
                     
                     const mainColour = document.getElementById(`mainColour-${index}`).value;
                     if (mainColour.length > 50) {
-                        alert(`Colour in section #${Number(index) + 1} must be 50 characters or less.`);
+                        showError(`Colour in section #${Number(index) + 1} must be 50 characters or less.`);
                         isValid = false;
                         return;
                     }
-                    
-                    const functionVal = document.getElementById(`function-${index}`).value;
+                      const functionVal = document.getElementById(`function-${index}`).value;
                     if (functionVal.length > 50) {
-                        alert(`Function in section #${Number(index) + 1} must be 50 characters or less.`);
+                        showError(`Function in section #${Number(index) + 1} must be 50 characters or less.`);
                         isValid = false;
                         return;
                     }
                     
                     const batch = document.getElementById(`batch-${index}`).value;
                     if (batch && batch.length > 50) {
-                        alert(`Batch in section #${Number(index) + 1} must be 50 characters or less.`);
+                        showError(`Batch in section #${Number(index) + 1} must be 50 characters or less.`);
                         isValid = false;
                         return;
                     }
@@ -248,28 +261,28 @@
                     // Check manual input fields if they are visible and have content
                     const categoryManual = document.getElementById(`categoryManual-${index}`);
                     if (!categoryManual.classList.contains('hidden') && categoryManual.value.length > 50) {
-                        alert(`Category in section #${Number(index) + 1} must be 50 characters or less.`);
+                        showError(`Category in section #${Number(index) + 1} must be 50 characters or less.`);
                         isValid = false;
                         return;
                     }
                     
                     const natureManual = document.getElementById(`natureManual-${index}`);
                     if (!natureManual.classList.contains('hidden') && natureManual.value.length > 50) {
-                        alert(`Nature in section #${Number(index) + 1} must be 50 characters or less.`);
+                        showError(`Nature in section #${Number(index) + 1} must be 50 characters or less.`);
                         isValid = false;
                         return;
                     }
                     
                     const brandManual = document.getElementById(`brandManual-${index}`);
                     if (!brandManual.classList.contains('hidden') && brandManual.value.length > 50) {
-                        alert(`Brand in section #${Number(index) + 1} must be 50 characters or less.`);
+                        showError(`Brand in section #${Number(index) + 1} must be 50 characters or less.`);
                         isValid = false;
                         return;
                     }
                     
                     const modelManual = document.getElementById(`modelManual-${index}`);
                     if (!modelManual.classList.contains('hidden') && modelManual.value.length > 50) {
-                        alert(`Model in section #${Number(index) + 1} must be 50 characters or less.`);
+                        showError(`Model in section #${Number(index) + 1} must be 50 characters or less.`);
                         isValid = false;
                         return;
                     }

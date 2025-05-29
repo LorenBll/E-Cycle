@@ -24,10 +24,9 @@
         .actions {
             display: flex;
             justify-content: flex-end;
-            margin-top: 10px;
-        }
+            margin-top: 10px;        }
         button {
-            padding: 6px 12px;
+            /* Button styling removed as requested */
             cursor: pointer;
             margin-left: 10px;
         }
@@ -44,38 +43,16 @@
             padding-bottom: 10px;
         }
         .inactive-table {
-            opacity: 0.8;
-        }
+            opacity: 0.8;        }
+        /* All button styling classes simplified */
         .accept-button {
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            padding: 5px 10px;
-            border-radius: 3px;
-            cursor: pointer;
+            margin-left: 5px; /* Keep spacing for layout */
         }
-        .accept-button:hover {
-            background-color: #45a049;
-        }        .delete-button {
-            background-color: #f44336;
-            color: white;
-            border: none;
-            border-radius: 3px;
-        }
-        .delete-button:hover {
-            background-color: #d32f2f;
+        .delete-button {
+            margin-left: 5px; /* Keep spacing for layout */
         }
         .reject-button {
-            background-color: #ff9800;
-            color: white;
-            border: none;
-            padding: 5px 10px;
-            border-radius: 3px;
-            cursor: pointer;
-            margin-left: 5px;
-        }
-        .reject-button:hover {
-            background-color: #f57c00;
+            margin-left: 5px; /* Keep spacing for layout */
         }
     </style>
 </head>
@@ -92,9 +69,14 @@
     <main>
         <section class="request-details">
             <h2 th:text="${request.title}">Request Title</h2>
-            
-            <!-- Active Requests Section -->
+              <!-- Active Requests Section -->
             <h3 class="section-title">Active Requests</h3>
+            
+            <!-- Error message container for displaying in-page errors -->
+            <div id="error-message-container" class="error-message" style="display: none; color: red; margin-bottom: 15px; padding: 10px; border: 1px solid #f5c6cb; border-radius: 4px; background-color: #f8d7da;">
+                <p id="error-message-text"></p>
+            </div>
+            
             <div th:if="${singRequests.isEmpty()}">
                 <p>No active items available in this request</p>
             </div>
@@ -248,9 +230,8 @@
             
             deleteButton.addEventListener('click', function() {
                 const selectedRequest = document.querySelector('.single-checkbox:checked');
-                
-                if (!selectedRequest) {
-                    alert('Please select an item to delete');
+                  if (!selectedRequest) {
+                    showError('Please select an item to delete');
                     return;
                 }
                 
@@ -273,62 +254,86 @@
                 // Second click - proceed with deletion
                 fetch('/deleteSingRequest?singRequestId=' + selectedRequest.value, {
                     method: 'PUT'
-                })
-                .then(response => {
+                })                .then(response => {
                     if (response.ok || response.redirected) {
                         window.location.href = '/home?singRequestDeleted=true';
                     } else {
-                        alert('Failed to delete the item. Please try again.');
+                        showError('Failed to delete the item. Please try again.');
                     }
                 })
                 .catch(error => {
                     console.error('Error:', error);
-                    alert('An error occurred while deleting the item.');
+                    showError('An error occurred while deleting the item.');
                 });
-                
-                // Reset button
+                  // Reset button
                 deleteButton.textContent = "Delete Selected Item";
                 isConfirmMode = false;
             });
         });
-          // Function to accept a negotiation
-        function acceptNegotiation(negotiationId) {
-            if (confirm('Are you sure you want to accept this negotiation?')) {
-                fetch('/acceptNegotiation?negotiationId=' + negotiationId, {
-                    method: 'PUT'
-                })
-                .then(response => {
-                    if (response.ok || response.redirected) {
-                        window.location.href = '/home?negotiationAccepted=true';
-                    } else {
-                        alert('Failed to accept the negotiation. Please try again.');
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    alert('An error occurred while accepting the negotiation.');
-                });
-            }
-        }
         
-        // Function to reject a negotiation
-        function rejectNegotiation(negotiationId) {
-            if (confirm('Are you sure you want to reject this negotiation?')) {
-                fetch('/rejectNegotiation?negotiationId=' + negotiationId, {
-                    method: 'PUT'
-                })
-                .then(response => {
-                    if (response.ok || response.redirected) {
-                        window.location.href = '/home?negotiationRejected=true';
-                    } else {
-                        alert('Failed to reject the negotiation. Please try again.');
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    alert('An error occurred while rejecting the negotiation.');
-                });
+        // Function to accept a negotiation with confirmation
+        function acceptNegotiation(negotiationId) {
+            // Show confirmation message in page
+            showError('Click accept again to confirm this action');
+            
+            // Create a one-time event using a flag
+            if (!window.acceptConfirmationClicked) {
+                window.acceptConfirmationClicked = true;
+                
+                // Reset flag after 3 seconds
+                setTimeout(() => {
+                    window.acceptConfirmationClicked = false;
+                }, 3000);
+                
+                return;
             }
+              // The second click will execute this
+            fetch('/acceptNegotiation?negotiationId=' + negotiationId, {
+                method: 'PUT'
+            })
+            .then(response => {
+                if (response.ok || response.redirected) {
+                    window.location.href = '/home?negotiationAccepted=true';
+                } else {
+                    showError('Failed to accept the negotiation. Please try again.');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showError('An error occurred while accepting the negotiation.');
+            });
+        }        // Function to reject a negotiation with confirmation
+        function rejectNegotiation(negotiationId) {
+            // Show confirmation message in page
+            showError('Click reject again to confirm this action');
+            
+            // Create a one-time event using a flag
+            if (!window.rejectConfirmationClicked) {
+                window.rejectConfirmationClicked = true;
+                
+                // Reset flag after 3 seconds
+                setTimeout(() => {
+                    window.rejectConfirmationClicked = false;
+                }, 3000);
+                
+                return;
+            }
+            
+            // The second click will execute this
+            fetch('/rejectNegotiation?negotiationId=' + negotiationId, {
+                method: 'PUT'
+            })
+            .then(response => {
+                if (response.ok || response.redirected) {
+                    window.location.href = '/home?negotiationRejected=true';
+                } else {
+                    showError('Failed to reject the negotiation. Please try again.');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showError('An error occurred while rejecting the negotiation.');
+            });
         }
           
         // Table sorting function
@@ -336,8 +341,19 @@
             const table = document.getElementById(tableId);
             const tbody = table.querySelector('tbody');
             const rows = Array.from(tbody.querySelectorAll('tr'));
+              const columnIndex = Array.from(header.parentNode.children).indexOf(header);
             
-            const columnIndex = Array.from(header.parentNode.children).indexOf(header);
+            // Check if the column contains timestamp data (do not use for sorting as requested)
+            const isTimestamp = ['Date', 'Created', 'Updated', 'Time'].some(term => 
+                header.textContent.includes(term));
+                
+            if (isTimestamp) {
+                // Add a comment to indicate timestamps are not considered for sorting
+                console.log('Timestamp columns are not considered for sorting as requested');
+                return; // Skip sorting for timestamp columns
+            }
+            
+            // Only consider Price as numeric for sorting
             const isNumeric = ['Price'].includes(header.textContent);
             
             // Determine sort direction
@@ -394,6 +410,21 @@
             
             // Re-append rows in the new order
             rows.forEach(row => tbody.appendChild(row));
+        }
+        
+        // Function to show error message in page instead of alert
+        function showError(message) {
+            const errorContainer = document.getElementById('error-message-container');
+            const errorText = document.getElementById('error-message-text');
+            errorText.textContent = message;
+            errorContainer.style.display = 'block';
+            // Scroll to error message
+            errorContainer.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            
+            // Hide the message after 5 seconds
+            setTimeout(() => {
+                errorContainer.style.display = 'none';
+            }, 5000);
         }
     </script>
 </body>

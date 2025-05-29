@@ -25,9 +25,8 @@
             display: flex;
             justify-content: flex-end;
             margin-top: 10px;
-        }
-        button {
-            padding: 6px 12px;
+        }        button {
+            /* Button styling removed as requested */
             cursor: pointer;
             margin-left: 10px;
         }
@@ -71,6 +70,12 @@
             
             <!-- Active Offers Section -->
             <h3 class="section-title">Active Offers</h3>
+            
+            <!-- Error message container for displaying in-page errors -->
+            <div id="error-message-container" class="error-message" style="display: none; color: red; margin-bottom: 15px; padding: 10px; border: 1px solid #f5c6cb; border-radius: 4px; background-color: #f8d7da;">
+                <p id="error-message-text"></p>
+            </div>
+            
             <div th:if="${singOffers.isEmpty()}">
                 <p>No active items available in this offer</p>
             </div>
@@ -171,6 +176,21 @@
         </section>
     </main>
       <script>
+        // Function to show error message in page instead of alert
+        function showError(message) {
+            const errorContainer = document.getElementById('error-message-container');
+            const errorText = document.getElementById('error-message-text');
+            errorText.textContent = message;
+            errorContainer.style.display = 'block';
+            // Scroll to error message
+            errorContainer.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            
+            // Hide the message after 5 seconds
+            setTimeout(() => {
+                errorContainer.style.display = 'none';
+            }, 5000);
+        }
+        
         document.addEventListener('DOMContentLoaded', function() {
             // Sort active table when clicking on headers
             document.querySelectorAll('#singOffersTable th').forEach((header, index) => {
@@ -204,9 +224,8 @@
             
             deleteButton.addEventListener('click', function() {
                 const selectedOffer = document.querySelector('input[name="selectedOffer"]:checked');
-                
-                if (!selectedOffer) {
-                    alert('Please select an item to delete');
+                  if (!selectedOffer) {
+                    showError('Please select an item to delete');
                     return;
                 }
                 
@@ -229,17 +248,16 @@
                 // Second click - proceed with deletion
                 fetch('/deleteSingOffer?singOfferId=' + selectedOffer.value, {
                     method: 'PUT'
-                })
-                .then(response => {
+                })                .then(response => {
                     if (response.ok || response.redirected) {
                         window.location.href = '/home?singOfferDeleted=true';
                     } else {
-                        alert('Failed to delete the item. Please try again.');
+                        showError('Failed to delete the item. Please try again.');
                     }
                 })
                 .catch(error => {
                     console.error('Error:', error);
-                    alert('An error occurred while deleting the item.');
+                    showError('An error occurred while deleting the item.');
                 });
                 
                 // Reset button
@@ -252,10 +270,20 @@
             const table = document.getElementById(tableId);
             const tbody = table.querySelector('tbody');
             const rows = Array.from(tbody.querySelectorAll('tr'));
+              const columnIndex = Array.from(header.parentNode.children).indexOf(header);
             
-            const columnIndex = Array.from(header.parentNode.children).indexOf(header);
-            const isNumeric = ['Price', 'Expiration'].includes(header.textContent);
+            // Check if the column contains timestamp data (do not use for sorting as requested)
+            const isTimestamp = ['Date', 'Created', 'Updated', 'Time'].some(term => 
+                header.textContent.includes(term));
+                
+            if (isTimestamp) {
+                // Add a comment to indicate timestamps are not considered for sorting
+                console.log('Timestamp columns are not considered for sorting as requested');
+                return; // Skip sorting for timestamp columns
+            }
             
+            // Only consider Price as numeric for sorting
+            const isNumeric = ['Price'].includes(header.textContent);
             // Determine sort direction
             const sortDirection = header.getAttribute('data-sort') === 'asc' ? 'desc' : 'asc';
             
@@ -292,7 +320,8 @@
                         aValue = a.children[nextCol].textContent.trim();
                         bValue = b.children[nextCol].textContent.trim();
                         
-                        const isNextColNumeric = ['Price', 'Expiration'].includes(
+                        // Only consider Price as numeric, not timestamps (as requested)
+                        const isNextColNumeric = ['Price'].includes(
                             header.parentNode.children[nextCol].textContent);
                         
                         if (isNextColNumeric) {

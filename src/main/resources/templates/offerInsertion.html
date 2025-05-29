@@ -37,8 +37,13 @@
         </div>    
     </header>
     <main>
-        <section>
-            <h2>Insert New Offer</h2>
+        <section>            <h2>Insert New Offer</h2>
+            
+            <!-- Error message container for displaying in-page errors -->
+            <div id="error-message-container" class="error-message" style="display: none; color: red; margin-bottom: 15px; padding: 10px; border: 1px solid #f5c6cb; border-radius: 4px; background-color: #f8d7da;">
+                <p id="error-message-text"></p>
+            </div>
+            
             <form id="offerForm" action="/insertOffer" method="post">
                 <div class="input-group">
                     <label for="title">Offer Title:</label>
@@ -192,11 +197,10 @@
             // Form submission
             document.getElementById('offerForm').addEventListener('submit', function(event) {
                 event.preventDefault();
-                
-                // Validate field lengths
+                  // Validate field lengths
                 const title = document.getElementById('title').value;
                 if (title.length > 50) {
-                    alert('Title must be less than 50 characters');
+                    showError('Title must be less than 50 characters');
                     return;
                 }
                 
@@ -218,11 +222,10 @@
                         { id: `batch-${index}`, length: 50 },
                         { id: `description-${index}`, length: 500 }
                     ];
-                    
-                    manualFields.forEach(field => {
+                      manualFields.forEach(field => {
                         const element = document.getElementById(field.id);
                         if (element && element.value && element.value.length > field.length) {
-                            alert(`${field.id} must be less than ${field.length} characters`);
+                            showError(`${field.id} must be less than ${field.length} characters`);
                             isValid = false;
                         }
                     });
@@ -233,13 +236,12 @@
                         { id: `quantity-${index}`, min: 1 },
                         { id: `pricePerUnit-${index}`, min: 0 }
                     ];
-                    
-                    numericFields.forEach(field => {
+                      numericFields.forEach(field => {
                         const element = document.getElementById(field.id);
                         if (element) {
                             const value = parseFloat(element.value);
                             if (isNaN(value) || value < field.min || (field.max && value > field.max)) {
-                                alert(`${field.id} must be a valid number between ${field.min} and ${field.max || 'infinity'}`);
+                                showError(`${field.id} must be a valid number between ${field.min} and ${field.max || 'infinity'}`);
                                 isValid = false;
                             }
                         }
@@ -253,11 +255,10 @@
                         `model-${index}`,
                         `quality-${index}`
                     ];
-                    
-                    requiredSelects.forEach(id => {
+                      requiredSelects.forEach(id => {
                         const element = document.getElementById(id);
                         if (element && element.value === '' && !document.getElementById(`${id.split('-')[0]}Manual-${index}`).value) {
-                            alert(`Please select a ${id.split('-')[0]}`);
+                            showError(`Please select a ${id.split('-')[0]}`);
                             isValid = false;
                         }
                     });
@@ -332,20 +333,34 @@
                         'Content-Type': 'application/json',
                     },
                     body: JSON.stringify(offerData)
-                })
-                .then(response => {
+                })                .then(response => {
                     if (response.ok || response.redirected) {
                         window.location.href = '/home?offerSuccess=true';
                     } else {
-                        alert('There was an error submitting your offer. Please try again.');
+                        showError('There was an error submitting your offer. Please try again.');
                     }
                 })
                 .catch(error => {
                     console.error('Error:', error);
-                    alert('There was an error submitting your offer. Please try again.');
+                    showError('There was an error submitting your offer. Please try again.');
                 });
             });
         });
+        
+        // Function to show error message in page instead of alert
+        function showError(message) {
+            const errorContainer = document.getElementById('error-message-container');
+            const errorText = document.getElementById('error-message-text');
+            errorText.textContent = message;
+            errorContainer.style.display = 'block';
+            // Scroll to error message
+            errorContainer.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            
+            // Hide the message after 5 seconds
+            setTimeout(() => {
+                errorContainer.style.display = 'none';
+            }, 5000);
+        }
         
         function createCharacteristicsSection(index) {
             const section = document.createElement('div');

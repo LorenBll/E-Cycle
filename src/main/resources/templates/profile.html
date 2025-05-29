@@ -16,10 +16,14 @@
             <a href="/home">Home</a>
         </div>    
     </header>
-    <main>
-        <!-- Edit Profile Form -->
+    <main>        <!-- Edit Profile Form -->
         <section id="edit-profile-form">
             <h2>Edit Profile</h2>
+            
+            <!-- Error message container for displaying in-page errors -->
+            <div id="error-message-container" class="error-message" style="display: none; color: red; margin-bottom: 15px; padding: 10px; border: 1px solid #f5c6cb; border-radius: 4px; background-color: #f8d7da;">
+                <p id="error-message-text"></p>
+            </div>
             
             <form id="profileEditForm">
                 <div class="profile-section">
@@ -145,6 +149,20 @@
         </section>    
     </main>        
     <script>        
+        // Function to show error message in page instead of alert
+        function showError(message) {
+            const errorContainer = document.getElementById('error-message-container');
+            const errorText = document.getElementById('error-message-text');
+            errorText.textContent = message;
+            errorContainer.style.display = 'block';
+            // Scroll to error message
+            errorContainer.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            
+            // Hide the message after 5 seconds
+            setTimeout(() => {
+                errorContainer.style.display = 'none';
+            }, 5000);
+        }
         
         function deleteAccount() {
             const deleteBtn = document.getElementById('delete-account-btn');
@@ -166,10 +184,9 @@
                         window.location.href = response.url;
                     } else {
                         window.location.href = "/login?deleted=true";
-                    }
-                }).catch(error => {
+                    }                }).catch(error => {
                     console.error('Error:', error);
-                    alert('An error occurred while trying to delete your account. Please try again later.');
+                    showError('An error occurred while trying to delete your account. Please try again later.');
                 });
             }
         }
