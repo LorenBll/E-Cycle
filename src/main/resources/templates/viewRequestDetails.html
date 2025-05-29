@@ -3,58 +3,7 @@
 <head>    
     <title>E-Cycle - Request Details</title>
     <link rel="icon" th:href="@{/images/logos/logoIcon.png}" type="image/png">
-    <style>
-        .request-details {
-            margin: 20px 0;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-bottom: 20px;
-        }
-        th, td {
-            padding: 8px;
-            border: 1px solid #ddd;
-            text-align: left;
-        }
-        th {
-            background-color: #f2f2f2;
-            cursor: pointer;
-        }
-        .actions {
-            display: flex;
-            justify-content: flex-end;
-            margin-top: 10px;        }
-        button {
-            /* Button styling removed as requested */
-            cursor: pointer;
-            margin-left: 10px;
-        }
-        .checkbox-column {
-            width: 50px;
-            text-align: center;
-        }
-        .checkbox-options {
-            margin-top: 10px;
-        }
-        .section-title {
-            margin-top: 30px;
-            border-bottom: 1px solid #ddd;
-            padding-bottom: 10px;
-        }
-        .inactive-table {
-            opacity: 0.8;        }
-        /* All button styling classes simplified */
-        .accept-button {
-            margin-left: 5px; /* Keep spacing for layout */
-        }
-        .delete-button {
-            margin-left: 5px; /* Keep spacing for layout */
-        }
-        .reject-button {
-            margin-left: 5px; /* Keep spacing for layout */
-        }
-    </style>
+    <link rel="stylesheet" th:href="@{/css/viewRequestDetails.css}">
 </head>
 <body>
     <header>
@@ -72,8 +21,7 @@
               <!-- Active Requests Section -->
             <h3 class="section-title">Active Requests</h3>
             
-            <!-- Error message container for displaying in-page errors -->
-            <div id="error-message-container" class="error-message" style="display: none; color: red; margin-bottom: 15px; padding: 10px; border: 1px solid #f5c6cb; border-radius: 4px; background-color: #f8d7da;">
+            <!-- Error message container for displaying in-page errors -->            <div id="error-message-container" class="error-message" style="display: none;">
                 <p id="error-message-text"></p>
             </div>
             

@@ -3,27 +3,28 @@
 <head>    
     <title>E-Cycle - Error</title>
     <link rel="icon" th:href="@{/images/logos/logoIcon.png}" type="image/png">
+    <link rel="stylesheet" th:href="@{/css/error.css}">
 </head>
 <body>
-    <section id="error-content">
-        <div>
-            <img th:src="@{/images/logos/logo.png}" alt="E-Cycle Logo">
-            <h1>An Error Occurred</h1>
-            <div>
-                <div th:text="${status != null ? status : 'Error'}">404</div>
-                
-                <div th:text="${error != null ? error : 'Something went wrong'}">
-                    Page not found
-                </div>
-                
-                <div th:if="${exception != null}">
-                    <p><strong>Exception:</strong> <span th:text="${exception.message}">Exception message</span></p>
-                    <p th:if="${trace != null}"><strong>Stack trace:</strong> <span th:text="${trace}">Stack trace</span></p>
-                </div>
-                
-                <a href="/">Back to Homepage</a>
-            </div>
-        </div>    
-    </section>
+    <div class="logo-container">
+        <img th:src="@{/images/logos/logo.png}" alt="E-Cycle Logo">
+    </div>
+    
+    <div class="error-card">
+        <h2>An Error Occurred</h2>
+        
+        <div class="error-code" th:text="${status != null ? status : 'Error'}">404</div>
+        
+        <div class="error-message" th:text="${error != null ? error : 'Something went wrong'}">
+            Page not found
+        </div>
+        
+        <div class="error-details" th:if="${exception != null}">
+            <p><strong>Exception:</strong> <span th:text="${exception.message}">Exception message</span></p>
+            <p th:if="${trace != null}"><strong>Stack trace:</strong> <span th:text="${trace}">Stack trace</span></p>
+        </div>
+        
+        <a href="/" class="back-link">Back to Homepage</a>
+    </div>
 </body>
 </html>

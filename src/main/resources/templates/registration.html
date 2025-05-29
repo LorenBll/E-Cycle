@@ -3,156 +3,182 @@
 <head>    
     <title>E-Cycle - Registration</title>
     <link rel="icon" th:href="@{/images/logos/logoIcon.png}" type="image/png">
-    <style>
-        .password-container {
-            position: relative;
-        }
-        
-        .toggle-password {
-            position: absolute;
-            right: 10px;
-            top: 50%;
-            transform: translateY(-50%);
-            cursor: pointer;
-        }
-          .error-message {
-            color: red;
-        }
-        
-        .password-instructions {
-            font-size: 0.8em;
-            color: #666;
-            margin-top: -5px;
-            margin-bottom: 10px;
-        }
-    </style>
+    <link rel="stylesheet" th:href="@{/css/registration.css}">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 <body>
-    <section>
-        <div>
-            <img th:src="@{/images/logos/logo.png}" alt="E-Cycle Logo">
-            <h2>Registration</h2>            <form id="registrationForm" onsubmit="submitRegistrationForm(event)">
-                <div>
-                    <label for="username">Username*</label>
-                    <input type="text" id="username" name="username" required maxlength="50">
-                </div>
-                <div>
-                    <label for="name">Name</label>
-                    <input type="text" id="name" name="name" maxlength="50">
-                </div>
-                <div>
-                    <label for="surname">Surname</label>
-                    <input type="text" id="surname" name="surname" maxlength="50">
-                </div>
-                <div>
-                    <label for="email">Email*</label>
-                    <input type="email" id="email" name="email" required maxlength="100">                
-                </div>
-                <div class="password-container">
-                    <label for="password">Password*</label>
-                    <input type="password" id="password" name="password" required>
-                    <span class="toggle-password" onclick="togglePassword('password', 'eye-icon-open-password', 'eye-icon-closed-password')">
-                        <span id="eye-icon-open-password" style="display:inline;">👁️</span>
-                        <span id="eye-icon-closed-password" style="display:none;">👁️‍🗨️</span>
-                    </span>
-                </div>
-                <div class="password-instructions">
-                    <small>Password requirements: at least 8 characters, 1 uppercase letter, and 1 special character.</small>
-                </div>
-                <div class="password-container">
-                    <label for="confirmPassword">Confirm Password*</label>
-                    <input type="password" id="confirmPassword" name="confirmPassword" required>
-                    <span class="toggle-password" onclick="togglePassword('confirmPassword', 'eye-icon-open-confirm', 'eye-icon-closed-confirm')">
-                        <span id="eye-icon-open-confirm" style="display:inline;">👁️</span>
-                        <span id="eye-icon-closed-confirm" style="display:none;">👁️‍🗨️</span>
-                    </span>
-                </div>
-                <div>
-                    <label for="state">State*</label>
-                    <input type="text" id="state" name="state" required maxlength="50">
-                </div>
-                <div>
-                    <label for="region">Region*</label>
-                    <input type="text" id="region" name="region" required maxlength="50">
-                </div>
-                <div>
-                    <label for="province">Province*</label>
-                    <input type="text" id="province" name="province" required maxlength="50">
-                </div>
-                <div>
-                    <label for="city">City*</label>
-                    <input type="text" id="city" name="city" required maxlength="50">
-                </div>
-                <div>
-                    <label for="street">Street*</label>
-                    <input type="text" id="street" name="street" required maxlength="100">
-                </div>                
-                <div>
-                    <label for="civic">Civic Number*</label>
-                    <input type="text" id="civic" name="civic" required maxlength="50">
-                </div>
-                <div id="password-validation-error" class="error-message" style="display: none;">
-                    <p id="password-validation-message"></p>
-                </div>
-                <div th:if="${error}" class="error-message">
-                    <p th:text="${error}">Error message</p>
-                </div>
-                <div>
-                    <button type="submit">Register</button>
-                </div>
-            </form>
-            
-            <script>
-                function submitRegistrationForm(event) {
-                    event.preventDefault();
-                    if (!validateForm()) {
-                        return;
-                    }
-                    
-                    const formData = {
-                        username: document.getElementById('username').value,
-                        name: document.getElementById('name').value,
-                        surname: document.getElementById('surname').value,
-                        email: document.getElementById('email').value,
-                        password: document.getElementById('password').value,
-                        state: document.getElementById('state').value,
-                        region: document.getElementById('region').value,
-                        province: document.getElementById('province').value,
-                        city: document.getElementById('city').value,
-                        street: document.getElementById('street').value,
-                        civic: document.getElementById('civic').value
-                    };
-                      fetch('/register', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify(formData)
-                    })
-                    .then(response => {
-                        if (response.redirected) {
-                            window.location.href = response.url;
-                        } else if (response.ok) {
-                            window.location.href = '/home';
-                        } else {
-                            console.error('Registration failed');
-                            // Handle error response
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Error:', error);
-                    });
-                }
-            </script>
-            <div>                
-                <p><a href="/login">Already have an account? Login</a></p>
-                <p><a href="/">Back to the Initial Page</a></p>
-            </div>
+    <div class="logo-container">
+        <img th:src="@{/images/logos/logo.png}" alt="E-Cycle Logo">
+    </div>
+    
+    <div class="card">
+        <h2>Registration</h2>
+        
+        <div class="links">
+            <a href="/login">Login</a>
+            <a href="/">Home</a>
         </div>
-    </section>
-      
+        
+        <form id="registrationForm" onsubmit="submitRegistrationForm(event)">
+            <!-- Personal Information -->
+            <div class="form-group">
+                <label for="username">Username*</label>
+                <input type="text" id="username" name="username" required maxlength="50">
+            </div>
+            
+            <div class="form-row">
+                <div class="form-column">
+                    <div class="form-group">
+                        <label for="name">Name</label>
+                        <input type="text" id="name" name="name" maxlength="50">
+                    </div>
+                </div>
+                <div class="form-column">
+                    <div class="form-group">
+                        <label for="surname">Surname</label>
+                        <input type="text" id="surname" name="surname" maxlength="50">
+                    </div>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="email">Email*</label>
+                <input type="email" id="email" name="email" required maxlength="100">                
+            </div>
+            
+            <!-- Password Fields -->
+            <div class="form-group password-container">
+                <label for="password">Password*</label>
+                <input type="password" id="password" name="password" required>
+                <span class="toggle-password" onclick="togglePassword('password', 'eye-icon-open-password', 'eye-icon-closed-password')">
+                    <span id="eye-icon-open-password" style="display:inline;">👁️</span>
+                    <span id="eye-icon-closed-password" style="display:none;">👁️‍🗨️</span>
+                </span>
+            </div>
+            
+            <div class="password-instructions">
+                Password requirements: at least 8 characters, 1 uppercase letter, and 1 special character.
+            </div>
+            
+            <div class="form-group password-container">
+                <label for="confirmPassword">Confirm Password*</label>
+                <input type="password" id="confirmPassword" name="confirmPassword" required>
+                <span class="toggle-password" onclick="togglePassword('confirmPassword', 'eye-icon-open-confirm', 'eye-icon-closed-confirm')">
+                    <span id="eye-icon-open-confirm" style="display:inline;">👁️</span>
+                    <span id="eye-icon-closed-confirm" style="display:none;">👁️‍🗨️</span>
+                </span>
+            </div>
+            
+            <!-- Address Information - Two column layout -->
+            <h3 style="text-align: left; color: #4CAF50; margin-top: 20px;">Address Information</h3>
+            
+            <div class="form-row">
+                <div class="form-column">
+                    <div class="form-group">
+                        <label for="state">State*</label>
+                        <input type="text" id="state" name="state" required maxlength="50">
+                    </div>
+                </div>
+                <div class="form-column">
+                    <div class="form-group">
+                        <label for="region">Region*</label>
+                        <input type="text" id="region" name="region" required maxlength="50">
+                    </div>
+                </div>
+            </div>
+            
+            <div class="form-row">
+                <div class="form-column">
+                    <div class="form-group">
+                        <label for="province">Province*</label>
+                        <input type="text" id="province" name="province" required maxlength="50">
+                    </div>
+                </div>
+                <div class="form-column">
+                    <div class="form-group">
+                        <label for="city">City*</label>
+                        <input type="text" id="city" name="city" required maxlength="50">
+                    </div>
+                </div>
+            </div>
+            
+            <div class="form-row">
+                <div class="form-column">
+                    <div class="form-group">
+                        <label for="street">Street*</label>
+                        <input type="text" id="street" name="street" required maxlength="100">
+                    </div>
+                </div>
+                <div class="form-column">
+                    <div class="form-group">
+                        <label for="civic">Civic Number*</label>
+                        <input type="text" id="civic" name="civic" required maxlength="50">
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Error Messages -->
+            <div id="password-validation-error" class="error-message" style="display: none;">
+                <p id="password-validation-message"></p>
+            </div>
+            
+            <div th:if="${error}" class="error-message">
+                <p th:text="${error}">Error message</p>
+            </div>
+            
+            <button type="submit">Register</button>
+        </form>
+        
+        <div class="bottom-links">
+            <p><a href="/login">Already have an account? Login</a></p>
+            <p><a href="/">Back to the Initial Page</a></p>
+        </div>
+    </div>
+    
     <script>
-
+        function submitRegistrationForm(event) {
+            event.preventDefault();
+            if (!validateForm()) {
+                return;
+            }
+            
+            const formData = {
+                username: document.getElementById('username').value,
+                name: document.getElementById('name').value,
+                surname: document.getElementById('surname').value,
+                email: document.getElementById('email').value,
+                password: document.getElementById('password').value,
+                state: document.getElementById('state').value,
+                region: document.getElementById('region').value,
+                province: document.getElementById('province').value,
+                city: document.getElementById('city').value,
+                street: document.getElementById('street').value,
+                civic: document.getElementById('civic').value
+            };
+              
+            fetch('/register', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(formData)
+            })
+            .then(response => {
+                if (response.redirected) {
+                    window.location.href = response.url;
+                } else if (response.ok) {
+                    window.location.href = '/home';
+                } else {
+                    console.error('Registration failed');
+                    // Handle error response
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        }
+    </script>
+        <script>
         function togglePassword(inputId, openEyeId, closedEyeId) {
             const passwordInput = document.getElementById(inputId);
             const openEye = document.getElementById(openEyeId);
@@ -343,7 +369,6 @@
             errorDiv.style.display = 'none';            
             return true;
         }
-        
     </script>
 </body>
 </html>

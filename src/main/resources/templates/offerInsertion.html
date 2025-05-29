@@ -3,41 +3,16 @@
 <head>    
     <title>E-Cycle - Offer Insertion</title>
     <link rel="icon" th:href="@{/images/logos/logoIcon.png}" type="image/png">
-    <style>
-        .characteristics-section {
-            border: 1px solid #ddd;
-            padding: 15px;
-            margin-bottom: 15px;
-            position: relative;
-        }
-        .section-header {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 10px;
-        }
-        .input-group {
-            margin-bottom: 10px;
-        }
-        .input-group label {
-            display: block;
-            margin-bottom: 5px;
-        }
-        .btn-container {
-            margin: 20px 0;
-        }
-        .hidden {
-            display: none;
-        }
-    </style>
+    <link rel="stylesheet" th:href="@{/css/offerInsertion.css}">
 </head>
 <body>
     <header>
-        <div>
-            <img th:src="@{/images/logos/logo.png}" alt="E-Cycle Logo">
-        </div>    
+        <img th:src="@{/images/logos/logo.png}" alt="E-Cycle Logo">
     </header>
     <main>
-        <section>            <h2>Insert New Offer</h2>
+        <div class="main-card">
+            <section>
+            <h2>Insert New Offer</h2>
             
             <!-- Error message container for displaying in-page errors -->
             <div id="error-message-container" class="error-message" style="display: none; color: red; margin-bottom: 15px; padding: 10px; border: 1px solid #f5c6cb; border-radius: 4px; background-color: #f8d7da;">
@@ -160,9 +135,9 @@
                 <div class="btn-container">
                     <button type="button" id="cancelOfferBtn">Cancel Offer</button>
                     <button type="submit">Confirm</button>
-                </div>
-            </form>
+                </div>            </form>
         </section>
+        </div>
     </main>
     <script th:inline="javascript">
         // Get all models from the server

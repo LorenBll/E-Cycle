@@ -3,27 +3,22 @@
 <head>    
     <title>E-Cycle - Home</title>
     <link rel="icon" th:href="@{/images/logos/logoIcon.png}" type="image/png">
+    <link rel="stylesheet" th:href="@{/css/home.css}">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
-<body>
-    <header>
+<body>    <header>
         <div>
             <img th:src="@{/images/logos/logo.png}" alt="E-Cycle Logo">
-            <h1>Welcome to E-Cycle</h1>
-        </div>    
-    </header>
-    <main>
-        <section>
-            <h2>Your E-Cycle Dashboard</h2>
-            <p>Welcome to your personalized E-Cycle dashboard. From here you can manage your account and activities.</p>
-            
-            <div>
-                <a href="/profile">View Profile</a>
-             </div>
-        </section>
+        </div>        
+        <div class="navigation-links">
+            <a href="/profile">View Profile</a>
+            <a href="/requestInsertion">Create New Request</a>
+            <a href="/offerInsertion">Create New Offer</a>
+        </div>
+    </header>    <main>
         <!-- Active Requests Section -->
-        <section>
+        <section class="card-1">
             <h2>Active Requests</h2>
-            <button onclick="window.location.href='/requestInsertion'">Create New Request</button>
             <div th:if="${activeRequests.isEmpty()}">
                 <p>No Active Requests</p>
             </div>
@@ -44,10 +39,9 @@
                         </td>
                     </tr>
                 </tbody>            
-            </table>
-        </section>
+            </table>        </section>
         <!-- Inactive Requests Section -->
-        <section>
+        <section class="card-2">
             <h2>Inactive Requests</h2>
             <div th:if="${inactiveRequests.isEmpty()}">
                 <p>No Inactive Requests</p>
@@ -69,12 +63,9 @@
                         </td>
                     </tr>
                 </tbody>            
-            </table>
-        </section>
-        <!-- Active Offers Section -->
-        <section>
+            </table>        </section>        <!-- Active Offers Section -->
+        <section class="card-3">
             <h2>Active Offers</h2>
-            <button onclick="window.location.href='/offerInsertion'">Create New Offer</button>
             <div th:if="${activeOffers.isEmpty()}">
                 <p>No Active Offers</p>
             </div>
@@ -95,10 +86,9 @@
                         </td>
                     </tr>
                 </tbody>            
-            </table>
-        </section>
+            </table>        </section>
         <!-- Inactive Offers Section -->
-        <section>
+        <section class="card-4">
             <h2>Inactive Offers</h2>
             <div th:if="${inactiveOffers.isEmpty()}">
                 <p>No Inactive Offers</p>

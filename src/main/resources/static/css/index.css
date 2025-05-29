@@ -1,0 +1,86 @@
+/* Font face definition */
+@font-face {
+    font-family: 'Croogla4F';
+    src: url('../fonts/Croogla4F.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+/* Index page styling */
+body {
+    margin: 0;
+    padding: 0;
+    background-color: #333333; /* dark gray background, same as home page */
+    font-family: 'Croogla4F', Arial, sans-serif;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    overflow: hidden; /* Hide scrollbars */
+}
+
+.container {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.logo {
+    margin-bottom: 30px;
+    opacity: 0;
+    transform: translateY(50px);
+    animation: fadeInUp 0.8s ease forwards;
+}
+
+.logo img {
+    max-width: 400px; /* Increased from 300px to 400px */
+}
+
+.links {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    opacity: 0;
+    transform: translateY(50px);
+    animation: fadeInUp 0.8s ease forwards;
+    animation-delay: 0.5s; /* Delay appearance of links */
+}
+
+.links a {
+    padding: 12px 24px;
+    background-color: #4CAF50;
+    color: white;
+    text-decoration: none;
+    border-radius: 4px;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+}
+
+.links a:hover {
+    background-color: #45a049;
+}
+
+/* Animations */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(50px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}

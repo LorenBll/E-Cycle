@@ -3,46 +3,19 @@
 <head>    
     <title>E-Cycle - Request Insertion</title>
     <link rel="icon" th:href="@{/images/logos/logoIcon.png}" type="image/png">
-    <style>
-        .characteristics-section {
-            border: 1px solid #ddd;
-            padding: 15px;
-            margin-bottom: 15px;
-            position: relative;
-        }
-        .section-header {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 10px;
-        }
-        .input-group {
-            margin-bottom: 10px;
-        }
-        .input-group label {
-            display: block;
-            margin-bottom: 5px;
-        }
-        .btn-container {
-            margin: 20px 0;
-        }
-        .hidden {
-            display: none;
-        }
-    </style>
+    <link rel="stylesheet" th:href="@{/css/requestInsertion.css}">
 </head>
-<body>    <header>
-        <div>
-            <img th:src="@{/images/logos/logo.png}" alt="E-Cycle Logo">
-        </div>    
+<body>    
+    <header>
+        <img th:src="@{/images/logos/logo.png}" alt="E-Cycle Logo">   
     </header>
     <main>
-        <section>
+        <div class="main-card">
             <h2>Insert New Request</h2>
             <!-- Error message container for displaying validation errors -->
-            <div id="error-message-container" class="error-message" style="display: none; color: red; margin-bottom: 15px; padding: 10px; border: 1px solid #f5c6cb; border-radius: 4px; background-color: #f8d7da;">
+            <div id="error-message-container" class="error-message" style="display: none;">
                 <p id="error-message-text"></p>
-            </div>
-            <form id="requestForm" action="/insertRequest" method="post">
+            </div>            <form id="requestForm" action="/insertRequest" method="post">
                 <div class="input-group">
                     <label for="title">Request Title:</label>
                     <input type="text" id="title" name="title" required maxlength="50">
@@ -51,7 +24,7 @@
                 <button type="button" id="addCharacteristicsBtn">Add Another Characteristics Section</button>
                 
                 <div id="characteristicsContainer">
-                    <div class="characteristics-section" data-index="0">                        <div class="section-header">
+                    <div class="characteristics-section" data-index="0"><div class="section-header">
                             <h3>Characteristics #1</h3>
                             <div>
                                 <button type="button" class="cancelSectionBtn" data-index="0" disabled>Cancel</button>
@@ -143,9 +116,8 @@
                 <div class="btn-container">
                     <button type="button" id="cancelRequestBtn">Cancel Request</button>
                     <button type="submit">Confirm</button>
-                </div>
-            </form>
-        </section>
+                </div>            </form>
+        </div>
     </main>
       <script th:inline="javascript">
         // Get all models from the server

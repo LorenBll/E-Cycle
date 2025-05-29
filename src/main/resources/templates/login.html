@@ -3,96 +3,79 @@
 <head>    
     <title>E-Cycle - Login</title>    
     <link rel="icon" th:href="@{/images/logos/logoIcon.png}" type="image/png">
-    <style>
-        .password-container {
-            position: relative;
-        }
-        .toggle-password {
-            position: absolute;
-            right: 10px;
-            top: 50%;
-            transform: translateY(-50%);
-            cursor: pointer;
-        }
-        .error-message {
-            color: red;
-        }
-        .success-message {
-            color: green;
-        }
-    </style>
+    <link rel="stylesheet" th:href="@{/css/login.css}">
 </head>
 <body>
-    <section>
-        <div>
-            <img th:src="@{/images/logos/logo.png}" alt="E-Cycle Logo">            
-            <h2>Login</h2>            <form id="loginForm" onsubmit="submitLoginForm(event)">
-                <div>
-                    <label for="username">Username</label>
-                    <input type="text" id="username" name="username" required>                
-                </div>
-                <div class="password-container">
-                    <label for="password">Password</label>
-                    <input type="password" id="password" name="password" required>
-                    <span class="toggle-password" onclick="togglePassword()">
-                        <span id="eye-icon-open" style="display:inline;">👁️</span>
-                        <span id="eye-icon-closed" style="display:none;">👁️‍🗨️</span>
-                    </span>
-                </div>
-                <div th:if="${error}" class="error-message">
-                    <p th:text="${error}">Error message</p>
-                </div>
-                <div th:if="${success}" class="success-message">
-                    <p th:text="${success}">Success message</p>
-                </div>
-                <div>
-                    <button type="submit">Login</button>
-                </div>
-            </form>
-            
-            <script>
-                function submitLoginForm(event) {
-                    event.preventDefault();
-                    if (!validateLoginForm()) {
-                        return;
-                    }
-                    
-                    const formData = {
-                        username: document.getElementById('username').value,
-                        password: document.getElementById('password').value
-                    };
-                    
-                    fetch('/login', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify(formData)
-                    })
-                    .then(response => {
-                        if (response.redirected) {
-                            window.location.href = response.url;
-                        } else if (response.ok) {
-                            window.location.href = '/home';
-                        } else {
-                            console.error('Login failed');
-                            window.location.href = '/login?error=invalid';
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Error:', error);
-                    });
-                }
-            </script>
-            <div>
-                <p><a href="/registration">Don't have an account? Register</a></p>
-                <p><a href="/">Back to the Initial Page</a></p>
-            </div>
-        </div>    
-    </section>
+    <div class="logo-container">
+        <img th:src="@{/images/logos/logo.png}" alt="E-Cycle Logo">
+    </div>
     
-    <script>        
-
+    <div class="card">
+        <h2>Login</h2>
+        
+        <div class="links">
+            <a href="/registration">Register</a>
+            <a href="/">Home</a>
+        </div>
+        
+        <form id="loginForm" onsubmit="submitLoginForm(event)">
+            <div class="form-group">
+                <label for="username">Username</label>
+                <input type="text" id="username" name="username" required>                  </div>
+            
+            <div class="form-group password-container">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" required>
+                <span class="toggle-password" onclick="togglePassword()">
+                    <span id="eye-icon-open" style="display:inline;">👁️</span>
+                    <span id="eye-icon-closed" style="display:none;">👁️‍🗨️</span>
+                </span>
+            </div>
+            
+            <div th:if="${error}" class="error-message">
+                <p th:text="${error}">Error message</p>
+            </div>
+            
+            <div th:if="${success}" class="success-message">
+                <p th:text="${success}">Success message</p>
+            </div>
+            
+            <button type="submit">Login</button>
+        </form>
+    </div>    <script>
+        function submitLoginForm(event) {
+            event.preventDefault();
+            if (!validateLoginForm()) {
+                return;
+            }
+            
+            const formData = {
+                username: document.getElementById('username').value,
+                password: document.getElementById('password').value
+            };
+            
+            fetch('/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(formData)
+            })
+            .then(response => {
+                if (response.redirected) {
+                    window.location.href = response.url;
+                } else if (response.ok) {
+                    window.location.href = '/home';
+                } else {
+                    console.error('Login failed');
+                    window.location.href = '/login?error=invalid';
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        }
+        
         function togglePassword() {
             const passwordInput = document.getElementById('password');
             const openEye = document.getElementById('eye-icon-open');
@@ -112,25 +95,29 @@
         function validateLoginForm() {
             const usernameInput = document.getElementById('username');
             const passwordInput = document.getElementById('password');
-            const errorDiv = document.querySelector('.error-message');
             
             // Check if either username or password is empty
             if (!usernameInput.value.trim() || !passwordInput.value.trim()) {
                 // Create error message element if it doesn't exist
+                let errorDiv = document.querySelector('.error-message');
                 if (!errorDiv) {
-                    const newErrorDiv = document.createElement('div');
-                    newErrorDiv.className = 'error-message';
+                    errorDiv = document.createElement('div');
+                    errorDiv.className = 'error-message';
+                    
                     const errorMessage = document.createElement('p');
                     errorMessage.textContent = 'Username and password are required';
-                    newErrorDiv.appendChild(errorMessage);
+                    errorDiv.appendChild(errorMessage);
                     
                     // Insert before the submit button
-                    const submitButtonDiv = document.querySelector('button[type="submit"]').parentNode;
-                    submitButtonDiv.parentNode.insertBefore(newErrorDiv, submitButtonDiv);
+                    const submitButton = document.querySelector('button[type="submit"]');
+                    submitButton.parentNode.insertBefore(errorDiv, submitButton);
                 } else {
                     // Update existing error message
-                    const errorMessageP = errorDiv.querySelector('p');
+                    const errorMessageP = errorDiv.querySelector('p') || document.createElement('p');
                     errorMessageP.textContent = 'Username and password are required';
+                    if (!errorDiv.contains(errorMessageP)) {
+                        errorDiv.appendChild(errorMessageP);
+                    }
                     errorDiv.style.display = 'block';
                 }
                 
@@ -139,7 +126,6 @@
             
             return true;
         }
-        
     </script>
 </body>
 </html>

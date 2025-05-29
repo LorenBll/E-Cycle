@@ -3,56 +3,7 @@
 <head>    
     <title>E-Cycle - Offer Details</title>
     <link rel="icon" th:href="@{/images/logos/logoIcon.png}" type="image/png">
-    <style>
-        .offer-details {
-            margin: 20px 0;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-bottom: 20px;
-        }
-        th, td {
-            padding: 8px;
-            border: 1px solid #ddd;
-            text-align: left;
-        }
-        th {
-            background-color: #f2f2f2;
-            cursor: pointer;
-        }
-        .actions {
-            display: flex;
-            justify-content: flex-end;
-            margin-top: 10px;
-        }        button {
-            /* Button styling removed as requested */
-            cursor: pointer;
-            margin-left: 10px;
-        }
-        .checkbox-column {
-            width: 50px;
-            text-align: center;
-        }
-        .checkbox-options {
-            margin-top: 10px;
-        }
-        .section-title {
-            margin-top: 30px;
-            border-bottom: 1px solid #ddd;
-            padding-bottom: 10px;
-        }
-        .inactive-table {
-            opacity: 0.8;
-        }
-        .revenue-summary {
-            margin: 20px 0;
-            padding: 15px;
-            background-color: #f9f9f9;
-            border-radius: 5px;
-            border: 1px solid #ddd;
-        }
-    </style>
+    <link rel="stylesheet" th:href="@{/css/viewOfferDetails.css}">
 </head>
 <body>
     <header>
@@ -71,8 +22,7 @@
             <!-- Active Offers Section -->
             <h3 class="section-title">Active Offers</h3>
             
-            <!-- Error message container for displaying in-page errors -->
-            <div id="error-message-container" class="error-message" style="display: none; color: red; margin-bottom: 15px; padding: 10px; border: 1px solid #f5c6cb; border-radius: 4px; background-color: #f8d7da;">
+            <!-- Error message container for displaying in-page errors -->            <div id="error-message-container" class="error-message" style="display: none;">
                 <p id="error-message-text"></p>
             </div>
             
@@ -124,10 +74,9 @@
                     <button id="deleteButton">Delete Selected Item</button>
                 </div>
             </div>
-            
-            <!-- Revenue Summary Section -->
+              <!-- Revenue Summary Section -->
             <h3 class="section-title">Revenue Summary</h3>
-            <div class="revenue-summary" style="margin: 20px 0; padding: 15px; background-color: #f9f9f9; border-radius: 5px; border: 1px solid #ddd;">
+            <div class="revenue-summary">
                 <p><strong>Total Revenue from Accepted Offers:</strong> <span th:text="${revenue != null ? '$' + #numbers.formatDecimal(revenue, 1, 2) : '$0.00'}">$0.00</span></p>
                 <p><em>This total includes all offers with "Accepted" status</em></p>
             </div>

@@ -1,0 +1,238 @@
+/* Font face definition */
+@font-face {
+    font-family: 'Croogla4F';
+    src: url('../fonts/Croogla4F.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+/* E-Cycle Offer Details Page Stylesheet */
+body {
+    margin: 0;
+    padding: 0;
+    background-color: #333333; /* dark gray background as requested */
+    font-family: 'Croogla4F', 'Segoe UI', Arial, sans-serif;
+    color: #f8fbf7;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+    overflow-x: hidden;
+    padding-bottom: 30px;
+}
+
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 90%;
+    max-width: 900px;
+    margin-bottom: 30px;
+    margin-top: 20px;
+    opacity: 0;
+    transform: translateY(50px);
+    animation: fadeInFromBottom 0.8s ease-out forwards; /* animation for logo popping from bottom */
+}
+
+header img {
+    max-width: 300px;
+    height: auto;
+}
+
+header a {
+    color: #4CAF50;
+    text-decoration: none;
+    font-weight: 600;
+    transition: color 0.3s;
+    padding: 8px 16px;
+    border: 1px solid #4CAF50;
+    border-radius: 6px;
+}
+
+header a:hover {
+    color: #fff;
+    background-color: #4CAF50;
+}
+
+main {
+    width: 90%;
+    max-width: 900px;
+}
+
+.offer-details {
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    box-shadow: 0 8px 24px rgba(44, 120, 67, 0.15);
+    padding: 30px;
+    width: 100%;
+    text-align: left;
+    border: 2px solid #43c047;
+    opacity: 0;
+    transform: translateY(30px);
+    animation: fadeInFromBottom 0.8s ease-out forwards;
+    animation-delay: 0.2s;
+    margin-bottom: 20px;
+    box-sizing: border-box;
+}
+
+.offer-details h2 {
+    color: #4CAF50;
+    font-size: 2rem;
+    margin-top: 0;
+    margin-bottom: 24px;
+    text-align: center;
+}
+
+.section-title {
+    color: #4CAF50;
+    font-size: 1.5rem;
+    margin-top: 30px;
+    border-bottom: 1px solid rgba(67, 192, 71, 0.5);
+    padding-bottom: 10px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+    background-color: rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+th, td {
+    padding: 12px 8px;
+    text-align: left;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+th {
+    background-color: rgba(67, 192, 71, 0.2);
+    color: #4CAF50;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+th:hover {
+    background-color: rgba(67, 192, 71, 0.3);
+}
+
+tr:hover {
+    background-color: rgba(255, 255, 255, 0.03);
+}
+
+.checkbox-column {
+    width: 50px;
+    text-align: center;
+}
+
+.inactive-table {
+    opacity: 0.7;
+}
+
+/* Button styling */
+button {
+    background-color: #4CAF50;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 6px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s;
+    margin-right: 10px;
+    margin-bottom: 10px;
+}
+
+button:hover {
+    background-color: #3e8e41;
+    transform: translateY(-2px);
+}
+
+button:active {
+    transform: translateY(0);
+}
+
+#deleteButton {
+    background-color: #f44336;
+}
+
+#deleteButton:hover {
+    background-color: #d32f2f;
+}
+
+.actions {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 15px;
+}
+
+.revenue-summary {
+    background-color: rgba(67, 192, 71, 0.1) !important;
+    border-radius: 8px !important;
+    border: 1px solid rgba(67, 192, 71, 0.3) !important;
+    padding: 15px !important;
+    margin: 20px 0 !important;
+}
+
+.revenue-summary p {
+    margin: 5px 0;
+    color: #f8fbf7;
+}
+
+.revenue-summary strong {
+    color: #4CAF50;
+}
+
+.error-message {
+    color: #f44336;
+    background-color: rgba(244, 67, 54, 0.1);
+    padding: 10px;
+    border-radius: 4px;
+    text-align: left;
+    border: 1px solid rgba(244, 67, 54, 0.3);
+    margin-bottom: 15px;
+}
+
+/* Animation keyframes */
+@keyframes fadeInFromBottom {
+    from {
+        opacity: 0;
+        transform: translateY(50px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Responsive adjustments */
+@media screen and (max-width: 768px) {
+    header {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    header img {
+        max-width: 250px;
+    }
+    
+    header a {
+        margin-top: 15px;
+    }
+    
+    .offer-details {
+        padding: 20px;
+    }
+    
+    table {
+        display: block;
+        overflow-x: auto;
+    }
+    
+    th, td {
+        min-width: 120px;
+    }
+}

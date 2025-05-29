@@ -1,0 +1,207 @@
+/* Font face definition */
+@font-face {
+    font-family: 'Croogla4F';
+    src: url('../fonts/Croogla4F.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+/* E-Cycle Registration Page Stylesheet */
+body {
+    margin: 0;
+    padding: 0;
+    background-color: #333333; /* dark gray background as requested */
+    font-family: 'Croogla4F', 'Segoe UI', Arial, sans-serif;
+    color: #f8fbf7;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+    overflow-x: hidden;
+    padding-bottom: 30px;
+}
+
+.logo-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
+    margin-bottom: 30px;
+    opacity: 0;
+    transform: translateY(50px);
+    animation: fadeInFromBottom 0.8s ease-out forwards; /* animation for logo popping from bottom */
+}
+
+.logo-container img {
+    max-width: 350px;
+    height: auto;
+}
+
+.card {
+    background-color: rgba(255, 255, 255, 0.1); /* semi-transparent like other pages */
+    border-radius: 12px;
+    box-shadow: 0 8px 24px rgba(44, 120, 67, 0.15);
+    padding: 30px;
+    width: 500px;
+    max-width: 90%;
+    text-align: center;
+    border: 2px solid #43c047;
+    opacity: 0;
+    transform: translateY(30px);
+    animation: fadeInFromBottom 0.8s ease-out forwards;
+    animation-delay: 0.3s;
+}
+
+.card h2 {
+    color: #4CAF50;
+    font-size: 2rem;
+    margin-top: 0;
+    margin-bottom: 24px;
+}
+
+.links {
+    margin-top: 5px; /* reduced spacing */
+    margin-bottom: 20px;
+}
+
+.links a {
+    display: inline-block;
+    color: #ffffff;
+    text-decoration: none;
+    margin: 0 10px;
+    font-weight: 600;
+    padding: 8px 15px;
+    background-color: #4CAF50;
+    border-radius: 4px;
+    transition: background-color 0.3s;
+}
+
+.links a:hover {
+    background-color: #3e8e41;
+    text-decoration: none;
+}
+
+.form-group {
+    margin-bottom: 15px;
+    text-align: left;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: 600;
+    color: #4CAF50;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 10px;
+    border: 1.5px solid #4CAF50;
+    border-radius: 6px;
+    font-size: 16px;
+    box-sizing: border-box;
+    outline: none;
+    transition: border 0.2s;
+    background-color: rgba(255, 255, 255, 0.9);
+}
+
+.form-group input:focus {
+    border: 1.5px solid #3e8e41;
+}
+
+.password-container {
+    position: relative;
+}
+
+.toggle-password {
+    position: absolute;
+    right: 10px;
+    top: 65%; /* moved more below to match login page */
+    transform: translateY(-50%);
+    cursor: pointer;
+    color: #4CAF50;
+}
+
+button[type="submit"] {
+    background-color: #4CAF50;
+    color: #fff;
+    border: none;
+    padding: 12px 0;
+    width: 100%;
+    border-radius: 6px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    margin-top: 10px;
+}
+
+button[type="submit"]:hover {
+    background-color: #3e8e41;
+}
+
+.error-message {
+    color: #f44336;
+    margin-bottom: 15px;
+    font-weight: 500;
+    background-color: rgba(244, 67, 54, 0.1);
+    padding: 8px;
+    border-radius: 4px;
+}
+
+.success-message {
+    color: #4CAF50;
+    margin-bottom: 15px;
+    font-weight: 500;
+    background-color: rgba(76, 175, 80, 0.1);
+    padding: 8px;
+    border-radius: 4px;
+}
+
+.password-instructions {
+    font-size: 0.8em;
+    color: #c3f0c5;
+    margin-top: 5px;
+    margin-bottom: 10px;
+}
+
+.bottom-links {
+    margin-top: 20px;
+    text-align: center;
+}
+
+.bottom-links a {
+    color: #4CAF50;
+    text-decoration: none;
+    transition: color 0.3s;
+}
+
+.bottom-links a:hover {
+    color: #3e8e41;
+    text-decoration: underline;
+}
+
+/* Two columns layout for address information */
+.form-row {
+    display: flex;
+    flex-wrap: wrap;
+    margin: 0 -10px;
+}
+
+.form-column {
+    flex: 1 0 45%;
+    padding: 0 10px;
+    min-width: 150px;
+}
+
+/* Animation keyframes */
+@keyframes fadeInFromBottom {
+    from {
+        opacity: 0;
+        transform: translateY(50px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
