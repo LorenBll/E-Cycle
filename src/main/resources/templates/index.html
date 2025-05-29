@@ -3,18 +3,17 @@
 <head>    
     <title>E-Cycle - Welcome</title>
     <link rel="icon" th:href="@{/images/logos/logoIcon.png}" type="image/png">
+    <link rel="stylesheet" th:href="@{/css/index.css}">
 </head>
 <body>
     <section>
-        <div>
-            <div>
-                <img th:src="@{/images/logos/logo.png}" alt="E-Cycle Logo">
-            </div>
-            <div>
-                <a href="/login">Login</a>
-                <a href="/registration">Registration</a>
-            </div>
-        </div>    
+        <div class="logo-container">
+            <img th:src="@{/images/logos/logo.png}" alt="E-Cycle Logo">
+        </div>
+        <div class="button-group">
+            <a href="/login">Log In</a>
+            <a href="/registration">Sign In</a>
+        </div>
     </section>
 </body>
 </html>

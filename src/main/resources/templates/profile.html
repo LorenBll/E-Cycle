@@ -3,151 +3,46 @@
 <head>    
     <title>E-Cycle - Profile</title>    
     <link rel="icon" th:href="@{/images/logos/logoIcon.png}" type="image/png">
+    <link rel="stylesheet" href="/css/profile.css">
     <!-- Styling removed as requested -->
 </head>
 <body>
-    <header>
-        <div>
-            <img th:src="@{/images/logos/logo.png}" alt="E-Cycle Logo">
-            <h1>User Profile</h1>
+    <div class="profile-container">
+        <!-- Logo background centrale -->
+        <img src="/images/logos/logo.png" alt="E-Cycle Logo" class="profile-bg-logo">
+        <!-- Header con pulsante Home -->
+        <div class="profile-header">
+            <button type="button" class="profile-home-btn" onclick="window.location.href='/home'">Home</button>
         </div>
-        <div>
-            <span>Welcome, <strong th:text="${user.username}"></strong></span>
-            <a href="/home">Home</a>
-        </div>    
-    </header>
-    <main>        <!-- Edit Profile Form -->
-        <section id="edit-profile-form">
-            <h2>Edit Profile</h2>
-            
-            <!-- Error message container for displaying in-page errors -->
-            <div id="error-message-container" class="error-message" style="display: none; color: red; margin-bottom: 15px; padding: 10px; border: 1px solid #f5c6cb; border-radius: 4px; background-color: #f8d7da;">
-                <p id="error-message-text"></p>
+        <main class="profile-main">
+            <div class="profile-left">
+                <div class="profile-title">User Profile</div>
+                <div class="profile-box">
+                    <div class="profile-box-title">Account Information</div>
+                    <div class="profile-box-content">
+                        <!-- Inserisci qui i dati account, es: username, email, nome, cognome -->
+                        <div><strong>Username:</strong> <span th:text="${user.username}"></span></div>
+                        <div><strong>Email:</strong> <span th:text="${user.email}"></span></div>
+                        <div><strong>Name:</strong> <span th:text="${user.name}"></span></div>
+                        <div><strong>Surname:</strong> <span th:text="${user.surname}"></span></div>
+                    </div>
+                </div>
+                <div class="profile-box">
+                    <div class="profile-box-title">Address</div>
+                    <div class="profile-box-content">
+                        <!-- Inserisci qui i dati indirizzo -->
+                        <div><strong>State:</strong> <span th:text="${user.state}"></span></div>
+                        <div><strong>Region:</strong> <span th:text="${user.region}"></span></div>
+                        <div><strong>Province:</strong> <span th:text="${user.province}"></span></div>
+                        <div><strong>City:</strong> <span th:text="${user.city}"></span></div>
+                        <div><strong>Street:</strong> <span th:text="${user.street}"></span></div>
+                        <div><strong>Civic Number:</strong> <span th:text="${user.civic}"></span></div>
+                    </div>
+                </div>
             </div>
-            
-            <form id="profileEditForm">
-                <div class="profile-section">
-                    <h3>Account Information</h3>                    
-                    <div class="form-row">
-                        <div class="form-col">
-                            <div class="form-group">
-                                <label for="username">Username:</label>
-                                <input type="text" id="username" name="username" th:value="${user.username}" required maxlength="50">
-                            </div>
-                        </div>
-                        <div class="form-col">
-                            <div class="form-group">
-                                <label for="email">Email:</label>
-                                <input type="email" id="email" name="email" th:value="${user.email}" required maxlength="100">
-                            </div>
-                        </div>                    
-                    </div>
-                    <div class="form-row">
-                        <div class="form-col">
-                            <div class="form-group">
-                                <label for="name">Name:</label>
-                                <input type="text" id="name" name="name" th:value="${user.name}" maxlength="50">
-                            </div>
-                        </div>
-                        <div class="form-col">
-                            <div class="form-group">
-                                <label for="surname">Surname:</label>
-                                <input type="text" id="surname" name="surname" th:value="${user.surname}" maxlength="50">
-                            </div>
-                        </div>                    
-                    </div>
-                    <div class="form-group">
-                        <label for="password">New Password (leave blank to keep current):</label>
-                        <div class="password-container">
-                            <input type="password" id="password" name="password">
-                            <span class="toggle-password" onclick="togglePassword('password', 'eye-icon-open-password', 'eye-icon-closed-password')">
-                                <span id="eye-icon-open-password" style="display:inline;">👁️</span>
-                                <span id="eye-icon-closed-password" style="display:none;">👁️‍🗨️</span>
-                            </span>
-                        </div>
-                    </div>
-                    <div class="password-instructions">
-                        <small>Password requirements: at least 8 characters, 1 uppercase letter, 1 lowercase letter, 1 number, and 1 special character.</small>
-                    </div>
-                    <div class="form-group">
-                        <label for="confirm_password">Confirm New Password:</label>
-                        <div class="password-container">
-                            <input type="password" id="confirm_password" name="confirm_password">
-                            <span class="toggle-password" onclick="togglePassword('confirm_password', 'eye-icon-open-confirm', 'eye-icon-closed-confirm')">
-                                <span id="eye-icon-open-confirm" style="display:inline;">👁️</span>
-                                <span id="eye-icon-closed-confirm" style="display:none;">👁️‍🗨️</span>
-                            </span>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="profile-section">
-                    <h3>Address</h3>
-                    <div class="form-row">
-                        <div class="form-col">
-                            <div class="form-group">
-                                <label for="state">State:</label>
-                                <input type="text" id="state" name="state" th:value="${user.state}" required maxlength="50">
-                            </div>
-                        </div>
-                        <div class="form-col">
-                            <div class="form-group">
-                                <label for="region">Region:</label>
-                                <input type="text" id="region" name="region" th:value="${user.region}" required maxlength="50">
-                            </div>
-                        </div>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-col">
-                            <div class="form-group">
-                                <label for="province">Province:</label>
-                                <input type="text" id="province" name="province" th:value="${user.province}" required maxlength="50">
-                            </div>
-                        </div>
-                        <div class="form-col">
-                            <div class="form-group">
-                                <label for="city">City:</label>
-                                <input type="text" id="city" name="city" th:value="${user.city}" required maxlength="50">
-                            </div>
-                        </div>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-col">
-                            <div class="form-group">
-                                <label for="street">Street:</label>
-                                <input type="text" id="street" name="street" th:value="${user.street}" required maxlength="100">
-                            </div>
-                        </div>
-                        <div class="form-col">
-                            <div class="form-group">
-                                <label for="civic">Civic Number:</label>
-                                <input type="text" id="civic" name="civic" th:value="${user.civic}" required maxlength="50">                            
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Error message display -->
-                <div class="error-message" th:if="${error != null}">
-                    <span th:text="${error}"></span>
-                </div>
-                <!-- Dynamic error message display -->
-                <div id="dynamic-error-message" class="error-message" style="display: none;">
-                    <span id="error-message-text"></span>
-                </div>
-                <!-- Success message display -->
-                <div class="success-message" th:if="${success != null}">
-                    <span th:text="${success}"></span>
-                </div>
-                <div class="buttons">
-                    <button type="submit" class="submit-btn">Save Changes</button>
-                    <button type="button" class="cancel-btn" id="cancel-edit-btn">Cancel</button>
-                </div>
-            </form>
-            <button onclick="window.location.href='/logout'" class="logout-btn">Logout</button>
-            <button type="button" id="delete-account-btn" class="delete-btn">Delete My Account</button>
-        </section>    
-    </main>        
+            <button type="button" class="profile-edit-btn">Edit Profile</button>
+        </main>
+    </div>        
     <script>        
         // Function to show error message in page instead of alert
         function showError(message) {
