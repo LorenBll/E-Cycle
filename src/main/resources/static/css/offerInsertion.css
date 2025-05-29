@@ -76,13 +76,6 @@ section h2 {
     margin-bottom: 25px;
     position: relative;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    transition: all 0.3s ease;
-}
-
-.characteristics-section:hover {
-    background-color: rgba(255, 255, 255, 0.08);
-    transform: translateY(-2px);
-    box-shadow: 0 6px 16px rgba(44, 120, 67, 0.25);
 }
 
 /* Header for each characteristics section */
@@ -151,18 +144,17 @@ button {
     font-size: 16px;
     font-weight: 600;
     cursor: pointer;
-    transition: background-color 0.3s, transform 0.2s;
+    transition: background-color 0.3s;
     margin-right: 10px;
     margin-bottom: 10px;
 }
 
 button:hover {
     background-color: #3e8e41;
-    transform: translateY(-2px);
 }
 
 button:active {
-    transform: translateY(0);
+    background-color: #3e8e41;
 }
 
 #addCharacteristicsBtn {

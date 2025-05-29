@@ -983,7 +983,7 @@ public class AppController {
             if (pendingNegotiation) {
                 activeStatusesList.add("Pending Negotiation");
             } else {
-                activeStatusesList.add("Yet to be Met");
+                activeStatusesList.add("Waiting");
             }
         }        
         
@@ -1104,7 +1104,7 @@ public class AppController {
             if (pendingNegotiation) {
                 activeStatusesList.add("Pending Negotiation");
             } else {
-                activeStatusesList.add("Yet to be Met");
+                activeStatusesList.add("Waiting");
             }
         }
 

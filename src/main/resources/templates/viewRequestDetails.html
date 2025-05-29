@@ -9,9 +9,6 @@
     <header>
         <div>
             <img th:src="@{/images/logos/logo.png}" alt="E-Cycle Logo">
-            <h1>Request Details</h1>
-        </div>
-        <div>
             <a href="/home">Back to Home</a>
         </div>
     </header>
@@ -21,7 +18,8 @@
               <!-- Active Requests Section -->
             <h3 class="section-title">Active Requests</h3>
             
-            <!-- Error message container for displaying in-page errors -->            <div id="error-message-container" class="error-message" style="display: none;">
+            <!-- Error message container for displaying in-page errors -->            
+            <div id="error-message-container" class="error-message" style="display: none;">
                 <p id="error-message-text"></p>
             </div>
             
@@ -30,58 +28,60 @@
             </div>
             
             <div th:if="${!singRequests.isEmpty()}">
-                <table id="singRequestsTable">
-                    <thead>
-                        <tr>
-                            <th class="checkbox-column">Select</th>
-                            <th>Category</th>
-                            <th>Nature</th>
-                            <th>Brand</th>
-                            <th>Model</th>
-                            <th>Batch</th>
-                            <th>Quality</th>
-                            <th>Function</th>
-                            <th>Main Color</th>
-                            <th>Description</th>
-                            <th>Price</th>
-                            <th>Status</th>
-                            <th>Action</th>
-                        </tr>
-                    </thead>
-                    <tbody>                        
-                        <tr th:each="singRequest, iterStat : ${singRequests}">
-                            <td class="checkbox-column">
-                                <input type="checkbox" name="selectedRequest" th:value="${singRequest.id}" th:id="'request-' + ${singRequest.id}" class="single-checkbox">
-                            </td>
-                            <td th:text="${singRequest.characteristics?.category?.id}"></td>
-                            <td th:text="${singRequest.characteristics?.nature?.id}"></td>
-                            <td th:text="${singRequest.characteristics?.model?.brand?.id}"></td>
-                            <td th:text="${singRequest.characteristics?.model?.id}"></td>
-                            <td th:text="${singRequest.characteristics?.batch}"></td>
-                            <td th:text="${singRequest.characteristics?.quality}"></td>
-                            <td th:text="${singRequest.characteristics?.function}"></td>
-                            <td th:text="${singRequest.characteristics?.mainColour}"></td>
-                            <!-- Get description from singOffer in negotiation -->
-                            <td th:text="${activeNegotiations != null && iterStat.index < activeNegotiations.size() && activeNegotiations[iterStat.index] != null ? activeNegotiations[iterStat.index].singOffer?.description : ''}"></td>
-                            <!-- Get price from singOffer in negotiation -->
-                            <td th:text="${activeNegotiations != null && iterStat.index < activeNegotiations.size() && activeNegotiations[iterStat.index] != null ? activeNegotiations[iterStat.index].singOffer?.price : ''}"></td>                            <td th:text="${statuses != null && !statuses.isEmpty() && iterStat.index < statuses.size() ? statuses[iterStat.index] : ''}"></td>
-                            <td>
-                                <div th:if="${activeNegotiations != null && iterStat.index < activeNegotiations.size() && activeNegotiations[iterStat.index] != null}">
-                                    <button class="accept-button"
-                                            th:data-negotiation-id="${activeNegotiations[iterStat.index]?.id}"
-                                            th:onclick="'acceptNegotiation(' + ${activeNegotiations[iterStat.index]?.id} + ')'">
-                                        Accept
-                                    </button>
-                                    <button class="reject-button"
-                                            th:data-negotiation-id="${activeNegotiations[iterStat.index]?.id}"
-                                            th:onclick="'rejectNegotiation(' + ${activeNegotiations[iterStat.index]?.id} + ')'">
-                                        Reject
-                                    </button>
-                                </div>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
+                <div class="table-container">
+                    <table id="singRequestsTable">
+                        <thead>
+                            <tr>
+                                <th class="checkbox-column">Select</th>
+                                <th>Category</th>
+                                <th>Nature</th>
+                                <th>Brand</th>
+                                <th>Model</th>
+                                <th>Batch</th>
+                                <th>Quality</th>
+                                <th>Function</th>
+                                <th>Main Color</th>
+                                <th>Description</th>                            
+                                <th>Price</th>
+                                <th class="status-column">Status</th>
+                                <th class="action-column">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>                        
+                            <tr th:each="singRequest, iterStat : ${singRequests}">
+                                <td class="checkbox-column">
+                                    <input type="checkbox" name="selectedRequest" th:value="${singRequest.id}" th:id="'request-' + ${singRequest.id}" class="single-checkbox">
+                                </td>
+                                <td th:text="${singRequest.characteristics?.category?.id}"></td>
+                                <td th:text="${singRequest.characteristics?.nature?.id}"></td>
+                                <td th:text="${singRequest.characteristics?.model?.brand?.id}"></td>
+                                <td th:text="${singRequest.characteristics?.model?.id}"></td>
+                                <td th:text="${singRequest.characteristics?.batch}"></td>
+                                <td th:text="${singRequest.characteristics?.quality}"></td>
+                                <td th:text="${singRequest.characteristics?.function}"></td>
+                                <td th:text="${singRequest.characteristics?.mainColour}"></td>
+                                <!-- Get description from singOffer in negotiation -->
+                                <td th:text="${activeNegotiations != null && iterStat.index < activeNegotiations.size() && activeNegotiations[iterStat.index] != null ? activeNegotiations[iterStat.index].singOffer?.description : ''}"></td>
+                                <!-- Get price from singOffer in negotiation -->
+                                <td th:text="${activeNegotiations != null && iterStat.index < activeNegotiations.size() && activeNegotiations[iterStat.index] != null ? activeNegotiations[iterStat.index].singOffer?.price : ''}"></td>                            <td class="status-column" th:text="${statuses != null && !statuses.isEmpty() && iterStat.index < statuses.size() ? statuses[iterStat.index] : ''}"></td>
+                                <td class="action-column">
+                                    <div th:if="${activeNegotiations != null && iterStat.index < activeNegotiations.size() && activeNegotiations[iterStat.index] != null}">
+                                        <button class="accept-button"
+                                                th:data-negotiation-id="${activeNegotiations[iterStat.index]?.id}"
+                                                th:onclick="'acceptNegotiation(' + ${activeNegotiations[iterStat.index]?.id} + ')'">
+                                            Accept
+                                        </button>
+                                        <button class="reject-button"
+                                                th:data-negotiation-id="${activeNegotiations[iterStat.index]?.id}"
+                                                th:onclick="'rejectNegotiation(' + ${activeNegotiations[iterStat.index]?.id} + ')'">
+                                            Reject
+                                        </button>
+                                    </div>
+                                </td>                        
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
                 
                 <div class="actions">
                     <button id="deleteButton" class="delete-button">Delete Selected Item</button>
@@ -94,40 +94,41 @@
                 <p>No inactive items available in this request</p>
             </div>
             <div th:if="${!inactiveSingRequests.isEmpty()}">
-                <table id="inactiveSingRequestsTable" class="inactive-table">
-                    <thead>
-                        <tr>
-                            <th>Category</th>
-                            <th>Nature</th>
-                            <th>Brand</th>
-                            <th>Model</th>
-                            <th>Batch</th>
-                            <th>Quality</th>
-                            <th>Function</th>
-                            <th>Main Color</th>
-                            <th>Description</th>
-                            <th>Price</th>
-                            <th>Status</th>
-                        </tr>
-                    </thead>
-                    <tbody>                        
-                        <tr th:each="singRequest, iterStat : ${inactiveSingRequests}">
-                            <td th:text="${singRequest.characteristics?.category?.id}"></td>
-                            <td th:text="${singRequest.characteristics?.nature?.id}"></td>
-                            <td th:text="${singRequest.characteristics?.model?.brand?.id}"></td>
-                            <td th:text="${singRequest.characteristics?.model?.id}"></td>
-                            <td th:text="${singRequest.characteristics?.batch}"></td>
-                            <td th:text="${singRequest.characteristics?.quality}"></td>
-                            <td th:text="${singRequest.characteristics?.function}"></td>
-                            <td th:text="${singRequest.characteristics?.mainColour}"></td>
-                            <!-- Get description from singOffer in negotiation -->
-                            <td th:text="${inactiveNegotiations != null && iterStat.index < inactiveNegotiations.size() && inactiveNegotiations[iterStat.index] != null ? inactiveNegotiations[iterStat.index].singOffer?.description : ''}"></td>
-                            <!-- Get price from singOffer in negotiation -->
-                            <td th:text="${inactiveNegotiations != null && iterStat.index < inactiveNegotiations.size() && inactiveNegotiations[iterStat.index] != null ? inactiveNegotiations[iterStat.index].singOffer?.price : ''}"></td>
-                            <td th:text="${inactiveStatuses != null && !inactiveStatuses.isEmpty() && iterStat.index < inactiveStatuses.size() ? inactiveStatuses[iterStat.index] : ''}"></td>
-                        </tr>
-                    </tbody>
-                </table>
+                <div class="table-container">
+                    <table id="inactiveSingRequestsTable" class="inactive-table">
+                        <thead>
+                            <tr>
+                                <th>Category</th>
+                                <th>Nature</th>
+                                <th>Brand</th>
+                                <th>Model</th>
+                                <th>Batch</th>
+                                <th>Quality</th>
+                                <th>Function</th>
+                                <th>Main Color</th>
+                                <th>Description</th>                            
+                                <th>Price</th>
+                                <th class="status-column">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>                        
+                            <tr th:each="singRequest, iterStat : ${inactiveSingRequests}">
+                                <td th:text="${singRequest.characteristics?.category?.id}"></td>
+                                <td th:text="${singRequest.characteristics?.nature?.id}"></td>
+                                <td th:text="${singRequest.characteristics?.model?.brand?.id}"></td>
+                                <td th:text="${singRequest.characteristics?.model?.id}"></td>
+                                <td th:text="${singRequest.characteristics?.batch}"></td>
+                                <td th:text="${singRequest.characteristics?.quality}"></td>
+                                <td th:text="${singRequest.characteristics?.function}"></td>
+                                <td th:text="${singRequest.characteristics?.mainColour}"></td>
+                                <!-- Get description from singOffer in negotiation -->
+                                <td th:text="${inactiveNegotiations != null && iterStat.index < inactiveNegotiations.size() && inactiveNegotiations[iterStat.index] != null ? inactiveNegotiations[iterStat.index].singOffer?.description : ''}"></td>
+                                <!-- Get price from singOffer in negotiation -->
+                                <td th:text="${inactiveNegotiations != null && iterStat.index < inactiveNegotiations.size() && inactiveNegotiations[iterStat.index] != null ? inactiveNegotiations[iterStat.index].singOffer?.price : ''}"></td>                            <td class="status-column" th:text="${inactiveStatuses != null && !inactiveStatuses.isEmpty() && iterStat.index < inactiveStatuses.size() ? inactiveStatuses[iterStat.index] : ''}"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </section>
     </main>

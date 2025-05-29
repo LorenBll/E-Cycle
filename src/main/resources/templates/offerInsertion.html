@@ -9,13 +9,10 @@
     <header>
         <img th:src="@{/images/logos/logo.png}" alt="E-Cycle Logo">
     </header>
-    <main>
-        <div class="main-card">
-            <section>
+    <main>        <div class="main-card">
             <h2>Insert New Offer</h2>
-            
-            <!-- Error message container for displaying in-page errors -->
-            <div id="error-message-container" class="error-message" style="display: none; color: red; margin-bottom: 15px; padding: 10px; border: 1px solid #f5c6cb; border-radius: 4px; background-color: #f8d7da;">
+              <!-- Error message container for displaying validation errors -->
+            <div id="error-message-container" class="error-message" style="display: none;">
                 <p id="error-message-text"></p>
             </div>
             

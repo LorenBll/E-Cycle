@@ -17,26 +17,44 @@ body {
     flex-direction: column;
     align-items: center;
     min-height: 100vh;
-    overflow-x: hidden;
+    overflow: hidden; /* Hide scrollbars completely */
     padding-bottom: 30px;
+}
+
+/* Hide scrollbars for all elements */
+::-webkit-scrollbar {
+    display: none;
+}
+
+/* Hide scrollbars for Firefox */
+* {
+    scrollbar-width: none;
 }
 
 header {
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
     align-items: center;
     width: 90%;
     max-width: 900px;
     margin-bottom: 30px;
-    margin-top: 20px;
+    margin-top: 50px;
     opacity: 0;
     transform: translateY(50px);
     animation: fadeInFromBottom 0.8s ease-out forwards; /* animation for logo popping from bottom */
+    position: relative; /* For absolute positioning of the back button */
+}
+
+header div {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 header img {
     max-width: 300px;
     height: auto;
+    margin-bottom: 15px;
 }
 
 header a {
@@ -55,24 +73,30 @@ header a:hover {
 }
 
 main {
-    width: 90%;
-    max-width: 900px;
+    width: 100%;
+    max-width: none; /* Remove max-width limitation to allow full screen width */
+    box-sizing: border-box;
+    padding: 0; /* Remove default padding */
+    display: flex;
+    justify-content: center; /* Center the card horizontally */
 }
 
 .offer-details {
     background-color: rgba(255, 255, 255, 0.1);
     border-radius: 12px;
     box-shadow: 0 8px 24px rgba(44, 120, 67, 0.15);
-    padding: 30px;
-    width: 100%;
+    padding: 60px; /* Even bigger padding for larger card */
+    width: calc(100vw - 20px); /* Full viewport width minus 20px (10px on each side) */
+    max-width: none; /* No maximum width to allow full expansion */
     text-align: left;
     border: 2px solid #43c047;
     opacity: 0;
     transform: translateY(30px);
     animation: fadeInFromBottom 0.8s ease-out forwards;
     animation-delay: 0.2s;
-    margin-bottom: 20px;
+    margin: 0 10px 40px 10px; /* Exactly 10px from page borders (left/right) */
     box-sizing: border-box;
+    overflow: visible; /* Changed from hidden to visible to ensure content is not cut off */
 }
 
 .offer-details h2 {
@@ -91,19 +115,35 @@ main {
     padding-bottom: 10px;
 }
 
+.table-container {
+    width: 100%; /* Take full width of parent */
+    overflow-x: auto; /* Enable horizontal scrolling only when needed */
+    border-radius: 8px;
+    margin-bottom: 20px;
+    padding: 0 10px; /* Add 10px padding on sides to match request */
+    box-sizing: border-box;
+    margin-left: auto;
+    margin-right: auto;
+    max-width: 100%; /* Ensure it doesn't exceed the parent width */
+}
+
 table {
     width: 100%;
     border-collapse: collapse;
-    margin-bottom: 20px;
     background-color: rgba(255, 255, 255, 0.05);
     border-radius: 8px;
-    overflow: hidden;
+    table-layout: auto; /* Changed from fixed to auto to allow content to dictate column width */
+    box-sizing: border-box;
 }
 
 th, td {
-    padding: 12px 8px;
+    padding: 12px 10px; /* Keep 10px padding on left and right as requested */
     text-align: left;
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 300px; /* Increased to allow even more content to be visible */
 }
 
 th {
@@ -125,6 +165,50 @@ tr:hover {
 .checkbox-column {
     width: 50px;
     text-align: center;
+}
+
+/* Column width constraints */
+.status-column {
+    width: 80px; /* Made narrower */
+    max-width: 80px;
+}
+
+.action-column {
+    width: 220px; /* Made wider */
+    min-width: 220px;
+}
+
+/* Custom checkbox styling */
+input[type="checkbox"].single-checkbox {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 20px;
+    height: 20px;
+    background-color: rgba(255, 255, 255, 0.1);
+    border: 2px solid #43c047;
+    border-radius: 4px;
+    cursor: pointer;
+    position: relative;
+    transition: all 0.3s ease;
+    vertical-align: middle;
+}
+
+input[type="checkbox"].single-checkbox:checked {
+    background-color: #43c047;
+}
+
+input[type="checkbox"].single-checkbox:checked::after {    content: '✓';
+    position: absolute;
+    color: white;
+    font-size: 16px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+input[type="checkbox"].single-checkbox:hover {
+    background-color: rgba(67, 192, 71, 0.3);
+    box-shadow: 0 0 5px rgba(67, 192, 71, 0.5);
 }
 
 .inactive-table {
@@ -169,6 +253,22 @@ button:active {
     margin-top: 15px;
 }
 
+.accept-button {
+    background-color: #4CAF50;
+}
+
+.accept-button:hover {
+    background-color: #3e8e41;
+}
+
+.reject-button {
+    background-color: #f44336;
+}
+
+.reject-button:hover {
+    background-color: #d32f2f;
+}
+
 .revenue-summary {
     background-color: rgba(67, 192, 71, 0.1) !important;
     border-radius: 8px !important;
@@ -210,6 +310,10 @@ button:active {
 
 /* Responsive adjustments */
 @media screen and (max-width: 768px) {
+    main {
+        width: 100%; /* Full width */
+    }
+    
     header {
         flex-direction: column;
         align-items: center;
@@ -220,19 +324,31 @@ button:active {
     }
     
     header a {
-        margin-top: 15px;
+        margin-top: 5px;
     }
     
     .offer-details {
-        padding: 20px;
+        padding: 20px 10px;
+        width: calc(100vw - 20px); /* Maintain exactly 10px from page borders */
+    }
+    
+    .table-container {
+        width: 100%;
+        overflow-x: auto;
+        margin: 0;
+        padding: 0;
     }
     
     table {
-        display: block;
-        overflow-x: auto;
+        width: 100%;
+        min-width: unset;
     }
     
     th, td {
         min-width: 120px;
+        padding: 10px 8px;
+    }    input[type="checkbox"].single-checkbox {
+        width: 20px;
+        height: 20px;
     }
 }

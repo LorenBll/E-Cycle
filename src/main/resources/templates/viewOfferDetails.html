@@ -5,13 +5,9 @@
     <link rel="icon" th:href="@{/images/logos/logoIcon.png}" type="image/png">
     <link rel="stylesheet" th:href="@{/css/viewOfferDetails.css}">
 </head>
-<body>
-    <header>
+<body>    <header>
         <div>
             <img th:src="@{/images/logos/logo.png}" alt="E-Cycle Logo">
-            <h1>Offer Details</h1>
-        </div>
-        <div>
             <a href="/home">Back to Home</a>
         </div>
     </header>
@@ -22,53 +18,54 @@
             <!-- Active Offers Section -->
             <h3 class="section-title">Active Offers</h3>
             
-            <!-- Error message container for displaying in-page errors -->            <div id="error-message-container" class="error-message" style="display: none;">
+            <!-- Error message container for displaying in-page errors -->            
+            <div id="error-message-container" class="error-message" style="display: none;">
                 <p id="error-message-text"></p>
             </div>
             
             <div th:if="${singOffers.isEmpty()}">
                 <p>No active items available in this offer</p>
             </div>
-            
-            <div th:if="${!singOffers.isEmpty()}">
-                <table id="singOffersTable">
-                    <thead>
-                        <tr>
-                            <th class="checkbox-column">Select</th>
-                            <th>Category</th>
-                            <th>Nature</th>
-                            <th>Brand</th>
-                            <th>Model</th>
-                            <th>Batch</th>
-                            <th>Quality</th>
-                            <th>Function</th>
-                            <th>Main Color</th>
-                            <th>Description</th>
-                            <th>Price</th>
-                            <th>Expiration</th>
-                            <th>Status</th>
-                        </tr>
-                    </thead>
-                    <tbody>                        
-                        <tr th:each="singOffer, iterStat : ${singOffers}">
-                            <td class="checkbox-column">
-                                <input type="radio" name="selectedOffer" th:value="${singOffer.id}" th:id="'offer-' + ${singOffer.id}">
-                            </td>
-                            <td th:text="${singOffer.characteristics?.category?.id}"></td>
-                            <td th:text="${singOffer.characteristics?.nature?.id}"></td>
-                            <td th:text="${singOffer.characteristics?.model?.brand?.id}"></td>
-                            <td th:text="${singOffer.characteristics?.model?.id}"></td>
-                            <td th:text="${singOffer.characteristics?.batch}"></td>
-                            <td th:text="${singOffer.characteristics?.quality}"></td>
-                            <td th:text="${singOffer.characteristics?.function}"></td>
-                            <td th:text="${singOffer.characteristics?.mainColour}"></td>
-                            <td th:text="${singOffer.description}"></td>
-                            <td th:text="${singOffer.price}"></td>
-                            <td th:text="${singOffer.expiration}"></td>
-                            <td th:text="${statuses != null && !statuses.isEmpty() && iterStat.index < statuses.size() ? statuses[iterStat.index] : ''}"></td>
-                        </tr>
-                    </tbody>
-                </table>
+              <div th:if="${!singOffers.isEmpty()}">
+                <div class="table-container">
+                    <table id="singOffersTable">
+                        <thead>
+                            <tr>
+                                <th class="checkbox-column">Select</th>
+                                <th>Category</th>
+                                <th>Nature</th>
+                                <th>Brand</th>
+                                <th>Model</th>
+                                <th>Batch</th>
+                                <th>Quality</th>
+                                <th>Function</th>
+                                <th>Main Color</th>
+                                <th>Description</th>
+                                <th>Price</th>
+                                <th>Expiration</th>
+                                <th class="status-column">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>                            <tr th:each="singOffer, iterStat : ${singOffers}">
+                                <td class="checkbox-column">
+                                    <input type="checkbox" name="selectedOffer" th:value="${singOffer.id}" th:id="'offer-' + ${singOffer.id}" class="single-checkbox">
+                                </td>
+                                <td th:text="${singOffer.characteristics?.category?.id}"></td>
+                                <td th:text="${singOffer.characteristics?.nature?.id}"></td>
+                                <td th:text="${singOffer.characteristics?.model?.brand?.id}"></td>
+                                <td th:text="${singOffer.characteristics?.model?.id}"></td>
+                                <td th:text="${singOffer.characteristics?.batch}"></td>
+                                <td th:text="${singOffer.characteristics?.quality}"></td>
+                                <td th:text="${singOffer.characteristics?.function}"></td>
+                                <td th:text="${singOffer.characteristics?.mainColour}"></td>
+                                <td th:text="${singOffer.description}"></td>
+                                <td th:text="${singOffer.price}"></td>
+                                <td th:text="${singOffer.expiration}"></td>
+                                <td class="status-column" th:text="${statuses != null && !statuses.isEmpty() && iterStat.index < statuses.size() ? statuses[iterStat.index] : ''}"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
                 
                 <div class="actions">
                     <button id="deleteButton">Delete Selected Item</button>
@@ -85,42 +82,43 @@
             <h3 class="section-title">Inactive Offers</h3>
             <div th:if="${inactiveSingOffers.isEmpty()}">
                 <p>No inactive items available in this offer</p>
-            </div>
-            <div th:if="${!inactiveSingOffers.isEmpty()}">
-                <table id="inactiveSingOffersTable" class="inactive-table">
-                    <thead>
-                        <tr>
-                            <th>Category</th>
-                            <th>Nature</th>
-                            <th>Brand</th>
-                            <th>Model</th>
-                            <th>Batch</th>
-                            <th>Quality</th>
-                            <th>Function</th>
-                            <th>Main Color</th>
-                            <th>Description</th>
-                            <th>Price</th>
-                            <th>Expiration</th>
-                            <th>Status</th>
-                        </tr>
-                    </thead>
-                    <tbody>                        
-                        <tr th:each="singOffer, iterStat : ${inactiveSingOffers}">
-                            <td th:text="${singOffer.characteristics?.category?.id}"></td>
-                            <td th:text="${singOffer.characteristics?.nature?.id}"></td>
-                            <td th:text="${singOffer.characteristics?.model?.brand?.id}"></td>
-                            <td th:text="${singOffer.characteristics?.model?.id}"></td>
-                            <td th:text="${singOffer.characteristics?.batch}"></td>
-                            <td th:text="${singOffer.characteristics?.quality}"></td>
-                            <td th:text="${singOffer.characteristics?.function}"></td>
-                            <td th:text="${singOffer.characteristics?.mainColour}"></td>
-                            <td th:text="${singOffer.description}"></td>
-                            <td th:text="${singOffer.price}"></td>
-                            <td th:text="${singOffer.expiration}"></td>
-                            <td th:text="${inactiveStatuses != null && !inactiveStatuses.isEmpty() && iterStat.index < inactiveStatuses.size() ? inactiveStatuses[iterStat.index] : ''}"></td>
-                        </tr>
-                    </tbody>
-                </table>
+            </div>            <div th:if="${!inactiveSingOffers.isEmpty()}">
+                <div class="table-container">
+                    <table id="inactiveSingOffersTable" class="inactive-table">
+                        <thead>
+                            <tr>
+                                <th>Category</th>
+                                <th>Nature</th>
+                                <th>Brand</th>
+                                <th>Model</th>
+                                <th>Batch</th>
+                                <th>Quality</th>
+                                <th>Function</th>
+                                <th>Main Color</th>
+                                <th>Description</th>
+                                <th>Price</th>
+                                <th>Expiration</th>
+                                <th class="status-column">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>                        
+                            <tr th:each="singOffer, iterStat : ${inactiveSingOffers}">
+                                <td th:text="${singOffer.characteristics?.category?.id}"></td>
+                                <td th:text="${singOffer.characteristics?.nature?.id}"></td>
+                                <td th:text="${singOffer.characteristics?.model?.brand?.id}"></td>
+                                <td th:text="${singOffer.characteristics?.model?.id}"></td>
+                                <td th:text="${singOffer.characteristics?.batch}"></td>
+                                <td th:text="${singOffer.characteristics?.quality}"></td>
+                                <td th:text="${singOffer.characteristics?.function}"></td>
+                                <td th:text="${singOffer.characteristics?.mainColour}"></td>
+                                <td th:text="${singOffer.description}"></td>
+                                <td th:text="${singOffer.price}"></td>
+                                <td th:text="${singOffer.expiration}"></td>
+                                <td class="status-column" th:text="${inactiveStatuses != null && !inactiveStatuses.isEmpty() && iterStat.index < inactiveStatuses.size() ? inactiveStatuses[iterStat.index] : ''}"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </section>
     </main>
@@ -139,8 +137,19 @@
                 errorContainer.style.display = 'none';
             }, 5000);
         }
-        
-        document.addEventListener('DOMContentLoaded', function() {
+          document.addEventListener('DOMContentLoaded', function() {
+            // Allow only one checkbox to be selected at a time
+            const checkboxes = document.querySelectorAll('.single-checkbox');
+            checkboxes.forEach(checkbox => {
+                checkbox.addEventListener('change', function() {
+                    if (this.checked) {
+                        checkboxes.forEach(item => {
+                            if (item !== this) item.checked = false;
+                        });
+                    }
+                });
+            });
+            
             // Sort active table when clicking on headers
             document.querySelectorAll('#singOffersTable th').forEach((header, index) => {
                 if (!header.classList.contains('checkbox-column')) {
