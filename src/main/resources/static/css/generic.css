@@ -380,3 +380,31 @@ header a.home-icon {
     width: 100%;
     max-width: 200px;
 }
+
+/* Add Easter Egg Animation Styles to generic CSS so they're available on all pages */
+.easter-egg-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none; /* Allow clicks to pass through */
+    z-index: 9999;
+    overflow: hidden;
+}
+
+.falling-egg {
+    position: absolute;
+    top: -50px; /* Start above the viewport */
+    animation: fallDown linear forwards;
+    opacity: 0.85;
+}
+
+@keyframes fallDown {
+    from {
+        transform: translateY(0) rotate(0deg);
+    }
+    to {
+        transform: translateY(calc(100vh + 50px)) rotate(360deg);
+    }
+}

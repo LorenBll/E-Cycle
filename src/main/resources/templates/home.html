@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head>      <title>E-Cycle - Home</title>    
+<head>      
+    <title>E-Cycle - Home</title>    
     <link rel="icon" th:href="@{/images/logos/logoIcon.png}" type="image/png">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" th:href="@{/css/generic.css}">
@@ -21,106 +22,121 @@
             <button class="green-button" onclick="window.location.href='/requestInsertion'">Create New Request</button>
             <button class="green-button" onclick="window.location.href='/offerInsertion'">Create New Offer</button>
         </div>
-        <!-- Active Requests Section -->
-        <section class="card-1">
-            <h2>Active Requests</h2>
-            <div th:if="${activeRequests.isEmpty()}">
-                <p>No Active Requests</p>
+        
+        <div class="cards-grid">
+            <!-- Row 1: Active Requests and Offers -->
+            <div class="grid-row">
+                <!-- Active Requests Section -->
+                <section class="card-1">
+                    <h2>Active Requests</h2>
+                    <div th:if="${activeRequests.isEmpty()}">
+                        <p>No Active Requests</p>
+                    </div>
+                    <table th:if="${!activeRequests.isEmpty()}">
+                        <thead>
+                            <tr>
+                                <th>Title</th>
+                                <th>Creation Date</th>
+                                <th class="action-header">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="request : ${activeRequests}">
+                                <td th:text="${request.title}"></td>
+                                <td th:text="${request.tsCreation}"></td>
+                                <td class="action-column">
+                                    <button class="green-button" th:onclick="|window.location.href='/viewRequestDetails?requestId=${request.id}'|">View</button>
+                                </td>
+                            </tr>
+                        </tbody>            
+                    </table>        
+                </section>
+                
+                <!-- Active Offers Section -->
+                <section class="card-3">
+                    <h2>Active Offers</h2>
+                    <div th:if="${activeOffers.isEmpty()}">
+                        <p>No Active Offers</p>
+                    </div>
+                    <table th:if="${!activeOffers.isEmpty()}">
+                        <thead>
+                            <tr>
+                                <th>Title</th>
+                                <th>Creation Date</th>
+                                <th class="action-header">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="offer : ${activeOffers}">
+                                <td th:text="${offer.title}"></td>
+                                <td th:text="${offer.tsCreation}"></td>
+                                <td class="action-column">
+                                    <button class="green-button" th:onclick="|window.location.href='/viewOfferDetails?offerId=${offer.id}'|">View</button>
+                                </td>
+                            </tr>
+                        </tbody>            
+                    </table>        
+                </section>
             </div>
-            <table th:if="${!activeRequests.isEmpty()}">
-                <thead>
-                    <tr>
-                        <th>Title</th>
-                        <th>Creation Date</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr th:each="request : ${activeRequests}">
-                        <td th:text="${request.title}"></td>
-                        <td th:text="${request.tsCreation}"></td>
-                        <td>
-                            <button class="green-button" th:onclick="|window.location.href='/viewRequestDetails?requestId=${request.id}'|">View</button>
-                        </td>
-                    </tr>
-                </tbody>            
-            </table>        
-        </section>
-        <!-- Inactive Requests Section -->
-        <section class="card-2">
-            <h2>Inactive Requests</h2>
-            <div th:if="${inactiveRequests.isEmpty()}">
-                <p>No Inactive Requests</p>
+            
+            <!-- Row 2: Inactive Requests and Offers -->
+            <div class="grid-row">
+                <!-- Inactive Requests Section -->
+                <section class="card-2">
+                    <h2>Inactive Requests</h2>
+                    <div th:if="${inactiveRequests.isEmpty()}">
+                        <p>No Inactive Requests</p>
+                    </div>
+                    <table th:if="${!inactiveRequests.isEmpty()}">
+                        <thead>
+                            <tr>
+                                <th>Title</th>
+                                <th>Creation Date</th>
+                                <th class="action-header">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="request : ${inactiveRequests}">
+                                <td th:text="${request.title}"></td>
+                                <td th:text="${request.tsCreation}"></td>
+                                <td class="action-column">
+                                    <button class="green-button" th:onclick="|window.location.href='/viewRequestDetails?requestId=${request.id}'|">View</button>
+                                </td>
+                            </tr>
+                        </tbody>            
+                    </table>        
+                </section>
+                
+                <!-- Inactive Offers Section -->
+                <section class="card-4">
+                    <h2>Inactive Offers</h2>
+                    <div th:if="${inactiveOffers.isEmpty()}">
+                        <p>No Inactive Offers</p>
+                    </div>
+                    <table th:if="${!inactiveOffers.isEmpty()}">
+                        <thead>
+                            <tr>
+                                <th>Title</th>
+                                <th>Creation Date</th>
+                                <th class="action-header">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="offer : ${inactiveOffers}">
+                                <td th:text="${offer.title}"></td>
+                                <td th:text="${offer.tsCreation}"></td>
+                                <td class="action-column">
+                                    <button class="green-button" th:onclick="|window.location.href='/viewOfferDetails?offerId=${offer.id}'|">View</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </section>
             </div>
-            <table th:if="${!inactiveRequests.isEmpty()}">
-                <thead>
-                    <tr>
-                        <th>Title</th>
-                        <th>Creation Date</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr th:each="request : ${inactiveRequests}">
-                        <td th:text="${request.title}"></td>
-                        <td th:text="${request.tsCreation}"></td>
-                        <td>
-                            <button class="green-button" th:onclick="|window.location.href='/viewRequestDetails?requestId=${request.id}'|">View</button>
-                        </td>
-                    </tr>
-                </tbody>            
-            </table>        
-        </section>        
-        <!-- Active Offers Section -->
-        <section class="card-3">
-            <h2>Active Offers</h2>
-            <div th:if="${activeOffers.isEmpty()}">
-                <p>No Active Offers</p>
-            </div>
-            <table th:if="${!activeOffers.isEmpty()}">
-                <thead>
-                    <tr>
-                        <th>Title</th>
-                        <th>Creation Date</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr th:each="offer : ${activeOffers}">
-                        <td th:text="${offer.title}"></td>
-                        <td th:text="${offer.tsCreation}"></td>
-                        <td>
-                            <button class="green-button" th:onclick="|window.location.href='/viewOfferDetails?offerId=${offer.id}'|">View</button>
-                        </td>
-                    </tr>
-                </tbody>            
-            </table>        
-        </section>
-        <!-- Inactive Offers Section -->
-        <section class="card-4">
-            <h2>Inactive Offers</h2>
-            <div th:if="${inactiveOffers.isEmpty()}">
-                <p>No Inactive Offers</p>
-            </div>
-            <table th:if="${!inactiveOffers.isEmpty()}">
-                <thead>
-                    <tr>
-                        <th>Title</th>
-                        <th>Creation Date</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr th:each="offer : ${inactiveOffers}">
-                        <td th:text="${offer.title}"></td>
-                        <td th:text="${offer.tsCreation}"></td>
-                        <td>
-                            <button class="green-button" th:onclick="|window.location.href='/viewOfferDetails?offerId=${offer.id}'|">View</button>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </section>
+        </div>
     </main>
+    
+    <!-- Replace inline script with external script reference -->
+    <script th:src="@{/js/easterEgg.js}"></script>
 </body>
 </html>
