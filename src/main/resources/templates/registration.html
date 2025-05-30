@@ -1,23 +1,23 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head>    
-    <title>E-Cycle - Registration</title>
+<head>
+    <title>E-Cycle - Registration</title>    
     <link rel="icon" th:href="@{/images/logos/logoIcon.png}" type="image/png">
-    <link rel="stylesheet" th:href="@{/css/registration.css}">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" th:href="@{/css/generic.css}">
+    <link rel="stylesheet" th:href="@{/css/registration.css}">
 </head>
-<body>
-    <div class="logo-container">
+<header>
+    <div class="logo-section">
         <img th:src="@{/images/logos/logo.png}" alt="E-Cycle Logo">
     </div>
-    
+    <div class="navigation-links">
+        <!-- Navigation buttons removed from here -->
+    </div>
+</header>
+<body>
     <div class="card">
         <h2>Registration</h2>
-        
-        <div class="links">
-            <a href="/login">Login</a>
-            <a href="/">Home</a>
-        </div>
         
         <form id="registrationForm" onsubmit="submitRegistrationForm(event)">
             <!-- Personal Information -->
@@ -50,9 +50,9 @@
             <div class="form-group password-container">
                 <label for="password">Password*</label>
                 <input type="password" id="password" name="password" required>
-                <span class="toggle-password" onclick="togglePassword('password', 'eye-icon-open-password', 'eye-icon-closed-password')">
-                    <span id="eye-icon-open-password" style="display:inline;">👁️</span>
-                    <span id="eye-icon-closed-password" style="display:none;">👁️‍🗨️</span>
+                <span class="toggle-password" onclick="togglePassword('password', 'eye-icon-open-password', 'eye-icon-closed-password')">                    
+                    <span id="eye-icon-open-password">See</span>
+                    <span id="eye-icon-closed-password">Hide</span>
                 </span>
             </div>
             
@@ -63,14 +63,14 @@
             <div class="form-group password-container">
                 <label for="confirmPassword">Confirm Password*</label>
                 <input type="password" id="confirmPassword" name="confirmPassword" required>
-                <span class="toggle-password" onclick="togglePassword('confirmPassword', 'eye-icon-open-confirm', 'eye-icon-closed-confirm')">
-                    <span id="eye-icon-open-confirm" style="display:inline;">👁️</span>
-                    <span id="eye-icon-closed-confirm" style="display:none;">👁️‍🗨️</span>
+                <span class="toggle-password" onclick="togglePassword('confirmPassword', 'eye-icon-open-confirm', 'eye-icon-closed-confirm')">                    
+                    <span id="eye-icon-open-confirm">See</span>
+                    <span id="eye-icon-closed-confirm">Hide</span>
                 </span>
             </div>
             
             <!-- Address Information - Two column layout -->
-            <h3 style="text-align: left; color: #4CAF50; margin-top: 20px;">Address Information</h3>
+            <h3>Address Information</h3>
             
             <div class="form-row">
                 <div class="form-column">
@@ -117,8 +117,8 @@
                 </div>
             </div>
             
-            <!-- Error Messages -->
-            <div id="password-validation-error" class="error-message" style="display: none;">
+            <!-- Error Messages -->            
+            <div id="password-validation-error" class="error-message">
                 <p id="password-validation-message"></p>
             </div>
             
@@ -126,12 +126,12 @@
                 <p th:text="${error}">Error message</p>
             </div>
             
-            <button type="submit">Register</button>
+            <button type="submit" class="green-button">Register</button>
         </form>
         
-        <div class="bottom-links">
-            <p><a href="/login">Already have an account? Login</a></p>
-            <p><a href="/">Back to the Initial Page</a></p>
+        <div class="bottom-nav button-container">
+            <button onclick="window.location.href='/'" class="green-button">Home</button>
+            <button onclick="window.location.href='/login'" class="green-button">Login</button>
         </div>
     </div>
     <script>

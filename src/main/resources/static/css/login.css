@@ -1,169 +1,52 @@
-/* Font face definition */
-@font-face {
-    font-family: 'Croogla4F';
-    src: url('../fonts/Croogla4F.ttf') format('truetype');
-    font-weight: normal;
-    font-style: normal;
-}
+/* Login page specific styles */
 
-body {
-    margin: 0;
-    padding: 0;
-    background-color: #333333; /* dark gray background like other pages */
-    font-family: 'Croogla4F', 'Segoe UI', Arial, sans-serif;
-    color: #f8fbf7;
+/* Bottom navigation container */
+.bottom-nav {
+    margin-top: 20px;
     display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    min-height: 100vh;
-    overflow: hidden;
+    justify-content: space-between;
+    gap: 10px;
+    border-top: 1px solid rgba(47, 137, 50, 0.3);
+    padding-top: 15px;
 }
 
-.logo-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-bottom: 30px; /* increased spacing */
-    opacity: 0;
-    transform: translateY(50px);
-    animation: fadeInFromBottom 0.8s ease-out forwards; /* animation like index page */
+.bottom-nav button {
+    flex: 1;
 }
 
-.logo-container img {
-    max-width: 350px;
-    height: auto;
+/* Disabled button style */
+.bottom-nav button[disabled] {
+    opacity: 0.6;
+    cursor: default;
 }
 
-.card {
-    background-color: rgba(255, 255, 255, 0.1); /* semi-transparent like other pages */
-    border-radius: 12px;
-    box-shadow: 0 8px 24px rgba(44, 120, 67, 0.15);
-    padding: 30px;
-    width: 350px;
-    max-width: 90%;
-    text-align: center;
-    border: 2px solid #43c047;
-    opacity: 0;
-    transform: translateY(30px);
-    animation: fadeInFromBottom 0.8s ease-out forwards;
-    animation-delay: 0.3s;
+.bottom-nav button[disabled]:hover {
+    transform: none;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
 }
 
-.card h2 {
-    color: #4CAF50;
-    font-size: 2rem;
-    margin-top: 0;
-    margin-bottom: 24px;
-}
-
-.links {
-    margin-top: 5px; /* reduced spacing */
-    margin-bottom: 20px;
-}
-
-.links a {
-    display: inline-block;
-    color: #ffffff;
-    text-decoration: none;
-    margin: 0 10px;
-    font-weight: 600;
-    padding: 8px 15px;
-    background-color: #4CAF50;
-    border-radius: 4px;
-    transition: background-color 0.3s;
-}
-
-.links a:hover {
-    background-color: #3e8e41;
-    text-decoration: none;
-}
-
-.form-group {
-    margin-bottom: 20px;
-    text-align: left;
-}
-
-.form-group label {
-    display: block;
-    margin-bottom: 6px;
-    font-weight: 600;
-    color: #4CAF50;
-}
-
-.form-group input {
-    width: 100%;
-    padding: 10px;
-    border: 1.5px solid #4CAF50;
-    border-radius: 6px;
-    font-size: 16px;
-    box-sizing: border-box;
-    outline: none;
-    transition: border 0.2s;
-    background-color: rgba(255, 255, 255, 0.9);
-}
-
-.form-group input:focus {
-    border: 1.5px solid #3e8e41;
-}
-
-.password-container {
-    position: relative;
-}
-
-.toggle-password {
-    position: absolute;
-    right: 5px; /* slightly inside the input box */
-    top: 65%; /* moved more below */
-    transform: translateY(-50%);
-    cursor: pointer;
-    color: #4CAF50;
-}
-
+/* Login button style */
 button[type="submit"] {
-    background-color: #4CAF50;
-    color: #fff;
+    background-color: #2f8932;
+    color: white;
     border: none;
-    padding: 12px 0;
+    border-radius: 25px;
+    padding: 12px 20px;
     width: 100%;
-    border-radius: 6px;
-    font-size: 16px;
-    font-weight: 600;
+    font-size: 1.1rem;
     cursor: pointer;
-    transition: background-color 0.3s;
-    margin-top: 10px;
+    transition: all 0.3s ease;
+    margin-top: 20px;
+    margin-bottom: 20px;
 }
 
 button[type="submit"]:hover {
-    background-color: #3e8e41;
+    background-color: #46a049;
+    transform: scale(1.02);
 }
 
-.error-message {
-    color: #f44336;
-    margin-bottom: 15px;
-    font-weight: 500;
-    background-color: rgba(244, 67, 54, 0.1);
-    padding: 8px;
-    border-radius: 4px;
-}
-
-.success-message {
-    color: #4CAF50;
-    margin-bottom: 15px;
-    font-weight: 500;
-    background-color: rgba(76, 175, 80, 0.1);
-    padding: 8px;
-    border-radius: 4px;
-}
-
-/* Animation keyframes */
-@keyframes fadeInFromBottom {
-    from {
-        opacity: 0;
-        transform: translateY(50px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
+@media (max-width: 768px) {
+    .bottom-nav {
+        flex-direction: column;
     }
 }

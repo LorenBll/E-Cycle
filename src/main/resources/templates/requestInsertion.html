@@ -1,21 +1,26 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>    
-    <title>E-Cycle - Request Insertion</title>
+    <title>E-Cycle - Request Insertion</title>    
     <link rel="icon" th:href="@{/images/logos/logoIcon.png}" type="image/png">
-    <link rel="stylesheet" th:href="@{/css/requestInsertion.css}">
 </head>
-<body>    
-    <header>
-        <img th:src="@{/images/logos/logo.png}" alt="E-Cycle Logo">   
-    </header>
+<header class="site-header">
+    <div class="logo-section">
+        <img th:src="@{/images/logos/logo.png}" alt="E-Cycle Logo">
+    </div>
+    <div class="nav-section">
+        <button onclick="window.location.href='/home'" class="home-icon" title="Go to Home">🏠</button>
+    </div>
+</header>
+<body>
     <main>
         <div class="main-card">
             <h2>Insert New Request</h2>
-            <!-- Error message container for displaying validation errors -->
-            <div id="error-message-container" class="error-message" style="display: none;">
+            <!-- Error message container for displaying validation errors -->            
+            <div id="error-message-container" class="error-message">
                 <p id="error-message-text"></p>
-            </div>            <form id="requestForm" action="/insertRequest" method="post">
+            </div>
+            <form id="requestForm" action="/insertRequest" method="post">
                 <div class="input-group">
                     <label for="title">Request Title:</label>
                     <input type="text" id="title" name="title" required maxlength="50">

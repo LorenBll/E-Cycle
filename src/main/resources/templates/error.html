@@ -1,10 +1,17 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head>    
-    <title>E-Cycle - Error</title>
+<head>      <title>E-Cycle - Error</title>    
     <link rel="icon" th:href="@{/images/logos/logoIcon.png}" type="image/png">
-    <link rel="stylesheet" th:href="@{/css/error.css}">
+    <link rel="stylesheet" th:href="@{/css/buttons.css}">
 </head>
+<header class="site-header">
+    <div class="logo-section">
+        <img th:src="@{/images/logos/logo.png}" alt="E-Cycle Logo">
+    </div>
+    <div class="nav-section">
+        <button onclick="window.location.href='/home'" class="home-icon" title="Go to Home">🏠</button>
+    </div>
+</header>
 <body>
     <div class="logo-container">
         <img th:src="@{/images/logos/logo.png}" alt="E-Cycle Logo">
@@ -20,12 +27,15 @@
         </div>
         
         <div class="error-details" th:if="${exception != null}">
-            <p><strong>Exception:</strong> <span th:text="${exception.message}">Exception message</span></p>
-            <p th:if="${trace != null}"><strong>Stack trace:</strong> 
-            <span th:text="${trace}">Stack trace</span></p>
+            <p>
+                <strong>Exception:</strong>
+                <span th:text="${exception.message}">Exception message</span>
+            </p>
+            <p th:if="${trace != null}">
+                <strong>Stack trace:</strong> 
+                <span th:text="${trace}">Stack trace</span>
+            </p>
         </div>
-        
-        <a href="/" class="back-link">Back to Homepage</a>
     </div>
 </body>
 </html>

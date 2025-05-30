@@ -1,0 +1,382 @@
+/* Font face definition */
+@font-face {
+    font-family: 'Croogla4F';
+    src: url('../fonts/Croogla4F.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+/* Page Background Style */
+html, body {
+    background-color: #212121;
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+}
+
+/* Default site font for all elements */
+body, button, input, select, textarea, a, p, h1, h2, h3, h4, h5, h6, span, div {
+    font-family: 'Croogla4F', 'Segoe UI', Arial, sans-serif;
+}
+
+/* Card Style */
+.card {
+    background-color: rgba(255, 255, 255, 0.1);
+    border: 2px solid #2f8932;
+    border-radius: 10px;
+    padding: 20px;
+    margin: 20px auto;
+    max-width: 800px;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    animation: slideUp 0.5s ease-out forwards;
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(50px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.card h2 {
+    color: #2f8932;
+    font-family: 'Croogla4F', 'Segoe UI', Arial, sans-serif;
+    margin-bottom: 1rem;
+}
+
+.card input {
+    background-color: transparent;
+    border: 1px solid #2f8932;
+    color: white;
+    font-family: 'Croogla4F', 'Segoe UI', Arial, sans-serif;
+    padding: 8px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.card input::placeholder {
+    color: rgba(255, 255, 255, 0.6);
+    font-family: 'Croogla4F', 'Segoe UI', Arial, sans-serif;
+}
+
+/* Container Style */
+.container {
+    padding: 20px;
+    max-width: 1000px; /* Reduced from 1200px */
+    margin: 0 auto;
+}
+
+/* Green Button Style */
+.green-button {
+    background-color: #2f8932;
+    color: white;
+    border: none;
+    border-radius: 25px;
+    padding: 10px 20px;
+    margin: 10px 0;
+    font-family: 'Croogla4F', 'Segoe UI', Arial, sans-serif;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.25, 0.1, 0.25, 1);
+    text-align: center;
+    display: inline-block;
+    min-width: 120px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.green-button:hover {
+    background-color: #046a38;
+    transform: scale(1.05);
+    box-shadow: 0 4px 10px rgba(47, 137, 50, 0.5);
+}
+
+/* Red Button Style */
+.red-button {
+    background-color: #e63946;
+    color: white;
+    border: none;
+    border-radius: 25px;
+    padding: 10px 20px;
+    margin: 10px 0;
+    font-family: 'Croogla4F', 'Segoe UI', Arial, sans-serif;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.25, 0.1, 0.25, 1);
+    text-align: center;
+    display: inline-block;
+    min-width: 120px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.red-button:hover {
+    background-color: #c1121f;
+    transform: scale(1.05);
+    box-shadow: 0 4px 10px rgba(230, 57, 70, 0.5);
+}
+
+/* Orange Button Style */
+.orange-button {
+    background-color: #ff8c00;
+    color: white;
+    border: none;
+    border-radius: 25px;
+    padding: 10px 20px;
+    margin: 10px 0;
+    font-family: 'Croogla4F', 'Segoe UI', Arial, sans-serif;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.25, 0.1, 0.25, 1);
+    text-align: center;
+    display: inline-block;
+    min-width: 120px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.orange-button:hover {
+    background-color: #d17000;
+    transform: scale(1.05);
+    box-shadow: 0 4px 10px rgba(255, 140, 0, 0.5);
+}
+
+/* Header Styles */
+header, .site-header {
+    width: 100%;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    background-color: transparent;
+    padding: 1.5rem 0; /* Changed from 1.5rem 1rem to remove left and right padding */
+}
+
+header .logo-section, header div:first-child {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+}
+
+header .nav-section, header .navigation-links, header div:last-child {
+    display: flex;
+    align-items: center;
+    margin-left: auto;
+}
+
+header img {
+    max-height: 65px;
+    margin-left: 30px; /* Changed from 10px to 30px */
+    transition: transform 0.3s ease;
+}
+
+header img:hover {
+    transform: scale(1.05);
+}
+
+header a.home-icon {
+    font-size: 1.5rem;
+    text-decoration: none;
+    margin-left: 1rem;
+    margin-right: 30px; /* Added right padding of 30px */
+}
+
+/* Container for centering card */
+.container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: calc(100vh - 150px); /* Reduced from calc(100vh - 100px) */
+    padding: 0 20px;
+    max-width: 1000px; /* Added to ensure consistency with earlier declaration */
+}
+
+/* Card Style with Glass Effect */
+.card {
+    background-color: transparent;
+    border: 2px solid #2f8932;
+    border-radius: 10px;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    padding: 30px;
+    width: 100%;
+    max-width: 500px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    opacity: 0;
+    transform: translateY(30px);
+    animation: fadeInUp 0.8s cubic-bezier(0.25, 0.1, 0.25, 1) forwards;
+    transition: all 0.3s cubic-bezier(0.25, 0.1, 0.25, 1);
+}
+
+/* Card hover effect */
+.card:hover {
+    box-shadow: 0 8px 25px rgba(47, 137, 50, 0.3);
+    border-color: #46a049;
+}
+
+/* Title styles inside card */
+.card h2 {
+    color: #2f8932;
+    font-family: 'Croogla4F', 'Segoe UI', Arial, sans-serif;
+    margin-top: 0;
+    margin-bottom: 20px;
+    font-weight: normal;
+    text-align: center;
+    font-size: 1.8rem;
+}
+
+/* Input styles inside card */
+.card input {
+    background-color: transparent;
+    border: 2px solid #2f8932;
+    border-radius: 5px;
+    padding: 10px 15px;
+    width: 100%;
+    color: white;
+    font-family: 'Croogla4F', 'Segoe UI', Arial, sans-serif;
+    margin-bottom: 15px;
+    transition: all 0.3s cubic-bezier(0.25, 0.1, 0.25, 1);
+    box-sizing: border-box;
+}
+
+/* Input focus state */
+.card input:focus {
+    outline: none;
+    border-color: #46a049;
+    box-shadow: 0 0 8px rgba(47, 137, 50, 0.5);
+    background-color: transparent;
+}
+
+/* Input placeholder style */
+.card input::placeholder {
+    color: rgba(255, 255, 255, 0.6);
+    font-family: 'Croogla4F', 'Segoe UI', Arial, sans-serif;
+}
+
+/* Additional Card Styling */
+
+/* Form inside card */
+.card form {
+    width: 100%;
+}
+
+/* Form groups for inputs */
+.form-group {
+    margin-bottom: 15px;
+}
+
+/* Label styling */
+.card label {
+    display: block;
+    margin-bottom: 5px;
+    color: white;
+    font-family: 'Croogla4F', 'Segoe UI', Arial, sans-serif;
+}
+
+/* Links container */
+.card .links {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+.card .links a {
+    color: #2f8932;
+    text-decoration: none;
+    transition: color 0.3s;
+}
+
+.card .links a:hover {
+    color: #46a049;
+    text-decoration: underline;
+}
+
+/* Error and success messages */
+.error-message, .success-message {
+    padding: 10px;
+    margin: 10px 0;
+    border-radius: 5px;
+    text-align: center;
+}
+
+.error-message {
+    background-color: rgba(230, 57, 70, 0.2);
+    border: 1px solid #e63946;
+    color: #e63946;
+}
+
+.success-message {
+    background-color: rgba(47, 137, 50, 0.2);
+    border: 1px solid #2f8932;
+    color: #2f8932;
+}
+
+/* Password toggle styling */
+.password-container {
+    position: relative;
+}
+
+.toggle-password {
+    position: absolute;
+    right: 10px;
+    top: 35px;
+    cursor: pointer;
+    color: #2f8932;
+}
+
+#eye-icon-closed {
+    display: none;
+    color: #2f8932;
+}
+
+/* Animation for card appearance */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .container {
+        padding: 0 10px;
+    }
+    
+    .card {
+        padding: 20px;
+    }
+}
+
+/* Button container styling for login page */
+.button-container {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 15px;
+    gap: 10px;
+    border-top: 1px solid rgba(47, 137, 50, 0.3);
+    padding-top: 15px;
+}
+
+.button-container button {
+    flex: 1;
+    min-width: 0;
+}
+
+/* Login button container - separated from other buttons */
+.login-button-container {
+    display: flex;
+    justify-content: center;
+    margin: 20px 0;
+}
+
+.login-button-container button {
+    width: 100%;
+    max-width: 200px;
+}

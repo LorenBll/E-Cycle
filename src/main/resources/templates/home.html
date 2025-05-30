@@ -1,23 +1,26 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head>    
-    <title>E-Cycle - Home</title>
+<head>      <title>E-Cycle - Home</title>    
     <link rel="icon" th:href="@{/images/logos/logoIcon.png}" type="image/png">
-    <link rel="stylesheet" th:href="@{/css/home.css}">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" th:href="@{/css/generic.css}">
+    <link rel="stylesheet" th:href="@{/css/home.css}">
 </head>
+<header>
+    <div class="logo-section">
+        <img th:src="@{/images/logos/logo.png}" alt="E-Cycle Logo">
+    </div>
+    <div class="navigation-links">
+        <!-- Navigation buttons removed from here -->
+    </div>
+</header>
 <body>    
-    <header>
-        <div>
-            <img th:src="@{/images/logos/logo.png}" alt="E-Cycle Logo">
-        </div>        
-        <div class="navigation-links">
-            <a href="/profile">View Profile</a>
-            <a href="/requestInsertion">Create New Request</a>
-            <a href="/offerInsertion">Create New Offer</a>
-        </div>
-    </header>    
     <main>
+        <div class="navigation-links">
+            <button class="green-button" onclick="window.location.href='/profile'">View Profile</button>
+            <button class="green-button" onclick="window.location.href='/requestInsertion'">Create New Request</button>
+            <button class="green-button" onclick="window.location.href='/offerInsertion'">Create New Offer</button>
+        </div>
         <!-- Active Requests Section -->
         <section class="card-1">
             <h2>Active Requests</h2>
@@ -37,7 +40,7 @@
                         <td th:text="${request.title}"></td>
                         <td th:text="${request.tsCreation}"></td>
                         <td>
-                            <a th:href="@{/viewRequestDetails(requestId=${request.id})}"><button>View</button></a>
+                            <button class="green-button" th:onclick="|window.location.href='/viewRequestDetails?requestId=${request.id}'|">View</button>
                         </td>
                     </tr>
                 </tbody>            
@@ -62,7 +65,7 @@
                         <td th:text="${request.title}"></td>
                         <td th:text="${request.tsCreation}"></td>
                         <td>
-                            <a th:href="@{/viewRequestDetails(requestId=${request.id})}"><button>View</button></a>
+                            <button class="green-button" th:onclick="|window.location.href='/viewRequestDetails?requestId=${request.id}'|">View</button>
                         </td>
                     </tr>
                 </tbody>            
@@ -87,7 +90,7 @@
                         <td th:text="${offer.title}"></td>
                         <td th:text="${offer.tsCreation}"></td>
                         <td>
-                            <a th:href="@{/viewOfferDetails(offerId=${offer.id})}"><button>View</button></a>
+                            <button class="green-button" th:onclick="|window.location.href='/viewOfferDetails?offerId=${offer.id}'|">View</button>
                         </td>
                     </tr>
                 </tbody>            
@@ -112,7 +115,7 @@
                         <td th:text="${offer.title}"></td>
                         <td th:text="${offer.tsCreation}"></td>
                         <td>
-                            <a th:href="@{/viewOfferDetails(offerId=${offer.id})}"><button>View</button></a>
+                            <button class="green-button" th:onclick="|window.location.href='/viewOfferDetails?offerId=${offer.id}'|">View</button>
                         </td>
                     </tr>
                 </tbody>

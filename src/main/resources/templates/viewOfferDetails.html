@@ -1,17 +1,18 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>    
-    <title>E-Cycle - Offer Details</title>
+    <title>E-Cycle - Offer Details</title>    
     <link rel="icon" th:href="@{/images/logos/logoIcon.png}" type="image/png">
-    <link rel="stylesheet" th:href="@{/css/viewOfferDetails.css}">
 </head>
+<header class="site-header">
+    <div class="logo-section">
+        <img th:src="@{/images/logos/logo.png}" alt="E-Cycle Logo">
+    </div>
+    <div class="nav-section">
+        <button onclick="window.location.href='/home'" class="home-icon" title="Go to Home">🏠</button>
+    </div>
+</header>
 <body>    
-    <header>
-        <div>
-            <img th:src="@{/images/logos/logo.png}" alt="E-Cycle Logo">
-            <a href="/home">Back to Home</a>
-        </div>
-    </header>
     <main>
         <section class="offer-details">
             <h2 th:text="${offer.title}">Offer Title</h2>
@@ -19,8 +20,8 @@
             <!-- Active Offers Section -->
             <h3 class="section-title">Active Offers</h3>
             
-            <!-- Error message container for displaying in-page errors -->            
-            <div id="error-message-container" class="error-message" style="display: none;">
+            <!-- Error message container for displaying in-page errors -->              
+            <div id="error-message-container" class="error-message">
                 <p id="error-message-text"></p>
             </div>
             
