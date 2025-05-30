@@ -12,8 +12,6 @@ import org.springframework.lang.NonNull;
 public interface Negotiations_Repository extends JpaRepository<Negotiation, Integer> {
 
     Negotiation findById(int id);
-    List<Negotiation> findBySingOffer(SingOffer singOffer);
-    List<Negotiation> findBySingRequest(SingRequest singRequest);
     List<Negotiation> findBySingOfferAndSingRequest(SingOffer singOffer, SingRequest singRequest);
     // to see all negotiations that have been accepted or rejected (wasAccepted = true or false)
     Negotiation findBySingOfferAndWasAccepted(SingOffer singOffer, boolean wasAccepted);
@@ -21,12 +19,8 @@ public interface Negotiations_Repository extends JpaRepository<Negotiation, Inte
     // to see negotiations that are still open
     Negotiation findBySingOfferAndTsClosureIsNull(SingOffer singOffer);
     Negotiation findBySingRequestAndTsClosureIsNull(SingRequest singRequest);
-    // to see all negotiations that have been closed (whether accepted or not)
-    List<Negotiation> findBySingOfferAndTsClosureIsNotNull(SingOffer singOffer);
-    List<Negotiation> findBySingRequestAndTsClosureIsNotNull(SingRequest singRequest);
     @NonNull List<Negotiation> findAll();
 
-    void deleteById(int id);
     void deleteBySingOffer(SingOffer singOffer);
     void deleteBySingRequest(SingRequest singRequest);
 

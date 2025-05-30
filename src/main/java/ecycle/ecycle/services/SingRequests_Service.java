@@ -7,7 +7,6 @@ import ecycle.ecycle.repositories.SingRequests_Repository;
 import ecycle.ecycle.models.Interaction;
 import ecycle.ecycle.models.SingRequest;
 import java.util.List;
-import ecycle.ecycle.models.Characteristics;
 import ecycle.ecycle.models.Negotiation;
 import java.sql.Timestamp;
 
@@ -38,7 +37,7 @@ public class SingRequests_Service {
         return isActive;
 
     }
-
+    
     public SingRequest findById(int id) {
         return singRequestsRepository.findById(id);
     }
@@ -47,36 +46,19 @@ public class SingRequests_Service {
         return singRequestsRepository.findByRequest(request);
     }
 
-    public List<SingRequest> findByRequestAndTsDeletionIsNull(Interaction request) {
-        return singRequestsRepository.findByRequestAndTsDeletionIsNull(request);
-    }
-
-    public List<SingRequest> findByRequestAndTsDeletionIsNotNull(Interaction request) {
-        return singRequestsRepository.findByRequestAndTsDeletionIsNotNull(request);
-    }
-
-    public List<SingRequest> findByTsDeletionIsNullAndCharacteristicsAndMaxPriceMoreThan(Characteristics characteristics, float price) {
-        List<SingRequest> singRequests = singRequestsRepository.findByTsDeletionIsNullAndCharacteristics(characteristics);
-        singRequests.removeIf(singRequest -> singRequest.getMaxPrice() < price);
-        return singRequests;
-    }
-
     public List<SingRequest> findAll() {
         return singRequestsRepository.findAll();
     }
 
-    // register a new sing request
     public SingRequest save(SingRequest singRequest) {
         return singRequestsRepository.save(singRequest);
     }
 
-    // delete sing request (soft delete, update tsDeletion)
     public void delete(SingRequest singRequest) {
         singRequest.setTsDeletion(new Timestamp(System.currentTimeMillis()));
         singRequestsRepository.save(singRequest);
     }    
     
-    // delete sing request by request (hard delete)
     @Transactional
     public void deleteByRequest(Interaction request) {
         // find by request
@@ -90,3 +72,4 @@ public class SingRequests_Service {
     }
 
 }
+

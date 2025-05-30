@@ -22,3 +22,4 @@ public class RegistrationRequest {
     private String street;
     private String civic;
 }
+

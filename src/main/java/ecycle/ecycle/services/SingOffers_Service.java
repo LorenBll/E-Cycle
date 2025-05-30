@@ -39,7 +39,7 @@ public class SingOffers_Service {
         return isActive;
 
     }
-
+    
     public SingOffer findById(int id) {
         return singOffersRepository.findById(id);
     }
@@ -48,35 +48,20 @@ public class SingOffers_Service {
         return singOffersRepository.findByOffer(offer);
     }
 
-    public List<SingOffer> findByOfferAndTsDeletionIsNull(Interaction offer) {
-        return singOffersRepository.findByOfferAndTsDeletionIsNull(offer);
-    }
-
-    public List<SingOffer> findByOfferAndTsDeletionIsNotNullOrExpirationBefore(Interaction offer, Date expiration) {
-        return singOffersRepository.findByOfferAndTsDeletionIsNotNullOrExpirationBefore(offer, expiration);
-    }
-
-    public List<SingOffer> findByOfferAndTsDeletionIsNullAndExpirationAfter(Interaction offer, Date expiration) {
-        return singOffersRepository.findByOfferAndTsDeletionIsNullAndExpirationAfter(offer, expiration);
-    }
-
     public List<SingOffer> findAll () {
         return singOffersRepository.findAll();
     }
 
-    // register a new sing offer
     public SingOffer save(SingOffer singOffer) {
         return singOffersRepository.save(singOffer);
     }
 
-    // delete sing offer (soft delete, update tsDeletion)
     @Transactional
     public void delete(SingOffer singOffer) {
         singOffer.setTsDeletion(new Timestamp(System.currentTimeMillis()));
         singOffersRepository.save(singOffer);
     }
 
-    // delete sing offer by offer (hard delete)
     @Transactional
     public void deleteByOffer(Interaction offer) {
         // find by offer
@@ -90,3 +75,4 @@ public class SingOffers_Service {
     }
 
 }
+

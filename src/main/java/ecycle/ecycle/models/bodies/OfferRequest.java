@@ -28,6 +28,5 @@ public class OfferRequest {
     private Float pricePerUnit;
     private String description;
     private Date expiration;
-    
     private String filePath; // tocheck
 }

@@ -4,9 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ecycle.ecycle.repositories.Users_Repository;
 import ecycle.ecycle.models.User;
-import java.util.List;
 import org.springframework.transaction.annotation.Transactional;
-
 
 @Service
 @RequiredArgsConstructor
@@ -14,11 +12,7 @@ public class Users_Service {
     
     private final Users_Repository usersRepository;
     private final Interactions_Service interactionsService;
-
-    public User findById(int id) {
-        return usersRepository.findById(id);
-    }
-
+    
     public User findByUsername(String username) {
         return usersRepository.findByUsername(username);
     }
@@ -27,29 +21,10 @@ public class Users_Service {
         return usersRepository.findByEmail(email);
     }
 
-    public User login(String username, String password) {
-        return usersRepository.findByUsernameAndPassword(username, password);
-    }
-
-    public User findByUsernameAndPassword(String username, String password) {
-        return usersRepository.findByUsernameAndPassword(username, password);
-    }
-
-    public List<User> findAll() {
-        return usersRepository.findAll();
-    }
-
-    // register a new user
     public User save(User user) {
         return usersRepository.save(user);
     }
 
-    // update user
-    public User update(User user) {
-        return usersRepository.save(user);
-    }
-
-    // delete user
     @Transactional
     public void delete(User user) {
         interactionsService.deleteByUser(user);
@@ -57,3 +32,4 @@ public class Users_Service {
     }
 
 }
+

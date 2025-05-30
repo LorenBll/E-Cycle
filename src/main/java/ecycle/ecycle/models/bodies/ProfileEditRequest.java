@@ -22,3 +22,4 @@ public class ProfileEditRequest {
     private String street;
     private String civic;
 }
+

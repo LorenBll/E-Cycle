@@ -20,7 +20,8 @@ import java.sql.Timestamp;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name="interactions")
-public class Interaction { 
+public class Interaction {
+
     @Id @Column(name="ID") @GeneratedValue(strategy=GenerationType.IDENTITY) private int id;
     @Column(name="title",length=50) private String title;
     @Column(name="ts_creation") private Timestamp tsCreation;
@@ -30,6 +31,7 @@ public class Interaction {
     public void setIsOffer(boolean isOffer) {
         this.isOffer = isOffer;
     }
+    
     public boolean getIsOffer() {
         return isOffer;
     }

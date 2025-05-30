@@ -20,7 +20,6 @@ public class Categories_Service {
         return categoriesRepository.findAll();
     }
 
-    // register a new category
     public Category save(Category category) {
         return categoriesRepository.save(category);
     }

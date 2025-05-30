@@ -10,6 +10,8 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Column;
+import java.sql.Timestamp;
+
 
 @Entity
 @Getter
@@ -23,8 +25,8 @@ public class User {
     @Column(name="name",length=50) private String name;
     @Column(name="surname",length=50) private String surname;
     @Column(name="email",length=100) private String email;
-    @Column(name="password",length=64) private String password;
-    // address components
+    @Column(name="ts_passwordUpdate") private Timestamp tsPasswordUpdate;
+    @Column(name="password",length=255) private String password;
     @Column(name="state",length=50) private String state;
     @Column(name="region",length=50) private String region;
     @Column(name="province",length=50) private String province;

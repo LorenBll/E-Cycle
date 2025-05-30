@@ -25,101 +25,102 @@
                 
                 <div id="characteristicsContainer">
                     <div class="characteristics-section" data-index="0"><div class="section-header">
-                            <h3>Characteristics #1</h3>
-                            <div>
-                                <button type="button" class="cancelSectionBtn" data-index="0" disabled>Cancel</button>
-                            </div>
+                        <h3>Characteristics #1</h3>
+                        <div>
+                            <button type="button" class="cancelSectionBtn" data-index="0" disabled>Cancel</button>
                         </div>
+                    </div>
                         
-                        <div class="input-group">
-                            <label for="category-0">Category:</label>
-                            <select id="category-0" name="characteristics[0].category" required>
-                                <option value="">Select a category</option>
-                                <option value="manual">Enter manually</option>
-                                <option th:each="category : ${categories}" th:value="${category.id}" th:text="${category.id}"></option>
-                            </select>
-                            <input type="text" id="categoryManual-0" name="characteristics[0].categoryManual" class="hidden" placeholder="Enter category name" maxlength="50">
-                        </div>
-                        
-                        <div class="input-group">
-                            <label for="nature-0">Nature:</label>
-                            <select id="nature-0" name="characteristics[0].nature" required>
-                                <option value="">Select a nature</option>
-                                <option value="manual">Enter manually</option>
-                                <option th:each="nature : ${natures}" th:value="${nature.id}" th:text="${nature.id}"></option>
-                            </select>
-                            <input type="text" id="natureManual-0" name="characteristics[0].natureManual" class="hidden" placeholder="Enter nature name" maxlength="50">
-                        </div>
-                        
-                        <div class="input-group">
-                            <label for="brand-0">Brand:</label>
-                            <select id="brand-0" name="characteristics[0].brand" required>
-                                <option value="">Select a brand</option>
-                                <option value="manual">Enter manually</option>
-                                <option th:each="brand : ${brands}" th:value="${brand.id}" th:text="${brand.id}"></option>
-                            </select>
-                            <input type="text" id="brandManual-0" name="characteristics[0].brandManual" class="hidden" placeholder="Enter brand name" maxlength="50">
-                        </div>
-                        
-                        <div class="input-group">
-                            <label for="model-0">Model:</label>
-                            <select id="model-0" name="characteristics[0].model" required disabled>
-                                <option value="">Select a model</option>
-                                <option value="manual">Enter manually</option>
-                            </select>
-                            <input type="text" id="modelManual-0" name="characteristics[0].modelManual" class="hidden" placeholder="Enter model name" maxlength="50">
-                        </div>
-                        
-                        <div class="input-group">
-                            <label for="mainColour-0">Colour:</label>
-                            <input type="text" id="mainColour-0" name="characteristics[0].mainColour" required maxlength="50">
-                        </div>
-                        
-                        <div class="input-group">
-                            <label for="function-0">Function:</label>
-                            <input type="text" id="function-0" name="characteristics[0].function" required maxlength="50">
-                        </div>
-                        
-                        <div class="input-group">
-                            <label for="prodYear-0">Year:</label>
-                            <input type="number" id="prodYear-0" name="characteristics[0].prodYear" min="1900" th:max="${#dates.format(#dates.createNow(), 'yyyy')}" required>
-                        </div>
-                        
-                        <div class="input-group">
-                            <label for="batch-0">Batch:</label>
-                            <input type="text" id="batch-0" name="characteristics[0].batch" maxlength="50">
-                        </div>
-                          <div class="input-group">
-                            <label for="quality-0">Quality:</label>
-                            <select id="quality-0" name="characteristics[0].quality" required>
-                                <option value="">Select quality</option>
-                                <option value="Excellent">Excellent</option>
-                                <option value="Good">Good</option>
-                                <option value="Acceptable">Acceptable</option>
-                                <option value="Needs Revision">Needs Revision</option>
-                                <option value="Broken">Broken</option>
-                            </select>
-                        </div>
-                        
-                        <div class="input-group">
-                            <label for="quantity-0">Quantity:</label>
-                            <input type="number" id="quantity-0" name="characteristics[0].quantity" min="1" value="1" required>
-                        </div>
-                        
-                        <div class="input-group">
-                            <label for="maxPrice-0">Max Price per Unit:</label>
-                            <input type="number" id="maxPrice-0" name="characteristics[0].maxPricePerUnit" step="0.01" min="0" required>
-                        </div>
+                    <div class="input-group">
+                        <label for="category-0">Category:</label>
+                        <select id="category-0" name="characteristics[0].category" required>
+                            <option value="">Select a category</option>
+                            <option value="manual">Enter manually</option>
+                            <option th:each="category : ${categories}" th:value="${category.id}" th:text="${category.id}"></option>
+                        </select>
+                        <input type="text" id="categoryManual-0" name="characteristics[0].categoryManual" class="hidden" placeholder="Enter category name" maxlength="50">
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="nature-0">Nature:</label>
+                        <select id="nature-0" name="characteristics[0].nature" required>
+                            <option value="">Select a nature</option>
+                            <option value="manual">Enter manually</option>
+                            <option th:each="nature : ${natures}" th:value="${nature.id}" th:text="${nature.id}"></option>
+                        </select>
+                        <input type="text" id="natureManual-0" name="characteristics[0].natureManual" class="hidden" placeholder="Enter nature name" maxlength="50">
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="brand-0">Brand:</label>
+                        <select id="brand-0" name="characteristics[0].brand" required>
+                            <option value="">Select a brand</option>
+                            <option value="manual">Enter manually</option>
+                            <option th:each="brand : ${brands}" th:value="${brand.id}" th:text="${brand.id}"></option>
+                        </select>
+                        <input type="text" id="brandManual-0" name="characteristics[0].brandManual" class="hidden" placeholder="Enter brand name" maxlength="50">
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="model-0">Model:</label>
+                        <select id="model-0" name="characteristics[0].model" required disabled>
+                            <option value="">Select a model</option>
+                            <option value="manual">Enter manually</option>
+                        </select>
+                        <input type="text" id="modelManual-0" name="characteristics[0].modelManual" class="hidden" placeholder="Enter model name" maxlength="50">
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="mainColour-0">Colour:</label>
+                        <input type="text" id="mainColour-0" name="characteristics[0].mainColour" required maxlength="50">
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="function-0">Function:</label>
+                        <input type="text" id="function-0" name="characteristics[0].function" required maxlength="50">
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="prodYear-0">Year:</label>
+                        <input type="number" id="prodYear-0" name="characteristics[0].prodYear" min="1900" th:max="${#dates.format(#dates.createNow(), 'yyyy')}" required>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="batch-0">Batch:</label>
+                        <input type="text" id="batch-0" name="characteristics[0].batch" maxlength="50">
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="quality-0">Quality:</label>
+                        <select id="quality-0" name="characteristics[0].quality" required>
+                            <option value="">Select quality</option>
+                            <option value="Excellent">Excellent</option>
+                            <option value="Good">Good</option>
+                            <option value="Acceptable">Acceptable</option>
+                            <option value="Needs Revision">Needs Revision</option>
+                            <option value="Broken">Broken</option>
+                        </select>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="quantity-0">Quantity:</label>
+                        <input type="number" id="quantity-0" name="characteristics[0].quantity" min="1" value="1" required>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="maxPrice-0">Max Price per Unit:</label>
+                        <input type="number" id="maxPrice-0" name="characteristics[0].maxPricePerUnit" step="0.01" min="0" required>
                     </div>
                 </div>
                 
                 <div class="btn-container">
                     <button type="button" id="cancelRequestBtn">Cancel Request</button>
                     <button type="submit">Confirm</button>
-                </div>            </form>
+                </div>            
+            </form>
         </div>
     </main>
-      <script th:inline="javascript">
+    <script th:inline="javascript">
         // Get all models from the server
         const allModels = /*[[${models}]]*/ [];
         // Get other data from the server
@@ -354,7 +355,8 @@
                 });
             });
         });
-          function createCharacteristicsSection(index) {
+        
+        function createCharacteristicsSection(index) {
             const section = document.createElement('div');
             section.className = 'characteristics-section';
             section.setAttribute('data-index', index);

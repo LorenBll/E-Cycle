@@ -134,20 +134,32 @@
             <p><a href="/">Back to the Initial Page</a></p>
         </div>
     </div>
-    
     <script>
-        function submitRegistrationForm(event) {
+        // Function to hash password with SHA-256
+        async function hashPassword(password) {
+            const encoder = new TextEncoder();
+            const data = encoder.encode(password);
+            const hash = await crypto.subtle.digest('SHA-256', data);
+            const hashArray = Array.from(new Uint8Array(hash));
+            const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+            return hashHex;
+        }
+
+        async function submitRegistrationForm(event) {
             event.preventDefault();
             if (!validateForm()) {
                 return;
             }
+            
+            const password = document.getElementById('password').value;
+            const hashedPassword = await hashPassword(password);
             
             const formData = {
                 username: document.getElementById('username').value,
                 name: document.getElementById('name').value,
                 surname: document.getElementById('surname').value,
                 email: document.getElementById('email').value,
-                password: document.getElementById('password').value,
+                password: hashedPassword,
                 state: document.getElementById('state').value,
                 region: document.getElementById('region').value,
                 province: document.getElementById('province').value,
@@ -178,7 +190,7 @@
             });
         }
     </script>
-        <script>
+    <script>
         function togglePassword(inputId, openEyeId, closedEyeId) {
             const passwordInput = document.getElementById(inputId);
             const openEye = document.getElementById(openEyeId);

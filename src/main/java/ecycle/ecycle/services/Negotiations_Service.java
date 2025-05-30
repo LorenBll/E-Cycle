@@ -14,17 +14,9 @@ import java.util.List;
 public class Negotiations_Service {
         
     private final Negotiations_Repository negotiationsRepository;
-
+    
     public Negotiation findById(int id) {
         return negotiationsRepository.findById(id);
-    }
-
-    public List<Negotiation> findBySingOffer(SingOffer singOffer) {
-        return negotiationsRepository.findBySingOffer(singOffer);
-    }
-
-    public List<Negotiation> findBySingRequest(SingRequest singRequest) {
-        return negotiationsRepository.findBySingRequest(singRequest);
     }
 
     public List<Negotiation> findBySingOfferAndSingRequest(SingOffer singOffer, SingRequest singRequest) {
@@ -47,14 +39,6 @@ public class Negotiations_Service {
         return negotiationsRepository.findBySingRequestAndTsClosureIsNull(singRequest);
     }
 
-    public List<Negotiation> findBySingOfferAndTsClosureIsNotNull(SingOffer singOffer) {
-        return negotiationsRepository.findBySingOfferAndTsClosureIsNotNull(singOffer);
-    }
-
-    public List<Negotiation> findBySingRequestAndTsClosureIsNotNull(SingRequest singRequest) {
-        return negotiationsRepository.findBySingRequestAndTsClosureIsNotNull(singRequest);
-    }
-
     public List<Negotiation> findAll() {
         return negotiationsRepository.findAll();
     }
@@ -63,10 +47,6 @@ public class Negotiations_Service {
         return negotiationsRepository.save(negotiation);
     }
 
-    public void deleteById(int id) {
-        negotiationsRepository.deleteById(id);
-    }    
-    
     @Transactional
     public void deleteBySingOffer(SingOffer singOffer) {
         negotiationsRepository.deleteBySingOffer(singOffer);

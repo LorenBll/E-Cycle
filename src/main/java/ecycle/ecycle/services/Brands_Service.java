@@ -20,7 +20,6 @@ public class Brands_Service {
         return brandsRepository.findAll();
     }
 
-    // register a new brand
     public Brand save(Brand brand) {
         return brandsRepository.save(brand);
     }   

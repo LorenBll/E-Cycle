@@ -226,13 +226,7 @@ button:active {
     .characteristics-section {
         padding: 15px;
     }
-    
-    .btn-container {
+      .btn-container {
         flex-direction: column;
-    }
-    
-    .btn-container button {
-        width: 100%;
-        margin-right: 0;
     }
 }

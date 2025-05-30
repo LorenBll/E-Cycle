@@ -9,7 +9,6 @@ import org.springframework.lang.NonNull;
 @Repository
 public interface Characteristics_Repository extends JpaRepository<Characteristics, Integer> {
     
-    Characteristics findById(int id);
     /* 
     there will be no other research methods for this entity, 
     as it would require the contemplation of all possible combinations of characteristics values

@@ -11,21 +11,20 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.ui.Model;
 import org.springframework.beans.factory.annotation.Autowired;
 import jakarta.servlet.http.HttpSession;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.nio.charset.StandardCharsets;
 import java.util.List;
+import java.security.MessageDigest;
 import java.util.Map;
+import java.sql.Timestamp;
+import java.sql.Date;
 import java.util.ArrayList;
 import ecycle.ecycle.models.*;
 import ecycle.ecycle.services.*;
 import ecycle.ecycle.models.bodies.*;
 
-
 @Controller
 @RequiredArgsConstructor
-public class AppController {
-
+public class AppController {    
+      
     @Autowired Users_Service usersService;
     @Autowired Interactions_Service interactionsService;
     @Autowired SingOffers_Service singOffersService; 
@@ -34,70 +33,64 @@ public class AppController {
     @Autowired ProductModels_Service modelsService;
     @Autowired Natures_Service naturesService;
     @Autowired Categories_Service categoriesService;
-    @Autowired Characteristics_Service characteristicsService;
+    @Autowired Characteristics_Service characteristicsService;    
     @Autowired Negotiations_Service negotiationsService;
 
-    private String hashPassword(String password) {
-        try {
-            MessageDigest digest = MessageDigest.getInstance("SHA-256");
-            byte[] hash = digest.digest(password.getBytes(StandardCharsets.UTF_8));
-            StringBuilder hexString = new StringBuilder();
-            for (byte b : hash) {
-                String hex = Integer.toHexString(0xff & b);
-                if (hex.length() == 1) hexString.append('0');
-                hexString.append(hex);
-            }
-            return hexString.toString();
-        } 
-        catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException(e);
-        }
-    }
+    private String hashPassword ( String password , Timestamp tsUpdate ) {
 
+        tsUpdate = new Timestamp(tsUpdate.getTime() / 1000 * 1000); // round to seconds
+        String salt = tsUpdate.toString();
+        String passwordWithSalt = password + salt;        
+        
+        String hash;
+        try {
+            // use sha256 hashing algorithm
+            MessageDigest digest = java.security.MessageDigest.getInstance("SHA-256");
+            byte[] hashBytes = digest.digest(passwordWithSalt.getBytes("UTF-8"));
+            StringBuilder sb = new StringBuilder();
+            for (byte b : hashBytes) {
+                sb.append(String.format("%02x", b));
+            }
+            hash = sb.toString();
+        } catch (Exception e) {
+            // if an error occurs, return null
+            e.printStackTrace();
+            return null;
+        }
+
+        return hash;
+
+    }    
+    
     private void routineCheck () {
-        
-        /* 
-        * in the routine check, the program does the following:
-        * - [done] unaccept negotiations that have been pending for more than 24 hours
-        * - [done] unaccept negotiations of which singOffers or singRequests have tsDeletion set
-        * - [done] checks if singOffers and singNegotiations with the same characteristics
-        * - [done] checks if the user of the singOffer is not the same as the user of the singRequest
-        * - [done] checks if both singOffer and singRequest do not have ts_deletion set (if is active)
-        * - [done] checks if singOffer's expiration is after the current date (if is active)
-        * - [done] checks if the singOffer or SingRequest have been associated negotiation that has been accepted (if is active)
-        * - [done] checks if the singOffer or the singRequest is already present in pending negotiations
-        * - [done] checks if the singOffer and the singRequest have been associated in a previous negotiation
-        * - [done] checks if the pricePerUnit of SingOffer is less than or equal to the maxPrice of singRequest
-        */
-        
+           
         List<Negotiation> negotiations = negotiationsService.findAll();
         for (Negotiation negotiation : negotiations) {
+        
             boolean isNegotiationOlderThan24Hours = 
                 negotiation.getTsClosure() == null && 
                 negotiation.getTsCreation().getTime() < System.currentTimeMillis() - 24 * 60 * 60 * 1000;
             boolean isNegotiationRelatedToDeletedSingOfferOrRequest = 
                 (negotiation.getSingOffer() != null && negotiation.getSingOffer().getTsDeletion() != null) || 
                 (negotiation.getSingRequest() != null && negotiation.getSingRequest().getTsDeletion() != null);
+            
             if (isNegotiationOlderThan24Hours || isNegotiationRelatedToDeletedSingOfferOrRequest) {
-                // unaccept the negotiation
                 negotiation.setWasAccepted(false);
-                negotiation.setTsClosure(new java.sql.Timestamp(System.currentTimeMillis()));
+                negotiation.setTsClosure(new Timestamp(System.currentTimeMillis()));
                 negotiationsService.save(negotiation);
             }
+        
         }
 
         List<SingOffer> singOffers = singOffersService.findAll();
         List<SingRequest> singRequests = singRequestsService.findAll();
 
-        for (SingOffer singOffer : singOffers) {
+        for (SingOffer singOffer : singOffers) {            
             for (SingRequest singRequest : singRequests) {
                 
-                // check if the characteristics are the same
                 if (!singOffer.getCharacteristics().equals(singRequest.getCharacteristics())) {
-                    continue;
-                }
+                    continue;                }
                 
-                // check that the user of the singOffer is not the same as the user of the singRequest
                 if (singOffer.getOffer().getUser().getId() == singRequest.getRequest().getUser().getId()) {
                     continue;
                 }
@@ -108,13 +101,12 @@ public class AppController {
                 }
 
                 // check if both singOffer and singRequest are active
-
                 /* 
-                check if the singOffer or the singRequest are inactive:
-                - singOffer's expiration is after the current date
-                - singOffer or SingRequest have been associated negotiation that has been accepted
-                - singOffer or the singRequest is already present in pending negotiations
-                */
+                 * check if the singOffer or the singRequest are inactive:
+                 * - singOffer's expiration is after the current date
+                 * - singOffer or SingRequest have been associated negotiation that has been accepted
+                 * - singOffer or the singRequest is already present in pending negotiations
+                 */
                 if (!singOffersService.isSingOfferActive(singOffer) || 
                     !singRequestsService.isSingRequestActive(singRequest)) {
                     continue;
@@ -143,25 +135,22 @@ public class AppController {
 
                 // if all checks passed, create a new negotiation
                 Negotiation negotiation = new Negotiation();
-                negotiation.setTsCreation(new java.sql.Timestamp(System.currentTimeMillis()));
+                negotiation.setTsCreation(new Timestamp(System.currentTimeMillis()));
                 negotiation.setSingOffer(singOffer);
                 negotiation.setSingRequest(singRequest);
                 negotiationsService.save(negotiation);
 
             }
-        }
-
-    }
-
+        }    
+    }    
+    
     @GetMapping("/")
     public String index () {
-        return "index";
-    }
+        return "index";    }
 
     @GetMapping("/error")
     public String error () {
-        return "error";
-    }    
+        return "error";    }    
     
     @GetMapping("/login")
     public String login (
@@ -181,7 +170,7 @@ public class AppController {
             model.addAttribute("success", "Your account has been successfully deleted");
         }
 
-        return "login";
+        return "login";    
     }
 
     @PostMapping("/login")
@@ -195,10 +184,15 @@ public class AppController {
             || loginRequest.getPassword() == null || loginRequest.getPassword().isEmpty()) {
             return "redirect:/login?error=missing";
         }
-        String hashedPassword = this.hashPassword(loginRequest.getPassword());
-        
-        User user = usersService.findByUsernameAndPassword(loginRequest.getUsername(), hashedPassword);
-        if (user != null) {
+
+        User user = usersService.findByUsername(loginRequest.getUsername());
+        if (user == null) {
+            return "redirect:/login?error=invalid";
+        }
+        String hashedPassword = this.hashPassword(loginRequest.getPassword(), user.getTsPasswordUpdate());
+
+        if (user.getPassword().equals(hashedPassword)) {
+            // login successful
             session.setAttribute("user", user);
             return "redirect:/home";
         }
@@ -290,7 +284,8 @@ public class AppController {
         user.setName(registrationRequest.getName());
         user.setSurname(registrationRequest.getSurname());
         user.setEmail(registrationRequest.getEmail());
-        String hashedPassword = this.hashPassword(registrationRequest.getPassword());
+        user.setTsPasswordUpdate(new Timestamp(System.currentTimeMillis()));
+        String hashedPassword = this.hashPassword(registrationRequest.getPassword(), user.getTsPasswordUpdate());
         user.setPassword(hashedPassword);
         user.setState(registrationRequest.getState());
         user.setRegion(registrationRequest.getRegion());
@@ -379,7 +374,7 @@ public class AppController {
             return "redirect:/profile?error=email";
         }
         
-        // Server-side validation for field lengths
+        // server-side validation for field lengths
         if (profileEditRequest.getUsername() != null && profileEditRequest.getUsername().length() > 50) {
             return "redirect:/profile?error=username_too_long";
         }
@@ -420,15 +415,17 @@ public class AppController {
             return "redirect:/profile?error=civic_too_long";
         }
         
-        if (profileEditRequest.getPassword() != null && !profileEditRequest.getPassword().isEmpty()) {
-            String hashedPassword = hashPassword(profileEditRequest.getPassword());
-            user.setPassword(hashedPassword);
-        }
-
+        
         user.setUsername(profileEditRequest.getUsername());
         user.setName(profileEditRequest.getName());
         user.setSurname(profileEditRequest.getSurname());
         user.setEmail(profileEditRequest.getEmail());
+        if (profileEditRequest.getPassword() != null) {
+            user.setTsPasswordUpdate(new Timestamp(System.currentTimeMillis()));
+            String password = profileEditRequest.getPassword();
+            String hashedPassword = this.hashPassword(password, user.getTsPasswordUpdate());
+            user.setPassword(hashedPassword);
+        }
         user.setState(profileEditRequest.getState());
         user.setRegion(profileEditRequest.getRegion());
         user.setProvince(profileEditRequest.getProvince());
@@ -612,7 +609,7 @@ public class AppController {
 
         Interaction interaction = new Interaction();
         interaction.setTitle(title);
-        interaction.setTsCreation(new java.sql.Timestamp(System.currentTimeMillis()));
+        interaction.setTsCreation(new Timestamp(System.currentTimeMillis()));
         interaction.setIsOffer(false);
         interaction.setUser(user);
         interactionsService.save(interaction);
@@ -678,7 +675,6 @@ public class AppController {
 
         }
 
-        // look for possible negotiations
         this.routineCheck();
 
         return "redirect:/home?requestSuccess=true";
@@ -844,10 +840,10 @@ public class AppController {
             
             // process expiration
             String expirationStr = (String) charData.get("expirationDate");
-            java.sql.Date expiration = null;
+            Date expiration = null;
             if (expirationStr != null && !expirationStr.isEmpty()) {
                 try {
-                    expiration = java.sql.Date.valueOf(expirationStr);
+                    expiration = Date.valueOf(expirationStr);
                 } catch (IllegalArgumentException e) {
                     return "redirect:/offerInsertion?error=invalid_expiration_date";
                 }
@@ -869,7 +865,7 @@ public class AppController {
 
         Interaction interaction = new Interaction();
         interaction.setTitle(title);
-        interaction.setTsCreation(new java.sql.Timestamp(System.currentTimeMillis()));
+        interaction.setTsCreation(new Timestamp(System.currentTimeMillis()));
         interaction.setIsOffer(true);
         interaction.setUser(user);
         interactionsService.save(interaction);
@@ -938,7 +934,6 @@ public class AppController {
 
         }
 
-        // look for possible negotiations
         this.routineCheck();
 
         return "redirect:/home?offerSuccess=true";
@@ -1001,7 +996,7 @@ public class AppController {
         List<String> inactiveStatusesList = new ArrayList<>();
         for (SingOffer singOffer : inactiveSingOffers) {
             boolean wasAccepted = (negotiationsService.findBySingOfferAndWasAccepted(singOffer, true) != null);
-            boolean hasExpired = (singOffer.getExpiration() != null && singOffer.getExpiration().before(new java.sql.Date(System.currentTimeMillis())));
+            boolean hasExpired = (singOffer.getExpiration() != null && singOffer.getExpiration().before(new Date(System.currentTimeMillis())));
             // add the status of the singOffer to the list
             if (wasAccepted) {
                 inactiveStatusesList.add("Accepted");
@@ -1058,10 +1053,13 @@ public class AppController {
         if (negotiation == null) {
             return "redirect:/home?offerDeleted=true";
         }
+
         negotiation.setWasAccepted(false);
-        negotiation.setTsClosure(new java.sql.Timestamp(System.currentTimeMillis()));
+        negotiation.setTsClosure(new Timestamp(System.currentTimeMillis()));
         negotiationsService.save(negotiation);
+        
         this.routineCheck();
+        
         return "redirect:/home?singOfferDeleted=true";
     }
 
@@ -1182,10 +1180,13 @@ public class AppController {
         if (negotiation == null) {
             return "redirect:/home?singRequestDeleted=true";
         }
+
         negotiation.setWasAccepted(false);
-        negotiation.setTsClosure(new java.sql.Timestamp(System.currentTimeMillis()));
+        negotiation.setTsClosure(new Timestamp(System.currentTimeMillis()));
         negotiationsService.save(negotiation);
+        
         this.routineCheck();
+        
         return "redirect:/home?singRequestDeleted=true";
     }
 
@@ -1212,7 +1213,7 @@ public class AppController {
 
         // accept the negotiation
         negotiation.setWasAccepted(true);
-        negotiation.setTsClosure(new java.sql.Timestamp(System.currentTimeMillis()));
+        negotiation.setTsClosure(new Timestamp(System.currentTimeMillis()));
         negotiationsService.save(negotiation);
 
         this.routineCheck();
@@ -1243,7 +1244,7 @@ public class AppController {
 
         // reject the negotiation
         negotiation.setWasAccepted(false);
-        negotiation.setTsClosure(new java.sql.Timestamp(System.currentTimeMillis()));
+        negotiation.setTsClosure(new Timestamp(System.currentTimeMillis()));
         negotiationsService.save(negotiation);
 
         this.routineCheck();

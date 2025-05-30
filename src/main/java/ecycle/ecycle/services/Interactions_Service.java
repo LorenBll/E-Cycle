@@ -19,7 +19,6 @@ public class Interactions_Service {
     private final SingRequests_Service singRequestsService;
     private final SingOffers_Service singOffersService;
     
-
     private List<Interaction> sort ( List<Interaction> interactions) {
         // sort by tsCreation
         interactions.sort((i1, i2) -> i2.getTsCreation().compareTo(i1.getTsCreation()));
@@ -80,26 +79,19 @@ public class Interactions_Service {
         return this.sort(requestedInteractions);
     }
 
-    public List<Interaction> findAll() {
-        List<Interaction> interactions = interactionsRepository.findAll();
-        return this.sort(interactions);
-    }
-
-    // register a new interaction
     public Interaction save(Interaction interaction) {
         return interactionsRepository.save(interaction);
     }    
     
-    // delete interaction
     @Transactional
     public void delete(Interaction interaction) {
         interactionsRepository.deleteById(interaction.getId());
     }
       
-    // delete interaction by user
     @Transactional
     public void deleteByUser(User user) {
         interactionsRepository.deleteByUser(user);
     }
 
 }
+

@@ -144,7 +144,11 @@
             <a href="#" id="delete-account-btn" class="delete-btn" style="background-color: #f44336;" onclick="deleteAccount(event)">Delete My Account</a>
         </div>
     </div>
-    <script>          // Function to show error message in page instead of alert
+    <script>          
+        // Store original form values to detect changes
+        let originalFormValues = {};
+        
+        // Function to show error message in page instead of alert
         function showError(message) {
             const errorContainer = document.getElementById('error-message-container');
             const errorText = document.getElementById('error-message-text');
@@ -158,7 +162,33 @@
                 errorContainer.style.display = 'none';
             }, 5000);
         }
-          function deleteAccount(event) {
+        
+        // Function to check if any form field has changed
+        function checkFormChanges() {
+            const formFields = ['username', 'email', 'name', 'surname', 'state', 'region', 'province', 'city', 'street', 'civic'];
+            const saveButton = document.querySelector('.submit-btn');
+            
+            // Check if any field has changed from its original value
+            const hasChanges = formFields.some(field => {
+                const input = document.getElementById(field);
+                return input && input.value !== originalFormValues[field];
+            });
+            
+            // Also check if password field is not empty
+            const hasPassword = document.getElementById('password').value.trim() !== '';
+            
+            // Enable/disable the button based on changes
+            saveButton.disabled = !(hasChanges || hasPassword);
+            
+            // Update button style based on state
+            if (saveButton.disabled) {
+                saveButton.classList.add('disabled-btn');
+            } else {
+                saveButton.classList.remove('disabled-btn');
+            }
+        }
+          
+        function deleteAccount(event) {
             event.preventDefault();
             const deleteBtn = document.getElementById('delete-account-btn');
             
@@ -185,7 +215,8 @@
                 });
             }
         }
-          function togglePassword(inputId, openEyeId, closedEyeId) {
+        
+        function togglePassword(inputId, openEyeId, closedEyeId) {
             const passwordInput = document.getElementById(inputId);
             const openEye = document.getElementById(openEyeId);
             const closedEye = document.getElementById(closedEyeId);
@@ -288,12 +319,39 @@
             return true;
         }        
         
+        // SHA-256 password hashing function
+        async function hashPassword(password) {
+            const encoder = new TextEncoder();
+            const data = encoder.encode(password);
+            const hash = await crypto.subtle.digest('SHA-256', data);
+            const hashArray = Array.from(new Uint8Array(hash));
+            const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+            return hashHex;
+        }
+
         document.addEventListener('DOMContentLoaded', function() {
+            // Store original form values for change detection
+            const formFields = ['username', 'email', 'name', 'surname', 'state', 'region', 'province', 'city', 'street', 'civic'];
+            formFields.forEach(field => {
+                const input = document.getElementById(field);
+                if (input) {
+                    originalFormValues[field] = input.value;
+                    // Add event listener to detect changes
+                    input.addEventListener('input', checkFormChanges);
+                }
+            });
+            
+            // Initial button state setup
+            const saveButton = document.querySelector('.submit-btn');
+            saveButton.disabled = true;
+            saveButton.classList.add('disabled-btn');
+            
             const editProfileForm = document.getElementById('edit-profile-form');
             // Cancel button has been removed
             const successMessage = document.querySelector('.success-message');
             const deleteAccountBtn = document.getElementById('delete-account-btn');
-              // Add event listener for delete account button
+            
+            // Add event listener for delete account button
             if (deleteAccountBtn) {
                 deleteAccountBtn.addEventListener('click', function(event) {
                     deleteAccount(event);
@@ -306,14 +364,17 @@
             const confirmPasswordInput = document.getElementById('confirm_password');
             
             // Check password requirements as user types
-            passwordInput.addEventListener('input', checkPasswordStrength);
+            passwordInput.addEventListener('input', function() {
+                checkPasswordStrength();
+                checkFormChanges();
+            });
             
             // Check if passwords match when user types in either field
-            passwordInput.addEventListener('input', checkPasswordsMatch);
             confirmPasswordInput.addEventListener('input', checkPasswordsMatch);
-              // Form validation with password confirmation
+            
+            // Form validation with password confirmation
             const form = document.getElementById('profileEditForm');
-            form.addEventListener('submit', function(event) {
+            form.addEventListener('submit', async function(event) {
                 event.preventDefault();
                 
                 const password = document.getElementById('password').value;
@@ -322,8 +383,7 @@
                 const email = document.getElementById('email').value;
                 const errorDiv = document.getElementById('dynamic-error-message');
                 const errorMessage = document.getElementById('error-message-text');
-                
-                // Check for empty username
+                  // Check for empty username
                 if (!username.trim()) {
                     errorDiv.style.display = 'block';
                     errorMessage.textContent = 'Username cannot be empty!';
@@ -424,13 +484,19 @@
                     }
                 }
                 
+                // Hash password if provided, otherwise use null
+                let hashedPassword = null;
+                if (password) {
+                    hashedPassword = await hashPassword(password);
+                }
+                
                 // Create JSON data from form inputs
                 const formData = {
                     username: document.getElementById('username').value,
                     name: document.getElementById('name').value,
                     surname: document.getElementById('surname').value,
                     email: document.getElementById('email').value,
-                    password: document.getElementById('password').value,
+                    password: hashedPassword,
                     state: document.getElementById('state').value,
                     region: document.getElementById('region').value,
                     province: document.getElementById('province').value,

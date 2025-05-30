@@ -158,6 +158,17 @@ button[type="submit"]:hover {
     background-color: #3e8e41;
 }
 
+/* Style for disabled button */
+.submit-btn.disabled-btn {
+    background-color: #cccccc;
+    color: #888888;
+    cursor: not-allowed;
+}
+
+.submit-btn.disabled-btn:hover {
+    background-color: #cccccc;
+}
+
 .error-message {
     color: #f44336;
     margin-bottom: 15px;

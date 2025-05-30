@@ -21,7 +21,8 @@
         
         <div class="error-details" th:if="${exception != null}">
             <p><strong>Exception:</strong> <span th:text="${exception.message}">Exception message</span></p>
-            <p th:if="${trace != null}"><strong>Stack trace:</strong> <span th:text="${trace}">Stack trace</span></p>
+            <p th:if="${trace != null}"><strong>Stack trace:</strong> 
+            <span th:text="${trace}">Stack trace</span></p>
         </div>
         
         <a href="/" class="back-link">Back to Homepage</a>

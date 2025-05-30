@@ -6,7 +6,8 @@
     <link rel="stylesheet" th:href="@{/css/home.css}">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
-<body>    <header>
+<body>    
+    <header>
         <div>
             <img th:src="@{/images/logos/logo.png}" alt="E-Cycle Logo">
         </div>        
@@ -15,7 +16,8 @@
             <a href="/requestInsertion">Create New Request</a>
             <a href="/offerInsertion">Create New Offer</a>
         </div>
-    </header>    <main>
+    </header>    
+    <main>
         <!-- Active Requests Section -->
         <section class="card-1">
             <h2>Active Requests</h2>
@@ -39,7 +41,8 @@
                         </td>
                     </tr>
                 </tbody>            
-            </table>        </section>
+            </table>        
+        </section>
         <!-- Inactive Requests Section -->
         <section class="card-2">
             <h2>Inactive Requests</h2>
@@ -63,7 +66,9 @@
                         </td>
                     </tr>
                 </tbody>            
-            </table>        </section>        <!-- Active Offers Section -->
+            </table>        
+        </section>        
+        <!-- Active Offers Section -->
         <section class="card-3">
             <h2>Active Offers</h2>
             <div th:if="${activeOffers.isEmpty()}">
@@ -86,7 +91,8 @@
                         </td>
                     </tr>
                 </tbody>            
-            </table>        </section>
+            </table>        
+        </section>
         <!-- Inactive Offers Section -->
         <section class="card-4">
             <h2>Inactive Offers</h2>
