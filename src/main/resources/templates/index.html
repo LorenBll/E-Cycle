@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head>      <title>E-Cycle - Welcome</title>    
+<head>
+    <title>E-Cycle - Welcome</title>    
     <link rel="icon" th:href="@{/images/logos/logoIcon.png}" type="image/png">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" th:href="@{/css/generic.css}">
@@ -11,7 +12,12 @@
     <div class="container">
         <div class="logo">
             <img th:src="@{/images/logos/logo.png}" alt="E-Cycle Logo">
-        </div>        <div class="links">
+        </div>
+        
+        <!-- Error message container -->
+        <div id="error-message-container" class="error-message" style="display: none;"></div>
+        
+        <div class="links">
             <button onclick="window.location.href='/login'" class="green-button">Login</button>
             <button onclick="window.location.href='/registration'" class="green-button">Registration</button>
         </div>

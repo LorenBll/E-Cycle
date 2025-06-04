@@ -6,16 +6,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" th:href="@{/css/generic.css}">
     <link rel="stylesheet" th:href="@{/css/registration.css}">
+    <script th:src="@{/js/formUtils.js}"></script>
 </head>
-<header>
-    <div class="logo-section">
-        <img th:src="@{/images/logos/logo.png}" alt="E-Cycle Logo">
-    </div>
-    <div class="navigation-links">
-        <!-- Navigation buttons removed from here -->
-    </div>
-</header>
 <body>
+    <header>
+        <div class="logo-section">
+            <img th:src="@{/images/logos/logo.png}" alt="E-Cycle Logo">
+        </div>
+        <div class="nav-section">
+            <!-- Navigation buttons removed from here -->
+        </div>
+    </header>
+    
     <div class="card">
         <h2>Registration</h2>
         
@@ -116,9 +118,11 @@
                     </div>
                 </div>
             </div>
+              
+            <!-- Consolidate all error messages here, just above the register button -->
+            <div id="error-message-container" class="error-message" style="display: none;"></div>
             
-            <!-- Error Messages -->            
-            <div id="password-validation-error" class="error-message">
+            <div id="password-validation-error" class="error-message" style="display: none;">
                 <p id="password-validation-message"></p>
             </div>
             
@@ -126,14 +130,15 @@
                 <p th:text="${error}">Error message</p>
             </div>
             
-            <button type="submit" class="green-button">Register</button>
+            <button type="submit" class="green-button" id="registerButton">Register</button>
         </form>
         
         <div class="bottom-nav button-container">
-            <button onclick="window.location.href='/'" class="green-button">Home</button>
+            <button onclick="window.location.href='/'" class="green-button">Go Back</button>
             <button onclick="window.location.href='/login'" class="green-button">Login</button>
         </div>
     </div>
+    
     <script>
         // Function to hash password with SHA-256
         async function hashPassword(password) {
@@ -151,10 +156,19 @@
                 return;
             }
             
+            // Get the register button and disable it
+            const registerButton = document.getElementById('registerButton');
+            const originalText = registerButton.textContent;
+            
+            // Replace text with spinner and disable button
+            registerButton.innerHTML = '<div class="spinner"></div>';
+            registerButton.classList.add('loading');
+            registerButton.disabled = true;
+            
             const password = document.getElementById('password').value;
             const hashedPassword = await hashPassword(password);
             
-            const formData = {
+            const formData = trimObjectValues({
                 username: document.getElementById('username').value,
                 name: document.getElementById('name').value,
                 surname: document.getElementById('surname').value,
@@ -166,7 +180,7 @@
                 city: document.getElementById('city').value,
                 street: document.getElementById('street').value,
                 civic: document.getElementById('civic').value
-            };
+            });
               
             fetch('/register', {
                 method: 'POST',
@@ -182,12 +196,31 @@
                     window.location.href = '/home';
                 } else {
                     console.error('Registration failed');
-                    // Handle error response
+                    // Reset button after error
+                    setTimeout(() => {
+                        registerButton.innerHTML = originalText;
+                        registerButton.classList.remove('loading');
+                        registerButton.disabled = false;
+                    }, 5000);
                 }
             })
             .catch(error => {
                 console.error('Error:', error);
+                // Reset button after error
+                setTimeout(() => {
+                    registerButton.innerHTML = originalText;
+                    registerButton.classList.remove('loading');
+                    registerButton.disabled = false;
+                }, 5000);
             });
+            
+            // Set a timeout to re-enable the button after 5 seconds
+            // This will only take effect if the page doesn't redirect
+            setTimeout(() => {
+                registerButton.innerHTML = originalText;
+                registerButton.classList.remove('loading');
+                registerButton.disabled = false;
+            }, 5000);
         }
     </script>
     <script>
@@ -381,8 +414,21 @@
             errorDiv.style.display = 'none';            
             return true;
         }
-    </script>
-    <!-- Add Easter Egg Script -->
+    </script>    <!-- Add Easter Egg Script -->
     <script th:src="@{/js/easterEgg.js}"></script>
+    
+    <!-- Initialize auto-hide for server-side error messages -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const errorElements = document.querySelectorAll('.error-message');
+            errorElements.forEach(element => {
+                if (element && element.style.display !== 'none') {
+                    setTimeout(() => {
+                        element.style.display = 'none';
+                    }, 5000);
+                }
+            });
+        });
+    </script>
 </body>
 </html>

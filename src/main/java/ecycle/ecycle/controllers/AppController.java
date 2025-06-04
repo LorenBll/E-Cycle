@@ -16,11 +16,16 @@ import java.security.MessageDigest;
 import java.util.Map;
 import java.sql.Timestamp;
 import java.sql.Date;
+import java.util.Calendar;
 import java.util.ArrayList;
 import ecycle.ecycle.models.*;
 import ecycle.ecycle.services.*;
 import ecycle.ecycle.models.bodies.*;
 
+/**
+ * main controller handling all application-related requests.
+ * this includes user authentication, profile management, and e-cycle's activities.
+ */
 @Controller
 @RequiredArgsConstructor
 public class AppController {    
@@ -36,6 +41,13 @@ public class AppController {
     @Autowired Characteristics_Service characteristicsService;    
     @Autowired Negotiations_Service negotiationsService;
 
+    /**
+     * creates a hashed version of user's password with a timestamp-based salt.
+     * 
+     * @param password The plain text password to be hashed
+     * @param tsUpdate Timestamp to use as salt
+     * @return Hashed password as a string
+     */
     private String hashPassword ( String password , Timestamp tsUpdate ) {
 
         tsUpdate = new Timestamp(tsUpdate.getTime() / 1000 * 1000); // round to seconds
@@ -59,99 +71,99 @@ public class AppController {
         }
 
         return hash;
-
     }    
     
+    /**
+     * performs routine system maintenance tasks:
+     * 1. closes expired/outdated negotiations
+     * 2. attempts to match available offers with suitable requests
+     */
     private void routineCheck () {
-           
+        
+        // check all negotiations and end them if necessary
         List<Negotiation> negotiations = negotiationsService.findAll();
         for (Negotiation negotiation : negotiations) {
-        
+
             boolean isNegotiationOlderThan24Hours = 
-                negotiation.getTsClosure() == null && 
-                negotiation.getTsCreation().getTime() < System.currentTimeMillis() - 24 * 60 * 60 * 1000;
-            boolean isNegotiationRelatedToDeletedSingOfferOrRequest = 
-                (negotiation.getSingOffer() != null && negotiation.getSingOffer().getTsDeletion() != null) || 
-                (negotiation.getSingRequest() != null && negotiation.getSingRequest().getTsDeletion() != null);
-            
-            if (isNegotiationOlderThan24Hours || isNegotiationRelatedToDeletedSingOfferOrRequest) {
+                negotiation.getTsCreation().getTime() + 24 * 60 * 60 * 1000 < System.currentTimeMillis();
+            boolean isRequestUserDeleted = negotiation.getSingRequest().getRequest().getUser() == null;
+            boolean isOfferUserDeleted = negotiation.getSingOffer().getOffer().getUser() == null;
+            boolean isOfferExpired = negotiation.getSingOffer().getExpiration().before(new Date(System.currentTimeMillis())) || 
+                negotiation.getSingOffer().getExpiration().equals(new Date(System.currentTimeMillis()));
+            boolean isSingRequestDelted = negotiation.getSingRequest().getTsDeletion() != null;
+            boolean isSingOfferDeleted = negotiation.getSingOffer().getTsDeletion() != null;
+
+            if (isNegotiationOlderThan24Hours || isRequestUserDeleted || isOfferUserDeleted || 
+                isOfferExpired || isSingRequestDelted || isSingOfferDeleted) {
+                // end the negotiation
                 negotiation.setWasAccepted(false);
                 negotiation.setTsClosure(new Timestamp(System.currentTimeMillis()));
                 negotiationsService.save(negotiation);
             }
-        
         }
 
-        List<SingOffer> singOffers = singOffersService.findAll();
-        List<SingRequest> singRequests = singRequestsService.findAll();
+        // get all valid singoffers
+        List<SingOffer> availableSingOffers = singOffersService.findByAvailability(true);
 
-        for (SingOffer singOffer : singOffers) {            
-            for (SingRequest singRequest : singRequests) {
-                
-                if (!singOffer.getCharacteristics().equals(singRequest.getCharacteristics())) {
-                    continue;                }
-                
-                if (singOffer.getOffer().getUser().getId() == singRequest.getRequest().getUser().getId()) {
+        // for each singoffer, find a singrequest that matches the characteristics and is not already in negotiation
+        for (SingOffer singOffer : availableSingOffers) {
+            
+            List<SingRequest> availableSingRequests = singRequestsService.findByAvailabilityAndCharacteristicsAndNotUserAndPrice(
+                true, 
+                singOffer.getCharacteristics(), 
+                singOffer.getOffer().getUser(), 
+                singOffer.getPrice()
+            );
+
+            SingRequest selectedSingRequest = null;
+            for (SingRequest singRequest : availableSingRequests) {
+                Negotiation negotiation = negotiationsService.findBySingOfferAndSingRequest(singOffer, selectedSingRequest);
+                if (negotiation != null) {
                     continue;
                 }
-
-                // check if both singOffer and singRequest do not have ts_deletion set
-                if (singOffer.getTsDeletion() != null || singRequest.getTsDeletion() != null) {
-                    continue;
-                }
-
-                // check if both singOffer and singRequest are active
-                /* 
-                 * check if the singOffer or the singRequest are inactive:
-                 * - singOffer's expiration is after the current date
-                 * - singOffer or SingRequest have been associated negotiation that has been accepted
-                 * - singOffer or the singRequest is already present in pending negotiations
-                 */
-                if (!singOffersService.isSingOfferActive(singOffer) || 
-                    !singRequestsService.isSingRequestActive(singRequest)) {
-                    continue;
-                }
-
-                // check if the singOffer are already present in pending negotiations
-                Negotiation pendingNegotiationsOffer = negotiationsService.findBySingOfferAndTsClosureIsNull(singOffer);
-                if (pendingNegotiationsOffer != null) {
-                    continue;
-                }
-                Negotiation pendingNegotiationsRequest = negotiationsService.findBySingRequestAndTsClosureIsNull(singRequest);
-                if (pendingNegotiationsRequest != null) {
-                    continue;
-                }
-
-                // check if the singOffer and the singRequest have been associated in a previous negotiation
-                List<Negotiation> previousNegotiations = negotiationsService.findBySingOfferAndSingRequest(singOffer, singRequest);
-                if (!previousNegotiations.isEmpty()) {
-                    continue;
-                }
-
-                // check if the pricePerUnit of SingOffer is less than or equal to the maxPrice of singRequest
-                if (singOffer.getPrice() > singRequest.getMaxPrice()) {
-                    continue;
-                }
-
-                // if all checks passed, create a new negotiation
-                Negotiation negotiation = new Negotiation();
-                negotiation.setTsCreation(new Timestamp(System.currentTimeMillis()));
-                negotiation.setSingOffer(singOffer);
-                negotiation.setSingRequest(singRequest);
-                negotiationsService.save(negotiation);
-
+                selectedSingRequest = singRequest;
+                break;
             }
-        }    
+
+            if (selectedSingRequest != null) {
+                // create a negotiation
+                Negotiation negotiation = new Negotiation();
+                negotiation.setSingOffer(singOffer);
+                negotiation.setSingRequest(selectedSingRequest);
+                negotiation.setTsCreation(new Timestamp(System.currentTimeMillis()));
+                negotiationsService.save(negotiation);
+            }
+        }
     }    
     
+    /**
+     * renders the index page.
+     * 
+     * @return The index view name
+     */
     @GetMapping("/")
     public String index () {
-        return "index";    }
+        return "index";
+    }
 
+    /**
+     * renders the error page.
+     * 
+     * @return The error view name
+     */
     @GetMapping("/error")
     public String error () {
-        return "error";    }    
+        return "error";    
+    }    
     
+    /**
+     * renders the login page with optional error messages.
+     * 
+     * @param error Optional error parameter
+     * @param deleted Optional delete confirmation parameter
+     * @param model The Spring MVC model
+     * @return The login view name
+     */
     @GetMapping("/login")
     public String login (
         @RequestParam(name="error",required=false) String error,
@@ -173,6 +185,14 @@ public class AppController {
         return "login";    
     }
 
+    /**
+     * processes login requests and authenticates users.
+     * 
+     * @param loginRequest The login request body
+     * @param session The HTTP session
+     * @param model The Spring MVC model
+     * @return Redirect to home or back to login
+     */
     @PostMapping("/login")
     public String login (
         @RequestBody LoginRequest loginRequest,
@@ -200,12 +220,26 @@ public class AppController {
         return "redirect:/login?error=invalid";
     }
 
+    /**
+     * logs out the current user by invalidating their session.
+     * 
+     * @param session The HTTP session
+     * @return Redirect to login page
+     */
     @GetMapping("/logout")
     public String logout (HttpSession session) {
         session.invalidate();
         return "redirect:/login";
     }
     
+    /**
+     * renders the registration page with optional error messages.
+     * 
+     * @param error Optional error parameter
+     * @param session The HTTP session
+     * @param model The Spring MVC model
+     * @return The registration view name
+     */
     @GetMapping("/registration")
     public String registration (
         @RequestParam(name="error",required=false) String error,
@@ -224,6 +258,14 @@ public class AppController {
         return "registration";
     }    
     
+    /**
+     * processes user registration requests.
+     * 
+     * @param registrationRequest The registration request body
+     * @param session The HTTP session
+     * @param model The Spring MVC model
+     * @return Redirect to home or back to registration
+     */
     @PostMapping("/register")
     public String registration (
         @RequestBody RegistrationRequest registrationRequest,
@@ -238,7 +280,7 @@ public class AppController {
             return "redirect:/registration?error=email";
         }
         
-        // Server-side validation for field lengths
+        // server-side validation for field lengths
         if (registrationRequest.getUsername() != null && registrationRequest.getUsername().length() > 50) {
             return "redirect:/registration?error=username_too_long";
         }
@@ -279,6 +321,7 @@ public class AppController {
             return "redirect:/registration?error=civic_too_long";
         }
 
+        // create and save new user
         User user = new User();
         user.setUsername(registrationRequest.getUsername());
         user.setName(registrationRequest.getName());
@@ -299,6 +342,13 @@ public class AppController {
         return "redirect:/home";
     }
 
+    /**
+     * renders the user's home page with their offers and requests.
+     * 
+     * @param session The HTTP session
+     * @param model The Spring MVC model
+     * @return The home view name or redirect to login
+     */
     @GetMapping("/home")
     public String home (
         HttpSession session, 
@@ -327,6 +377,15 @@ public class AppController {
         return "home";
     }
 
+    /**
+     * renders the user's profile page with their information.
+     * 
+     * @param success Optional success parameter
+     * @param error Optional error parameter
+     * @param session The HTTP session
+     * @param model The Spring MVC model
+     * @return The profile view name or redirect to login
+     */
     @GetMapping("/profile")
     public String profile (
         @RequestParam(name="success",required=false) String success,
@@ -355,6 +414,14 @@ public class AppController {
         return "profile";
     }    
     
+    /**
+     * processes profile edit requests.
+     * 
+     * @param profileEditRequest The profile edit request body
+     * @param session The HTTP session
+     * @param model The Spring MVC model
+     * @return Redirect to profile with success or error message
+     */
     @PutMapping("/profile/edit")
     public String editProfile (
         @RequestBody ProfileEditRequest profileEditRequest,
@@ -415,7 +482,7 @@ public class AppController {
             return "redirect:/profile?error=civic_too_long";
         }
         
-        
+        // update user information
         user.setUsername(profileEditRequest.getUsername());
         user.setName(profileEditRequest.getName());
         user.setSurname(profileEditRequest.getSurname());
@@ -438,6 +505,12 @@ public class AppController {
         return "redirect:/profile?success=true";
     }
 
+    /**
+     * processes account deletion requests.
+     * 
+     * @param session The HTTP session
+     * @return Redirect to login page with deletion confirmation
+     */
     @DeleteMapping("/profile/delete")
     public String deleteProfile(HttpSession session) {
         // check if user is logged in
@@ -446,12 +519,22 @@ public class AppController {
             return "redirect:/login";
         }
         
-        usersService.delete(user);        
         session.invalidate();
+        usersService.delete(user);
+        
+        // run routine checks to update negotiations
+        this.routineCheck();
         
         return "redirect:/login?deleted=true";
     }
 
+    /**
+     * renders the request insertion page.
+     * 
+     * @param session The HTTP session
+     * @param model The Spring MVC model
+     * @return The requestInsertion view name or redirect to login
+     */
     @GetMapping("/requestInsertion")
     public String requestInsertion (
         HttpSession session, 
@@ -463,6 +546,7 @@ public class AppController {
             return "redirect:/login";
         }
 
+        // provide necessary data for the form
         model.addAttribute("user", user);
         model.addAttribute("categories", categoriesService.findAll());
         model.addAttribute("natures", naturesService.findAll());
@@ -471,6 +555,14 @@ public class AppController {
         return "requestInsertion";
     }
 
+    /**
+     * processes request insertion submissions.
+     * 
+     * @param requestData The request data as a map
+     * @param session The HTTP session
+     * @param model The Spring MVC model
+     * @return Redirect to home with success message
+     */
     @PostMapping("/insertRequest")
     public String insertRequest (
         @RequestBody Map<String, Object> requestData,
@@ -494,6 +586,7 @@ public class AppController {
         List<Map<String, Object>> characteristicsData = (List<Map<String, Object>>) requestData.get("characteristics");
         List<RequestRequest> requestRequests = new ArrayList<>();
         
+        // process each characteristic from the form
         for (Map<String, Object> charData : characteristicsData) {
             
             RequestRequest charRequest = new RequestRequest();
@@ -558,8 +651,9 @@ public class AppController {
             // process year
             int prodYear;
             try {
+                int currentYear = Calendar.getInstance().get(Calendar.YEAR);
                 prodYear = Integer.parseInt(charData.get("prodYear").toString());
-                if (prodYear < 0) {
+                if (prodYear < 0 || prodYear > currentYear) {
                     return "redirect:/requestInsertion?error=invalid_year";
                 }
             } catch (NumberFormatException e) {
@@ -583,7 +677,7 @@ public class AppController {
             int quantity;
             try {
                 quantity = Integer.parseInt(charData.get("quantity").toString());
-                if (quantity < 1) {
+                if (quantity < 1 || quantity > 500) {
                     return "redirect:/requestInsertion?error=quantity_must_be_at_least_1";
                 }
             } catch (NumberFormatException e) {
@@ -595,7 +689,7 @@ public class AppController {
             float maxPricePerUnit;
             try {
                 maxPricePerUnit = Float.parseFloat(charData.get("maxPricePerUnit").toString());
-                if (maxPricePerUnit < 0) {
+                if (maxPricePerUnit < 0 || maxPricePerUnit > 500000) {
                     return "redirect:/requestInsertion?error=price_cannot_be_negative";
                 }
             } catch (NumberFormatException e) {
@@ -604,9 +698,9 @@ public class AppController {
             charRequest.setMaxPricePerUnit(maxPricePerUnit);
             
             requestRequests.add(charRequest);
-        
         }
 
+        // create the interaction entity
         Interaction interaction = new Interaction();
         interaction.setTitle(title);
         interaction.setTsCreation(new Timestamp(System.currentTimeMillis()));
@@ -614,6 +708,7 @@ public class AppController {
         interaction.setUser(user);
         interactionsService.save(interaction);
         
+        // create sing requests for each characteristics request
         for (RequestRequest characteristicsRequest : requestRequests) {
     
             Characteristics characteristics = new Characteristics();
@@ -659,12 +754,14 @@ public class AppController {
             characteristics.setProdYear(characteristicsRequest.getProdYear());
             characteristics.setBatch(characteristicsRequest.getBatch());
 
+            // avoid duplicate characteristics
             if (!characteristicsService.isDuplicate(characteristics)) {
                 characteristicsService.save(characteristics);
             } else {
                 characteristics = characteristicsService.findDuplicate(characteristics);
             }
 
+            // create sing requests for the specified quantity
             for (int i = 0; i < characteristicsRequest.getQuantity(); i++) {
                 SingRequest singRequest = new SingRequest();
                 singRequest.setRequest(interaction);
@@ -672,14 +769,21 @@ public class AppController {
                 singRequest.setMaxPrice(characteristicsRequest.getMaxPricePerUnit());
                 singRequestsService.save(singRequest);            
             }
-
         }
 
+        // run routine checks to update negotiations
         this.routineCheck();
 
         return "redirect:/home?requestSuccess=true";
     }
 
+    /**
+     * renders the offer insertion page.
+     * 
+     * @param session The HTTP session
+     * @param model The Spring MVC model
+     * @return The offerInsertion view name or redirect to login
+     */
     @GetMapping("/offerInsertion")
     public String offerInsertion (
         HttpSession session, 
@@ -691,6 +795,7 @@ public class AppController {
             return "redirect:/login";
         }
 
+        // provide necessary data for the form
         model.addAttribute("user", user);
         model.addAttribute("categories", categoriesService.findAll());
         model.addAttribute("natures", naturesService.findAll());
@@ -699,6 +804,14 @@ public class AppController {
         return "offerInsertion";
     }       
     
+    /**
+     * processes offer insertion submissions.
+     * 
+     * @param offerData The offer data as a map
+     * @param session The HTTP session
+     * @param model The Spring MVC model
+     * @return Redirect to home with success message
+     */
     @PostMapping("/insertOffer")
     public String insertOffer (
         @RequestBody Map<String, Object> offerData,
@@ -722,6 +835,7 @@ public class AppController {
         List<Map<String, Object>> characteristicsData = (List<Map<String, Object>>) offerData.get("characteristics");
         List<OfferRequest> offerRequests = new ArrayList<>();
 
+        // process each characteristic from the form
         for (Map<String, Object> charData : characteristicsData) {
             
             OfferRequest charOffer = new OfferRequest();
@@ -786,8 +900,9 @@ public class AppController {
             // process year
             int prodYear;
             try {
+                int currentYear = Calendar.getInstance().get(Calendar.YEAR);
                 prodYear = Integer.parseInt(charData.get("prodYear").toString());
-                if (prodYear < 0) {
+                if (prodYear < 0 || prodYear > currentYear) {
                     return "redirect:/offerInsertion?error=invalid_year";
                 }
             } catch (NumberFormatException e) {
@@ -811,7 +926,7 @@ public class AppController {
             int quantity;
             try {
                 quantity = Integer.parseInt(charData.get("quantity").toString());
-                if (quantity < 1) {
+                if (quantity < 1 || quantity > 500) {
                     return "redirect:/offerInsertion?error=quantity_must_be_at_least_1";
                 }
             } catch (NumberFormatException e) {
@@ -823,7 +938,7 @@ public class AppController {
             float pricePerUnit;
             try {
                 pricePerUnit = Float.parseFloat(charData.get("pricePerUnit").toString());
-                if (pricePerUnit < 0) {
+                if (pricePerUnit < 0 || pricePerUnit > 500000) {
                     return "redirect:/offerInsertion?error=price_cannot_be_negative";
                 }
             } catch (NumberFormatException e) {
@@ -850,7 +965,7 @@ public class AppController {
             }
             charOffer.setExpiration(expiration);
 
-            // tocheck process file path of the picture
+            // TODO: implement file upload handling for pictures
             /* 
             String filePath = (String) charData.get("filePath");
             if (filePath != null && filePath.length() > 255) {
@@ -860,9 +975,9 @@ public class AppController {
             charOffer.setFilePath("test");
 
             offerRequests.add(charOffer);
-
         }
 
+        // create the interaction entity
         Interaction interaction = new Interaction();
         interaction.setTitle(title);
         interaction.setTsCreation(new Timestamp(System.currentTimeMillis()));
@@ -870,6 +985,7 @@ public class AppController {
         interaction.setUser(user);
         interactionsService.save(interaction);
 
+        // create sing offers for each characteristics offer
         for (OfferRequest characteristicsRequest : offerRequests) {
     
             Characteristics characteristics = new Characteristics();
@@ -915,12 +1031,14 @@ public class AppController {
             characteristics.setProdYear(characteristicsRequest.getProdYear());
             characteristics.setBatch(characteristicsRequest.getBatch());
 
+            // avoid duplicate characteristics
             if (!characteristicsService.isDuplicate(characteristics)) {
                 characteristicsService.save(characteristics);
             } else {
                 characteristics = characteristicsService.findDuplicate(characteristics);
             }
 
+            // create sing offers for the specified quantity
             for (int i = 0; i < characteristicsRequest.getQuantity(); i++) {
                 SingOffer singOffer = new SingOffer();
                 singOffer.setOffer(interaction);
@@ -931,14 +1049,22 @@ public class AppController {
                 singOffer.setPicturePath(characteristicsRequest.getFilePath());
                 singOffersService.save(singOffer);
             }
-
         }
 
+        // run routine checks to update negotiations
         this.routineCheck();
 
         return "redirect:/home?offerSuccess=true";
     }
 
+    /**
+     * renders the offer details page showing information about a specific offer.
+     * 
+     * @param offerId The ID of the offer to view
+     * @param session The HTTP session
+     * @param model The Spring MVC model
+     * @return The viewOfferDetails view name or redirect on error
+     */
     @GetMapping("/viewOfferDetails")
     public String viewOfferDetails (
         @RequestParam(name="offerId") int offerId,
@@ -960,17 +1086,18 @@ public class AppController {
             return "redirect:/home?error=not_authorized";
         }        
         
-        //. active singOffers
+        // active singOffers
         // get all the singOffers associated with the offer
         List<SingOffer> activeSingOffers = singOffersService.findByOffer(offer);
         // remove all inactive singOffers from the list
         for (int i = activeSingOffers.size() - 1; i >= 0; i--) {
             SingOffer singOffer = activeSingOffers.get(i);
-            if (!singOffersService.isSingOfferActive(singOffer)) {
+            if (!singOffersService.isActive(singOffer)) {
                 activeSingOffers.remove(i);
             }
         }
 
+        // determine status for each active offer
         List<String> activeStatusesList = new ArrayList<>();
         for (SingOffer singOffer : activeSingOffers) {
             boolean pendingNegotiation = (negotiationsService.findBySingOfferAndTsClosureIsNull(singOffer) != null);                        
@@ -982,17 +1109,18 @@ public class AppController {
             }
         }        
         
-        //. inactive singOffers
+        // inactive singOffers
         // get all the inactive singOffers associated with the offer
         List<SingOffer> inactiveSingOffers = singOffersService.findByOffer(offer);
         // remove all active singOffers from the list
         for (int i = inactiveSingOffers.size() - 1; i >= 0; i--) {
             SingOffer singOffer = inactiveSingOffers.get(i);
-            if (singOffersService.isSingOfferActive(singOffer)) {
+            if (singOffersService.isActive(singOffer)) {
                 inactiveSingOffers.remove(i);
             }
         }
 
+        // determine status for each inactive offer
         List<String> inactiveStatusesList = new ArrayList<>();
         for (SingOffer singOffer : inactiveSingOffers) {
             boolean wasAccepted = (negotiationsService.findBySingOfferAndWasAccepted(singOffer, true) != null);
@@ -1007,6 +1135,7 @@ public class AppController {
             }
         }
         
+        // calculate total revenue from accepted offers
         float revenue = 0;
         for (SingOffer singOffer : inactiveSingOffers ) {
             if (negotiationsService.findBySingOfferAndWasAccepted(singOffer, true) != null) {
@@ -1024,6 +1153,14 @@ public class AppController {
         return "viewOfferDetails";
     }
 
+    /**
+     * processes sing offer deletion requests.
+     * 
+     * @param singOfferId The ID of the sing offer to delete
+     * @param session The HTTP session
+     * @param model The Spring MVC model
+     * @return Redirect to home with success message
+     */
     @PutMapping("/deleteSingOffer")
     public String deleteSingOffer (
         @RequestParam(name="singOfferId") int singOfferId,
@@ -1058,11 +1195,20 @@ public class AppController {
         negotiation.setTsClosure(new Timestamp(System.currentTimeMillis()));
         negotiationsService.save(negotiation);
         
+        // run routine checks to update negotiations
         this.routineCheck();
         
         return "redirect:/home?singOfferDeleted=true";
     }
 
+    /**
+     * renders the request details page showing information about a specific request.
+     * 
+     * @param requestId The ID of the request to view
+     * @param session The HTTP session
+     * @param model The Spring MVC model
+     * @return The viewRequestDetails view name or redirect on error
+     */
     @GetMapping("/viewRequestDetails")
     public String viewRequestDetails (
         @RequestParam(name="requestId") int requestId,
@@ -1084,17 +1230,18 @@ public class AppController {
             return "redirect:/home?error=not_authorized";
         }
 
-        //. active singRequests
+        // active singRequests
         // get all the singRequests associated with the request
         List<SingRequest> activeSingRequests = singRequestsService.findByRequest(request);
         // remove all inactive singRequests from the list
         for (int i = activeSingRequests.size() - 1; i >= 0; i--) {
             SingRequest singRequest = activeSingRequests.get(i);
-            if (!singRequestsService.isSingRequestActive(singRequest)) {
+            if (!singRequestsService.isActive(singRequest)) {
                 activeSingRequests.remove(i);
             }
         }
 
+        // determine status for each active request
         List<String> activeStatusesList = new ArrayList<>();
         for (SingRequest singRequest : activeSingRequests) {
             boolean pendingNegotiation = (negotiationsService.findBySingRequestAndTsClosureIsNull(singRequest) != null);                        
@@ -1106,23 +1253,25 @@ public class AppController {
             }
         }
 
+        // get active negotiations for each sing request
         List<Negotiation> activeNegotiations = new ArrayList<>();
         for (SingRequest singRequest : activeSingRequests) {
             Negotiation negotiation = negotiationsService.findBySingRequestAndTsClosureIsNull(singRequest);
             activeNegotiations.add(negotiation);
         }
 
-        //. inactive singRequests
+        // inactive singRequests
         // get all the inactive singRequests associated with the request
         List<SingRequest> inactiveSingRequests = singRequestsService.findByRequest(request);
         // remove all active singRequests from the list
         for (int i = inactiveSingRequests.size() - 1; i >= 0; i--) {
             SingRequest singRequest = inactiveSingRequests.get(i);
-            if (singRequestsService.isSingRequestActive(singRequest)) {
+            if (singRequestsService.isActive(singRequest)) {
                 inactiveSingRequests.remove(i);
             }
         }
 
+        // determine status for each inactive request
         List<String> inactiveStatusesList = new ArrayList<>();
         for (SingRequest singRequest : inactiveSingRequests) {
             boolean wasAccepted = (negotiationsService.findBySingRequestAndWasAccepted(singRequest, true) != null);
@@ -1134,6 +1283,7 @@ public class AppController {
             }
         }
 
+        // get inactive negotiations for each sing request
         List<Negotiation> inactiveNegotiations = new ArrayList<>();
         for (SingRequest singRequest : inactiveSingRequests) {
             Negotiation negotiation = negotiationsService.findBySingRequestAndWasAccepted(singRequest, true);
@@ -1151,6 +1301,14 @@ public class AppController {
         return "viewRequestDetails";
     }
 
+    /**
+     * processes sing request deletion requests.
+     * 
+     * @param singRequestId The ID of the sing request to delete
+     * @param session The HTTP session
+     * @param model The Spring MVC model
+     * @return Redirect to view request details page
+     */
     @PutMapping("/deleteSingRequest")
     public String deleteSingRequest (
         @RequestParam(name="singRequestId") int singRequestId,
@@ -1178,18 +1336,29 @@ public class AppController {
         // reject the negotiation associated with the singRequest
         Negotiation negotiation = negotiationsService.findBySingRequestAndTsClosureIsNull(singRequest);
         if (negotiation == null) {
-            return "redirect:/home?singRequestDeleted=true";
+            // return to the current request details page
+            return "redirect:/viewRequestDetails?requestId=" + singRequest.getRequest().getId();
         }
 
         negotiation.setWasAccepted(false);
         negotiation.setTsClosure(new Timestamp(System.currentTimeMillis()));
         negotiationsService.save(negotiation);
         
+        // run routine checks to update negotiations
         this.routineCheck();
         
-        return "redirect:/home?singRequestDeleted=true";
+        // return to the current request details page
+        return "redirect:/viewRequestDetails?requestId=" + singRequest.getRequest().getId();
     }
 
+    /**
+     * processes negotiation acceptance requests.
+     * 
+     * @param negotiationId The ID of the negotiation to accept
+     * @param session The HTTP session
+     * @param model The Spring MVC model
+     * @return Redirect to view request details page
+     */
     @PutMapping("/acceptNegotiation")
     public String acceptNegotiation (
         @RequestParam(name="negotiationId") int negotiationId,
@@ -1216,11 +1385,21 @@ public class AppController {
         negotiation.setTsClosure(new Timestamp(System.currentTimeMillis()));
         negotiationsService.save(negotiation);
 
+        // run routine checks to update negotiations
         this.routineCheck();
         
-        return "redirect:/home?negotiationAccepted=true";
+        // return to the current request details page
+        return "redirect:/viewRequestDetails?requestId=" + negotiation.getSingRequest().getRequest().getId();
     }
 
+    /**
+     * processes negotiation rejection requests.
+     * 
+     * @param negotiationId The ID of the negotiation to reject
+     * @param session The HTTP session
+     * @param model The Spring MVC model
+     * @return Redirect to view request details page
+     */
     @PutMapping("/rejectNegotiation")
     public String rejectNegotiation (
         @RequestParam(name="negotiationId") int negotiationId,
@@ -1247,9 +1426,11 @@ public class AppController {
         negotiation.setTsClosure(new Timestamp(System.currentTimeMillis()));
         negotiationsService.save(negotiation);
 
+        // run routine checks to update negotiations
         this.routineCheck();
         
-        return "redirect:/home?negotiationRejected=true";
+        // return to the current request details page
+        return "redirect:/viewRequestDetails?requestId=" + negotiation.getSingRequest().getRequest().getId();
     }
 
 }

@@ -3,37 +3,65 @@
 <head>    
     <title>E-Cycle - Offer Details</title>    
     <link rel="icon" th:href="@{/images/logos/logoIcon.png}" type="image/png">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" th:href="@{/css/generic.css}">
+    <link rel="stylesheet" th:href="@{/css/viewOfferDetails.css}">
+    <script th:src="@{/js/formUtils.js}"></script>
+    <style>
+        .status-cell {
+            text-align: center;
+            color: #2f8932;
+            font-weight: bold;
+        }
+        
+        .inactive-status-cell {
+            text-align: center;
+            color: #909090;
+            font-weight: bold;
+        }
+        
+        .spinner {
+            border: 2px solid #f3f3f3;
+            border-top: 2px solid #3498db;
+            border-radius: 50%;
+            width: 15px;
+            height: 15px;
+            animation: spin 1s linear infinite;
+            display: inline-block;
+            vertical-align: middle;
+            margin-right: 5px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
 </head>
-<header class="site-header">
-    <div class="logo-section">
-        <img th:src="@{/images/logos/logo.png}" alt="E-Cycle Logo">
-    </div>
-    <div class="nav-section">
-        <button onclick="window.location.href='/home'" class="home-icon" title="Go to Home">🏠</button>
-    </div>
-</header>
-<body>    
+<body>
+    <header>
+        <div>
+            <img th:src="@{/images/logos/logo.png}" alt="E-Cycle Logo">
+        </div>
+        <div>
+            <button class="green-button" onclick="window.location.href='/home'">Home</button>
+        </div>
+    </header>
+    
     <main>
-        <section class="offer-details">
+        <section>
             <h2 th:text="${offer.title}">Offer Title</h2>
             
-            <!-- Active Offers Section -->
-            <h3 class="section-title">Active Offers</h3>
-            
-            <!-- Error message container for displaying in-page errors -->              
-            <div id="error-message-container" class="error-message">
-                <p id="error-message-text"></p>
-            </div>
-            
-            <div th:if="${singOffers.isEmpty()}">
+            <h3>Active Offers</h3>
+              <div th:if="${singOffers.isEmpty()}" class="empty-table-message">
                 <p>No active items available in this offer</p>
             </div>
-              <div th:if="${!singOffers.isEmpty()}">
-                <div class="table-container">
+            <div th:if="${!singOffers.isEmpty()}">
+                <div>
                     <table id="singOffersTable">
                         <thead>
                             <tr>
-                                <th class="checkbox-column">Select</th>
+                                <th>Select</th>
                                 <th>Category</th>
                                 <th>Nature</th>
                                 <th>Brand</th>
@@ -45,11 +73,12 @@
                                 <th>Description</th>
                                 <th>Price</th>
                                 <th>Expiration</th>
-                                <th class="status-column">Status</th>
+                                <th>Status</th>
                             </tr>
                         </thead>
-                        <tbody>                            <tr th:each="singOffer, iterStat : ${singOffers}">
-                                <td class="checkbox-column">
+                        <tbody>
+                            <tr th:each="singOffer, iterStat : ${singOffers}">
+                                <td>
                                     <input type="checkbox" name="selectedOffer" th:value="${singOffer.id}" th:id="'offer-' + ${singOffer.id}" class="single-checkbox">
                                 </td>
                                 <td th:text="${singOffer.characteristics?.category?.id}"></td>
@@ -63,30 +92,34 @@
                                 <td th:text="${singOffer.description}"></td>
                                 <td th:text="${singOffer.price}"></td>
                                 <td th:text="${singOffer.expiration}"></td>
-                                <td class="status-column" th:text="${statuses != null && !statuses.isEmpty() && iterStat.index < statuses.size() ? statuses[iterStat.index] : ''}"></td>
+                                <td th:text="${statuses != null && !statuses.isEmpty() && iterStat.index < statuses.size() ? statuses[iterStat.index] : ''}" class="status-cell"></td>
                             </tr>
                         </tbody>
                     </table>
                 </div>
                 
-                <div class="actions">
-                    <button id="deleteButton">Delete Selected Item</button>
+                <div id="error-message-container">
+                    <p id="error-message-text"></p>
+                </div>
+                
+                <div>
+                    <button id="deleteButton" class="red-button">Delete Selected Item</button>
                 </div>
             </div>
-              <!-- Revenue Summary Section -->
-            <h3 class="section-title">Revenue Summary</h3>
-            <div class="revenue-summary">
+            
+            <h3>Revenue Summary</h3>
+            <div>
                 <p><strong>Total Revenue from Accepted Offers:</strong> <span th:text="${revenue != null ? '$' + #numbers.formatDecimal(revenue, 1, 2) : '$0.00'}">$0.00</span></p>
                 <p><em>This total includes all offers with "Accepted" status</em></p>
             </div>
             
-            <!-- Inactive Offers Section -->
-            <h3 class="section-title">Inactive Offers</h3>
+            <h3>Inactive Offers</h3>
             <div th:if="${inactiveSingOffers.isEmpty()}">
                 <p>No inactive items available in this offer</p>
-            </div>            <div th:if="${!inactiveSingOffers.isEmpty()}">
-                <div class="table-container">
-                    <table id="inactiveSingOffersTable" class="inactive-table">
+            </div>
+            <div th:if="${!inactiveSingOffers.isEmpty()}">
+                <div>
+                    <table id="inactiveSingOffersTable" class="inactive-related-table">
                         <thead>
                             <tr>
                                 <th>Category</th>
@@ -100,7 +133,7 @@
                                 <th>Description</th>
                                 <th>Price</th>
                                 <th>Expiration</th>
-                                <th class="status-column">Status</th>
+                                <th>Status</th>
                             </tr>
                         </thead>
                         <tbody>                        
@@ -116,7 +149,7 @@
                                 <td th:text="${singOffer.description}"></td>
                                 <td th:text="${singOffer.price}"></td>
                                 <td th:text="${singOffer.expiration}"></td>
-                                <td class="status-column" th:text="${inactiveStatuses != null && !inactiveStatuses.isEmpty() && iterStat.index < inactiveStatuses.size() ? inactiveStatuses[iterStat.index] : ''}"></td>
+                                <td th:text="${inactiveStatuses != null && !inactiveStatuses.isEmpty() && iterStat.index < inactiveStatuses.size() ? inactiveStatuses[iterStat.index] : ''}" class="inactive-status-cell"></td>
                             </tr>
                         </tbody>
                     </table>
@@ -124,24 +157,21 @@
             </div>
         </section>
     </main>
+    
     <script>
-        // Function to show error message in page instead of alert
         function showError(message) {
             const errorContainer = document.getElementById('error-message-container');
             const errorText = document.getElementById('error-message-text');
             errorText.textContent = message;
             errorContainer.style.display = 'block';
-            // Scroll to error message
             errorContainer.scrollIntoView({ behavior: 'smooth', block: 'center' });
             
-            // Hide the message after 5 seconds
             setTimeout(() => {
                 errorContainer.style.display = 'none';
             }, 5000);
         }
             
         document.addEventListener('DOMContentLoaded', function() {
-            // Allow only one checkbox to be selected at a time
             const checkboxes = document.querySelectorAll('.single-checkbox');
             checkboxes.forEach(checkbox => {
                 checkbox.addEventListener('change', function() {
@@ -153,7 +183,6 @@
                 });
             });
             
-            // Sort active table when clicking on headers
             document.querySelectorAll('#singOffersTable th').forEach((header, index) => {
                 if (!header.classList.contains('checkbox-column')) {
                     header.addEventListener('click', function() {
@@ -162,40 +191,35 @@
                 }
             });
 
-            // Sort inactive table when clicking on headers
             document.querySelectorAll('#inactiveSingOffersTable th').forEach(header => {
                 header.addEventListener('click', function() {
                     sortTable(this, 'inactiveSingOffersTable');
                 });
             });
             
-            // Auto-sort tables on page load (starting with category column)
-            const sortActiveTableHeader = document.querySelector('#singOffersTable th:nth-child(2)'); // Category column
+            const sortActiveTableHeader = document.querySelector('#singOffersTable th:nth-child(2)');
             if (sortActiveTableHeader) {
                 sortTable(sortActiveTableHeader, 'singOffersTable');
             }
             
-            const sortInactiveTableHeader = document.querySelector('#inactiveSingOffersTable th:first-child'); // Category column
+            const sortInactiveTableHeader = document.querySelector('#inactiveSingOffersTable th:first-child');
             if (sortInactiveTableHeader) {
                 sortTable(sortInactiveTableHeader, 'inactiveSingOffersTable');
             }
-            // Handle delete button click with double-click confirmation
             const deleteButton = document.getElementById('deleteButton');
             let isConfirmMode = false;
             
             deleteButton.addEventListener('click', function() {
                 const selectedOffer = document.querySelector('input[name="selectedOffer"]:checked');
-                  if (!selectedOffer) {
+                if (!selectedOffer) {
                     showError('Please select an item to delete');
                     return;
                 }
                 
                 if (!isConfirmMode) {
-                    // First click - change to confirm mode
                     deleteButton.textContent = "Click to Confirm";
                     isConfirmMode = true;
                     
-                    // Reset confirm mode after 3 seconds if not clicked
                     setTimeout(() => {
                         if (isConfirmMode) {
                             deleteButton.textContent = "Delete Selected Item";
@@ -206,57 +230,60 @@
                     return;
                 }
                 
-                // Second click - proceed with deletion
+                // Only show spinner and disable button on confirmation click
+                const originalText = deleteButton.textContent;
+                deleteButton.innerHTML = '<div class="spinner"></div>';
+                deleteButton.classList.add('loading');
+                deleteButton.disabled = true;
+                
                 fetch('/deleteSingOffer?singOfferId=' + selectedOffer.value, {
                     method: 'PUT'
-                })                .then(response => {
+                })
+                .then(response => {
                     if (response.ok || response.redirected) {
                         window.location.href = '/home?singOfferDeleted=true';
                     } else {
                         showError('Failed to delete the item. Please try again.');
+                        deleteButton.innerHTML = originalText;
+                        deleteButton.classList.remove('loading');
+                        deleteButton.disabled = false;
+                        isConfirmMode = false;
                     }
                 })
                 .catch(error => {
                     console.error('Error:', error);
                     showError('An error occurred while deleting the item.');
+                    deleteButton.innerHTML = originalText;
+                    deleteButton.classList.remove('loading');
+                    deleteButton.disabled = false;
+                    isConfirmMode = false;
                 });
-                
-                // Reset button
-                deleteButton.textContent = "Delete Selected Item";
-                isConfirmMode = false;
             });
         });
-          // Table sorting function
+        
         function sortTable(header, tableId) {
             const table = document.getElementById(tableId);
             const tbody = table.querySelector('tbody');
             const rows = Array.from(tbody.querySelectorAll('tr'));
-              const columnIndex = Array.from(header.parentNode.children).indexOf(header);
+            const columnIndex = Array.from(header.parentNode.children).indexOf(header);
             
-            // Check if the column contains timestamp data (do not use for sorting as requested)
             const isTimestamp = ['Date', 'Created', 'Updated', 'Time'].some(term => 
                 header.textContent.includes(term));
                 
             if (isTimestamp) {
-                // Add a comment to indicate timestamps are not considered for sorting
                 console.log('Timestamp columns are not considered for sorting as requested');
-                return; // Skip sorting for timestamp columns
+                return;
             }
             
-            // Only consider Price as numeric for sorting
             const isNumeric = ['Price'].includes(header.textContent);
-            // Determine sort direction
             const sortDirection = header.getAttribute('data-sort') === 'asc' ? 'desc' : 'asc';
             
-            // Clear previous sort directions
             table.querySelectorAll('th').forEach(th => {
                 th.removeAttribute('data-sort');
             });
             
-            // Set current sort direction
             header.setAttribute('data-sort', sortDirection);
             
-            // Sort rows
             rows.sort((a, b) => {
                 let aValue = a.children[columnIndex].textContent.trim();
                 let bValue = b.children[columnIndex].textContent.trim();
@@ -269,11 +296,9 @@
                 if (aValue < bValue) return sortDirection === 'asc' ? -1 : 1;
                 if (aValue > bValue) return sortDirection === 'asc' ? 1 : -1;
                 
-                // If values are equal, sort by next columns (left to right)
                 if (aValue === bValue) {
                     const columns = header.parentNode.children.length;
                     for (let nextCol = columnIndex + 1; nextCol < columns; nextCol++) {
-                        // Skip checkbox column if present
                         if (header.parentNode.children[nextCol].classList.contains('checkbox-column')) {
                             continue;
                         }
@@ -281,7 +306,6 @@
                         aValue = a.children[nextCol].textContent.trim();
                         bValue = b.children[nextCol].textContent.trim();
                         
-                        // Only consider Price as numeric, not timestamps (as requested)
                         const isNextColNumeric = ['Price'].includes(
                             header.parentNode.children[nextCol].textContent);
                         
@@ -298,12 +322,10 @@
                 return 0;
             });
             
-            // Re-append rows in the new order
             rows.forEach(row => tbody.appendChild(row));
         }
     </script>
     
-    <!-- Add Easter Egg Script -->
     <script th:src="@{/js/easterEgg.js}"></script>
 </body>
 </html>

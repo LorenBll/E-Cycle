@@ -1,19 +1,21 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head>      <title>E-Cycle - Login</title>      
+<head>
+    <title>E-Cycle - Login</title>
     <link rel="icon" th:href="@{/images/logos/logoIcon.png}" type="image/png">
     <link rel="stylesheet" th:href="@{/css/generic.css}">
     <link rel="stylesheet" th:href="@{/css/login.css}">
+    <script th:src="@{/js/formUtils.js}"></script>
 </head>
-<header>
-    <div class="logo-section">
-        <img th:src="@{/images/logos/logo.png}" alt="E-Cycle Logo">
-    </div>
-    <div class="navigation-links">
-        <!-- Navigation buttons removed from here -->
-    </div>
-</header>
 <body>
+    <header>
+        <div class="logo-section">
+            <img th:src="@{/images/logos/logo.png}" alt="E-Cycle Logo">
+        </div>
+        <div class="nav-section">
+            <!-- Navigation buttons removed from here -->
+        </div>
+    </header>
     
     <div class="container">
         <div class="card">
@@ -34,8 +36,11 @@
                     </span>
                 </div>
                 
+                <!-- Consolidate all error/success message containers here, just above the login button -->
+                <div id="error-message-container" class="error-message" style="display: none;"></div>
+                
                 <div th:if="${error}" class="error-message">
-                    <p th:text="${error}">Error message</p>
+                    <p th:text="${error}" id="error-message-text">Error message</p>
                 </div>
                 
                 <div th:if="${success}" class="success-message">
@@ -45,14 +50,14 @@
                 <button type="submit" class="green-button">Login</button>
             
                 <div class="bottom-nav">
-                    <button onclick="window.location.href='/'" class="green-button">Home</button>
+                    <button onclick="window.location.href='/'" class="green-button">Go Back</button>
                     <button onclick="window.location.href='/registration'" class="green-button">Register</button>
                 </div>
             </form>
         </div>
     </div>
+    
     <script>
-        // Function to hash password with SHA-256
         async function hashPassword(password) {
             const encoder = new TextEncoder();
             const data = encoder.encode(password);
@@ -71,10 +76,10 @@
             const password = document.getElementById('password').value;
             const hashedPassword = await hashPassword(password);
             
-            const formData = {
+            const formData = trimObjectValues({
                 username: document.getElementById('username').value,
                 password: hashedPassword
-            };
+            });
             
             fetch('/login', {
                 method: 'POST',
@@ -152,5 +157,49 @@
     
     <!-- Add Easter Egg Script -->
     <script th:src="@{/js/easterEgg.js}"></script>
+    
+    <!-- Initialize auto-hide for all error messages -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Function to auto-hide error messages
+            function setupAutoHideForErrors() {
+                const errorElements = document.querySelectorAll('.error-message');
+                errorElements.forEach(element => {
+                    if (element && element.style.display !== 'none') {
+                        setTimeout(() => {
+                            element.style.display = 'none';
+                        }, 5000);
+                    }
+                });
+            }
+
+            // Initial setup for server-side errors
+            setupAutoHideForErrors();
+
+            // Create a MutationObserver to watch for dynamically added error messages
+            const observer = new MutationObserver(function(mutations) {
+                mutations.forEach(function(mutation) {
+                    if (mutation.type === 'childList' && mutation.addedNodes.length > 0) {
+                        const hasErrorMessage = Array.from(mutation.addedNodes).some(node => 
+                            node.classList && node.classList.contains('error-message'));
+                        if (hasErrorMessage) {
+                            setupAutoHideForErrors();
+                        }
+                    }
+                });
+            });
+
+            // Start observing the document with the configured parameters
+            observer.observe(document.body, { childList: true, subtree: true });
+
+            // Also add auto-hide to errors shown during form validation
+            const loginForm = document.getElementById('loginForm');
+            if (loginForm) {
+                loginForm.addEventListener('submit', function() {
+                    setTimeout(setupAutoHideForErrors, 100);
+                });
+            }
+        });
+    </script>
 </body>
 </html>

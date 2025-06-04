@@ -6,6 +6,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 import org.springframework.lang.NonNull;
 
+/**
+ * repository interface for characteristics entity operations
+ */
 @Repository
 public interface Characteristics_Repository extends JpaRepository<Characteristics, Integer> {
     
@@ -13,6 +16,10 @@ public interface Characteristics_Repository extends JpaRepository<Characteristic
     there will be no other research methods for this entity, 
     as it would require the contemplation of all possible combinations of characteristics values
     */
+    
+    /**
+     * retrieves all characteristics
+     * @return list of all characteristics
+     */
     @NonNull List<Characteristics> findAll();
-
 }

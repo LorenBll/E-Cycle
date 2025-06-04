@@ -1,21 +1,22 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head>      
+<head>
     <title>E-Cycle - Home</title>    
     <link rel="icon" th:href="@{/images/logos/logoIcon.png}" type="image/png">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" th:href="@{/css/generic.css}">
     <link rel="stylesheet" th:href="@{/css/home.css}">
 </head>
-<header>
-    <div class="logo-section">
-        <img th:src="@{/images/logos/logo.png}" alt="E-Cycle Logo">
-    </div>
-    <div class="navigation-links">
-        <!-- Navigation buttons removed from here -->
-    </div>
-</header>
-<body>    
+<body>
+    <header class="site-header">
+        <div class="logo-section">
+            <img th:src="@{/images/logos/logo.png}" alt="E-Cycle Logo">
+        </div>
+        <div class="nav-section">
+            <!-- Navigation buttons removed as per original -->
+        </div>
+    </header>
+    
     <main>
         <div class="navigation-links">
             <button class="green-button" onclick="window.location.href='/profile'">View Profile</button>

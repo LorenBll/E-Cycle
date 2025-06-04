@@ -3,37 +3,35 @@
 <head>    
     <title>E-Cycle - Request Details</title>    
     <link rel="icon" th:href="@{/images/logos/logoIcon.png}" type="image/png">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" th:href="@{/css/generic.css}">
+    <link rel="stylesheet" th:href="@{/css/viewRequestDetails.css}">
+    <script th:src="@{/js/formUtils.js}"></script>
 </head>
-<header class="site-header">
-    <div class="logo-section">
-        <img th:src="@{/images/logos/logo.png}" alt="E-Cycle Logo">
-    </div>
-    <div class="nav-section">
-        <button onclick="window.location.href='/home'" class="home-icon" title="Go to Home">🏠</button>
-    </div>
-</header>
 <body>
+    <header>
+        <div>
+            <img th:src="@{/images/logos/logo.png}" alt="E-Cycle Logo">
+        </div>
+        <div>
+            <button class="green-button" onclick="window.location.href='/home'">Home</button>
+        </div>
+    </header>
+
     <main>
-        <section class="request-details">
+        <section>
             <h2 th:text="${request.title}">Request Title</h2>
-              <!-- Active Requests Section -->
-            <h3 class="section-title">Active Requests</h3>
-            
-            <!-- Error message container for displaying in-page errors -->              
-            <div id="error-message-container" class="error-message">
-                <p id="error-message-text"></p>
-            </div>
-            
-            <div th:if="${singRequests.isEmpty()}">
+            <h3>Active Requests</h3>
+            <div th:if="${singRequests.isEmpty()}" class="empty-table-message">
                 <p>No active items available in this request</p>
             </div>
             
             <div th:if="${!singRequests.isEmpty()}">
-                <div class="table-container">
+                <div>
                     <table id="singRequestsTable">
                         <thead>
                             <tr>
-                                <th class="checkbox-column">Select</th>
+                                <th>Select</th>
                                 <th>Category</th>
                                 <th>Nature</th>
                                 <th>Brand</th>
@@ -42,15 +40,15 @@
                                 <th>Quality</th>
                                 <th>Function</th>
                                 <th>Main Color</th>
-                                <th>Description</th>                            
-                                <th>Price</th>
-                                <th class="status-column">Status</th>
-                                <th class="action-column">Action</th>
+                                <th>Budget</th>
+                                <th>Offer's Price</th>
+                                <th>Description</th>
+                                <th>Action</th>
                             </tr>
                         </thead>
                         <tbody>                        
                             <tr th:each="singRequest, iterStat : ${singRequests}">
-                                <td class="checkbox-column">
+                                <td>
                                     <input type="checkbox" name="selectedRequest" th:value="${singRequest.id}" th:id="'request-' + ${singRequest.id}" class="single-checkbox">
                                 </td>
                                 <td th:text="${singRequest.characteristics?.category?.id}"></td>
@@ -61,42 +59,52 @@
                                 <td th:text="${singRequest.characteristics?.quality}"></td>
                                 <td th:text="${singRequest.characteristics?.function}"></td>
                                 <td th:text="${singRequest.characteristics?.mainColour}"></td>
-                                <!-- Get description from singOffer in negotiation -->
+                                <td th:text="${singRequest.maxPrice}"></td>
+                                <td th:text="${activeNegotiations != null && iterStat.index < activeNegotiations.size() && activeNegotiations[iterStat.index] != null ? activeNegotiations[iterStat.index].singOffer?.price : ''}"></td>
                                 <td th:text="${activeNegotiations != null && iterStat.index < activeNegotiations.size() && activeNegotiations[iterStat.index] != null ? activeNegotiations[iterStat.index].singOffer?.description : ''}"></td>
-                                <!-- Get price from singOffer in negotiation -->
-                                <td th:text="${activeNegotiations != null && iterStat.index < activeNegotiations.size() && activeNegotiations[iterStat.index] != null ? activeNegotiations[iterStat.index].singOffer?.price : ''}"></td>                            <td class="status-column" th:text="${statuses != null && !statuses.isEmpty() && iterStat.index < statuses.size() ? statuses[iterStat.index] : ''}"></td>
                                 <td class="action-column">
-                                    <div th:if="${activeNegotiations != null && iterStat.index < activeNegotiations.size() && activeNegotiations[iterStat.index] != null}">
-                                        <button class="accept-button"
+                                    <span th:if="${statuses != null && !statuses.isEmpty() && iterStat.index < statuses.size() && statuses[iterStat.index] != 'Pending Negotiation'}" 
+                                         class="status-text" 
+                                         th:text="${statuses[iterStat.index]}">
+                                    </span>
+                                    
+                                    <div th:if="${statuses == null || statuses.isEmpty() || iterStat.index >= statuses.size() || statuses[iterStat.index] == 'Pending Negotiation'}" 
+                                         th:class="${activeNegotiations != null && iterStat.index < activeNegotiations.size() && activeNegotiations[iterStat.index] != null ? 'button-container' : ''}">
+                                        <button th:if="${activeNegotiations != null && iterStat.index < activeNegotiations.size() && activeNegotiations[iterStat.index] != null}"
+                                                class="green-button accept-button"
                                                 th:data-negotiation-id="${activeNegotiations[iterStat.index]?.id}"
                                                 th:onclick="'acceptNegotiation(' + ${activeNegotiations[iterStat.index]?.id} + ')'">
                                             Accept
                                         </button>
-                                        <button class="reject-button"
+                                        <button th:if="${activeNegotiations != null && iterStat.index < activeNegotiations.size() && activeNegotiations[iterStat.index] != null}"
+                                                class="red-button reject-button"
                                                 th:data-negotiation-id="${activeNegotiations[iterStat.index]?.id}"
                                                 th:onclick="'rejectNegotiation(' + ${activeNegotiations[iterStat.index]?.id} + ')'">
                                             Reject
                                         </button>
                                     </div>
-                                </td>                        
+                                </td>
                             </tr>
                         </tbody>
                     </table>
                 </div>
                 
-                <div class="actions">
-                    <button id="deleteButton" class="delete-button">Delete Selected Item</button>
+                <div id="error-message-container">
+                    <p id="error-message-text"></p>
+                </div>
+                
+                <div>
+                    <button id="deleteButton" class="red-button">Delete Selected Item</button>
                 </div>
             </div>
             
-            <!-- Inactive Requests Section -->
-            <h3 class="section-title">Inactive Requests</h3>
-            <div th:if="${inactiveSingRequests.isEmpty()}">
+            <h3>Inactive Requests</h3>
+            <div th:if="${inactiveSingRequests.isEmpty()}" class="empty-table-message">
                 <p>No inactive items available in this request</p>
             </div>
             <div th:if="${!inactiveSingRequests.isEmpty()}">
-                <div class="table-container">
-                    <table id="inactiveSingRequestsTable" class="inactive-table">
+                <div>
+                    <table id="inactiveSingRequestsTable" class="inactive-related-table">
                         <thead>
                             <tr>
                                 <th>Category</th>
@@ -107,9 +115,10 @@
                                 <th>Quality</th>
                                 <th>Function</th>
                                 <th>Main Color</th>
-                                <th>Description</th>                            
-                                <th>Price</th>
-                                <th class="status-column">Status</th>
+                                <th>Budget</th>
+                                <th>Offer's Price</th>
+                                <th>Description</th>
+                                <th>Status</th>
                             </tr>
                         </thead>
                         <tbody>                        
@@ -122,10 +131,10 @@
                                 <td th:text="${singRequest.characteristics?.quality}"></td>
                                 <td th:text="${singRequest.characteristics?.function}"></td>
                                 <td th:text="${singRequest.characteristics?.mainColour}"></td>
-                                <!-- Get description from singOffer in negotiation -->
+                                <td th:text="${singRequest.maxPrice}"></td>
+                                <td th:text="${inactiveNegotiations != null && iterStat.index < inactiveNegotiations.size() && inactiveNegotiations[iterStat.index] != null ? inactiveNegotiations[iterStat.index].singOffer?.price : ''}"></td>
                                 <td th:text="${inactiveNegotiations != null && iterStat.index < inactiveNegotiations.size() && inactiveNegotiations[iterStat.index] != null ? inactiveNegotiations[iterStat.index].singOffer?.description : ''}"></td>
-                                <!-- Get price from singOffer in negotiation -->
-                                <td th:text="${inactiveNegotiations != null && iterStat.index < inactiveNegotiations.size() && inactiveNegotiations[iterStat.index] != null ? inactiveNegotiations[iterStat.index].singOffer?.price : ''}"></td>                            <td class="status-column" th:text="${inactiveStatuses != null && !inactiveStatuses.isEmpty() && iterStat.index < inactiveStatuses.size() ? inactiveStatuses[iterStat.index] : ''}"></td>
+                                <td th:text="${inactiveStatuses != null && !inactiveStatuses.isEmpty() && iterStat.index < inactiveStatuses.size() ? inactiveStatuses[iterStat.index] : ''}"></td>
                             </tr>
                         </tbody>
                     </table>
@@ -133,9 +142,9 @@
             </div>
         </section>
     </main>
+
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Allow only one checkbox to be selected at a time
             const checkboxes = document.querySelectorAll('.single-checkbox');
             checkboxes.forEach(checkbox => {
                 checkbox.addEventListener('change', function() {
@@ -147,7 +156,6 @@
                 });
             });
             
-            // Sort active table when clicking on headers
             document.querySelectorAll('#singRequestsTable th').forEach((header, index) => {
                 if (!header.classList.contains('checkbox-column')) {
                     header.addEventListener('click', function() {
@@ -156,41 +164,36 @@
                 }
             });
 
-            // Sort inactive table when clicking on headers
             document.querySelectorAll('#inactiveSingRequestsTable th').forEach(header => {
                 header.addEventListener('click', function() {
                     sortTable(this, 'inactiveSingRequestsTable');
                 });
             });
             
-            // Auto-sort tables on page load (starting with category column)
-            const sortActiveTableHeader = document.querySelector('#singRequestsTable th:nth-child(2)'); // Category column
+            const sortActiveTableHeader = document.querySelector('#singRequestsTable th:nth-child(2)');
             if (sortActiveTableHeader) {
                 sortTable(sortActiveTableHeader, 'singRequestsTable');
             }
             
-            const sortInactiveTableHeader = document.querySelector('#inactiveSingRequestsTable th:first-child'); // Category column
+            const sortInactiveTableHeader = document.querySelector('#inactiveSingRequestsTable th:first-child');
             if (sortInactiveTableHeader) {
                 sortTable(sortInactiveTableHeader, 'inactiveSingRequestsTable');
             }
                 
-            // Handle delete button click with confirmation
             const deleteButton = document.getElementById('deleteButton');
             let isConfirmMode = false;
             
             deleteButton.addEventListener('click', function() {
                 const selectedRequest = document.querySelector('.single-checkbox:checked');
-                  if (!selectedRequest) {
+                if (!selectedRequest) {
                     showError('Please select an item to delete');
                     return;
                 }
                 
                 if (!isConfirmMode) {
-                    // First click - change to confirm mode
                     deleteButton.textContent = "Click to Confirm";
                     isConfirmMode = true;
                     
-                    // Reset confirm mode after 3 seconds if not clicked
                     setTimeout(() => {
                         if (isConfirmMode) {
                             deleteButton.textContent = "Delete Selected Item";
@@ -201,123 +204,159 @@
                     return;
                 }
                 
-                // Second click - proceed with deletion
+                // Only show spinner and disable on confirmation click
+                const originalText = deleteButton.textContent;
+                deleteButton.innerHTML = '<div class="spinner"></div>';
+                deleteButton.classList.add('loading');
+                deleteButton.disabled = true;
+                
                 fetch('/deleteSingRequest?singRequestId=' + selectedRequest.value, {
                     method: 'PUT'
-                })                .then(response => {
+                })
+                .then(response => {
                     if (response.ok || response.redirected) {
                         window.location.href = '/home?singRequestDeleted=true';
                     } else {
                         showError('Failed to delete the item. Please try again.');
+                        deleteButton.innerHTML = originalText;
+                        deleteButton.classList.remove('loading');
+                        deleteButton.disabled = false;
+                        isConfirmMode = false;
                     }
                 })
                 .catch(error => {
                     console.error('Error:', error);
                     showError('An error occurred while deleting the item.');
+                    deleteButton.innerHTML = originalText;
+                    deleteButton.classList.remove('loading');
+                    deleteButton.disabled = false;
+                    isConfirmMode = false;
                 });
-                  // Reset button
-                deleteButton.textContent = "Delete Selected Item";
-                isConfirmMode = false;
             });
         });
         
-        // Function to accept a negotiation with confirmation
         function acceptNegotiation(negotiationId) {
-            // Show confirmation message in page
-            showError('Click accept again to confirm this action');
+            const acceptBtn = document.querySelector(`button.accept-button[data-negotiation-id="${negotiationId}"]`);
+            const rejectBtn = document.querySelector(`button.reject-button[data-negotiation-id="${negotiationId}"]`);
             
-            // Create a one-time event using a flag
-            if (!window.acceptConfirmationClicked) {
-                window.acceptConfirmationClicked = true;
+            if (acceptBtn.textContent !== "Click to Confirm") {
+                if (rejectBtn) rejectBtn.style.display = 'none';
                 
-                // Reset flag after 3 seconds
+                acceptBtn.textContent = "Click to Confirm";
+                
                 setTimeout(() => {
-                    window.acceptConfirmationClicked = false;
+                    if (acceptBtn.textContent === "Click to Confirm") {
+                        acceptBtn.textContent = "Accept";
+                        if (rejectBtn) rejectBtn.style.display = '';
+                    }
                 }, 3000);
                 
                 return;
             }
-              // The second click will execute this
+            
+            // Only add spinner and disable on confirmation click
+            const originalText = acceptBtn.textContent;
+            acceptBtn.innerHTML = '<div class="spinner"></div>';
+            acceptBtn.classList.add('loading');
+            acceptBtn.disabled = true;
+            
             fetch('/acceptNegotiation?negotiationId=' + negotiationId, {
                 method: 'PUT'
             })
             .then(response => {
                 if (response.ok || response.redirected) {
-                    window.location.href = '/home?negotiationAccepted=true';
+                    window.location.reload();
                 } else {
                     showError('Failed to accept the negotiation. Please try again.');
+                    acceptBtn.innerHTML = originalText;
+                    acceptBtn.classList.remove('loading');
+                    acceptBtn.disabled = false;
+                    if (rejectBtn) rejectBtn.style.display = '';
                 }
             })
             .catch(error => {
                 console.error('Error:', error);
                 showError('An error occurred while accepting the negotiation.');
+                acceptBtn.innerHTML = originalText;
+                acceptBtn.classList.remove('loading');
+                acceptBtn.disabled = false;
+                if (rejectBtn) rejectBtn.style.display = '';
             });
-        }        // Function to reject a negotiation with confirmation
+        }
+        
         function rejectNegotiation(negotiationId) {
-            // Show confirmation message in page
-            showError('Click reject again to confirm this action');
+            const rejectBtn = document.querySelector(`button.reject-button[data-negotiation-id="${negotiationId}"]`);
+            const acceptBtn = document.querySelector(`button.accept-button[data-negotiation-id="${negotiationId}"]`);
             
-            // Create a one-time event using a flag
-            if (!window.rejectConfirmationClicked) {
-                window.rejectConfirmationClicked = true;
+            if (rejectBtn.textContent !== "Click to Confirm") {
+                if (acceptBtn) acceptBtn.style.display = 'none';
                 
-                // Reset flag after 3 seconds
+                rejectBtn.textContent = "Click to Confirm";
+                
                 setTimeout(() => {
-                    window.rejectConfirmationClicked = false;
+                    if (rejectBtn.textContent === "Click to Confirm") {
+                        rejectBtn.textContent = "Reject";
+                        if (acceptBtn) acceptBtn.style.display = '';
+                    }
                 }, 3000);
                 
                 return;
             }
             
-            // The second click will execute this
+            // Only add spinner and disable on confirmation click
+            const originalText = rejectBtn.textContent;
+            rejectBtn.innerHTML = '<div class="spinner"></div>';
+            rejectBtn.classList.add('loading');
+            rejectBtn.disabled = true;
+            
             fetch('/rejectNegotiation?negotiationId=' + negotiationId, {
                 method: 'PUT'
             })
             .then(response => {
                 if (response.ok || response.redirected) {
-                    window.location.href = '/home?negotiationRejected=true';
+                    window.location.reload();
                 } else {
                     showError('Failed to reject the negotiation. Please try again.');
+                    rejectBtn.innerHTML = originalText;
+                    rejectBtn.classList.remove('loading');
+                    rejectBtn.disabled = false;
+                    if (acceptBtn) acceptBtn.style.display = '';
                 }
             })
             .catch(error => {
                 console.error('Error:', error);
                 showError('An error occurred while rejecting the negotiation.');
+                rejectBtn.innerHTML = originalText;
+                rejectBtn.classList.remove('loading');
+                rejectBtn.disabled = false;
+                if (acceptBtn) acceptBtn.style.display = '';
             });
         }
-          
-        // Table sorting function
+        
         function sortTable(header, tableId) {
             const table = document.getElementById(tableId);
             const tbody = table.querySelector('tbody');
             const rows = Array.from(tbody.querySelectorAll('tr'));
-              const columnIndex = Array.from(header.parentNode.children).indexOf(header);
+            const columnIndex = Array.from(header.parentNode.children).indexOf(header);
             
-            // Check if the column contains timestamp data (do not use for sorting as requested)
             const isTimestamp = ['Date', 'Created', 'Updated', 'Time'].some(term => 
                 header.textContent.includes(term));
                 
             if (isTimestamp) {
-                // Add a comment to indicate timestamps are not considered for sorting
                 console.log('Timestamp columns are not considered for sorting as requested');
-                return; // Skip sorting for timestamp columns
+                return;
             }
             
-            // Only consider Price as numeric for sorting
             const isNumeric = ['Price'].includes(header.textContent);
             
-            // Determine sort direction
             const sortDirection = header.getAttribute('data-sort') === 'asc' ? 'desc' : 'asc';
             
-            // Clear previous sort directions
             table.querySelectorAll('th').forEach(th => {
                 th.removeAttribute('data-sort');
             });
             
-            // Set current sort direction
             header.setAttribute('data-sort', sortDirection);
             
-            // Sort rows
             rows.sort((a, b) => {
                 let aValue = a.children[columnIndex]?.textContent.trim() || '';
                 let bValue = b.children[columnIndex]?.textContent.trim() || '';
@@ -330,11 +369,9 @@
                 if (aValue < bValue) return sortDirection === 'asc' ? -1 : 1;
                 if (aValue > bValue) return sortDirection === 'asc' ? 1 : -1;
                 
-                // If values are equal, sort by next columns (left to right)
                 if (aValue === bValue) {
                     const columns = header.parentNode.children.length;
                     for (let nextCol = columnIndex + 1; nextCol < columns; nextCol++) {
-                        // Skip checkbox column if present
                         if (header.parentNode.children[nextCol].classList.contains('checkbox-column')) {
                             continue;
                         }
@@ -358,27 +395,21 @@
                 return 0;
             });
             
-            // Re-append rows in the new order
             rows.forEach(row => tbody.appendChild(row));
         }
         
-        // Function to show error message in page instead of alert
         function showError(message) {
             const errorContainer = document.getElementById('error-message-container');
             const errorText = document.getElementById('error-message-text');
             errorText.textContent = message;
             errorContainer.style.display = 'block';
-            // Scroll to error message
-            errorContainer.scrollIntoView({ behavior: 'smooth', block: 'center' });
             
-            // Hide the message after 5 seconds
             setTimeout(() => {
                 errorContainer.style.display = 'none';
             }, 5000);
         }
     </script>
     
-    <!-- Add Easter Egg Script -->
     <script th:src="@{/js/easterEgg.js}"></script>
 </body>
 </html>

@@ -1,186 +1,211 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head>      <title>E-Cycle - Profile</title>      
+<head>      
+    <title>E-Cycle - Profile</title>      
     <link rel="icon" th:href="@{/images/logos/logoIcon.png}" type="image/png">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" th:href="@{/css/buttons.css}">
+    <link rel="stylesheet" th:href="@{/css/generic.css}">
+    <link rel="stylesheet" th:href="@{/css/profile.css}">
+    <script th:src="@{/js/formUtils.js}"></script>
 </head>
-<header class="site-header">
-    <div class="logo-section">
-        <img th:src="@{/images/logos/logo.png}" alt="E-Cycle Logo">
-    </div>
-    <div class="nav-section">
-        <button onclick="window.location.href='/home'" class="home-icon" title="Go to Home">🏠</button>
-    </div>
-</header>
 <body>
-    <div class="card">
-        <h2>User Profile</h2>
-        
-        <!-- Error message container for displaying in-page errors -->        
-        <div id="error-message-container" class="error-message">
-            <p id="error-message-text"></p>
+    <header>
+        <div class="logo-section">
+            <img th:src="@{/images/logos/logo.png}" alt="E-Cycle Logo">
         </div>
-        
-        <form id="profileEditForm">
+        <div class="navigation-links">
+            <button class="green-button" onclick="window.location.href='/home'" style="margin-right: 25px;">Home</button>
+        </div>
+    </header>
+    
+    <div class="container">
+        <div class="card">
+            <h2>User Profile</h2>
+            
+            <form id="profileEditForm">
                 <div class="profile-section">
-                    <h3>Account Information</h3>                    
-                    <div class="form-row">
-                        <div class="form-col">
-                            <div class="form-group">
-                                <label for="username">Username:</label>
-                                <input type="text" id="username" name="username" th:value="${user.username}" required maxlength="50">
-                            </div>
-                        </div>
-                        <div class="form-col">
-                            <div class="form-group">
-                                <label for="email">Email:</label>
-                                <input type="email" id="email" name="email" th:value="${user.email}" required maxlength="100">
-                            </div>
-                        </div>                    
+                    <div class="form-group">
+                        <label for="username">Username*</label>
+                        <input type="text" id="username" name="username" th:value="${user.username}" required maxlength="50">
                     </div>
+                    
                     <div class="form-row">
-                        <div class="form-col">
+                        <div class="form-column">
                             <div class="form-group">
-                                <label for="name">Name:</label>
+                                <label for="name">Name</label>
                                 <input type="text" id="name" name="name" th:value="${user.name}" maxlength="50">
                             </div>
                         </div>
-                        <div class="form-col">
+                        <div class="form-column">
                             <div class="form-group">
-                                <label for="surname">Surname:</label>
+                                <label for="surname">Surname</label>
                                 <input type="text" id="surname" name="surname" th:value="${user.surname}" maxlength="50">
                             </div>
                         </div>                    
                     </div>
+                    
                     <div class="form-group">
+                        <label for="email">Email*</label>
+                        <input type="email" id="email" name="email" th:value="${user.email}" required maxlength="100">
+                    </div>
+                    
+                    <div class="form-group password-container">
                         <label for="password">New Password (leave blank to keep current):</label>
-                        <div class="password-container">
-                            <input type="password" id="password" name="password">
-                            <span class="toggle-password" onclick="togglePassword('password', 'eye-icon-open-password', 'eye-icon-closed-password')">                                
-                                <span id="eye-icon-open-password">See</span>
-                                <span id="eye-icon-closed-password">Hide</span>
-                            </span>
-                        </div>
+                        <input type="password" id="password" name="password">
+                        <span class="toggle-password" onclick="togglePassword('password', 'eye-icon-open-password', 'eye-icon-closed-password')">                                
+                            <span id="eye-icon-open-password">See</span>
+                            <span id="eye-icon-closed-password">Hide</span>
+                        </span>
                     </div>
+                    
                     <div class="password-instructions">
-                        <small>Password requirements: at least 8 characters, 1 uppercase letter, 1 lowercase letter, 1 number, and 1 special character.</small>
+                        Password requirements: at least 8 characters, 1 uppercase letter, and 1 special character.
                     </div>
-                    <div class="form-group">
+                    
+                    <div class="form-group password-container">
                         <label for="confirm_password">Confirm New Password:</label>
-                        <div class="password-container">
-                            <input type="password" id="confirm_password" name="confirm_password">
-                            <span class="toggle-password" onclick="togglePassword('confirm_password', 'eye-icon-open-confirm', 'eye-icon-closed-confirm')">                                
-                                <span id="eye-icon-open-confirm">See</span>
-                                <span id="eye-icon-closed-confirm">Hide</span>
-                            </span>
-                        </div>
+                        <input type="password" id="confirm_password" name="confirm_password">
+                        <span class="toggle-password" onclick="togglePassword('confirm_password', 'eye-icon-open-confirm', 'eye-icon-closed-confirm')">                                
+                            <span id="eye-icon-open-confirm">See</span>
+                            <span id="eye-icon-closed-confirm">Hide</span>
+                        </span>
                     </div>
                 </div>
                 
                 <div class="profile-section">
-                    <h3>Address</h3>
+                    <h3>Address Information</h3>
+                    
                     <div class="form-row">
-                        <div class="form-col">
+                        <div class="form-column">
                             <div class="form-group">
-                                <label for="state">State:</label>
+                                <label for="state">State*</label>
                                 <input type="text" id="state" name="state" th:value="${user.state}" required maxlength="50">
                             </div>
                         </div>
-                        <div class="form-col">
+                        <div class="form-column">
                             <div class="form-group">
-                                <label for="region">Region:</label>
+                                <label for="region">Region*</label>
                                 <input type="text" id="region" name="region" th:value="${user.region}" required maxlength="50">
                             </div>
                         </div>
                     </div>
+                    
                     <div class="form-row">
-                        <div class="form-col">
+                        <div class="form-column">
                             <div class="form-group">
-                                <label for="province">Province:</label>
+                                <label for="province">Province*</label>
                                 <input type="text" id="province" name="province" th:value="${user.province}" required maxlength="50">
                             </div>
                         </div>
-                        <div class="form-col">
+                        <div class="form-column">
                             <div class="form-group">
-                                <label for="city">City:</label>
+                                <label for="city">City*</label>
                                 <input type="text" id="city" name="city" th:value="${user.city}" required maxlength="50">
                             </div>
                         </div>
                     </div>
+                    
                     <div class="form-row">
-                        <div class="form-col">
+                        <div class="form-column">
                             <div class="form-group">
-                                <label for="street">Street:</label>
+                                <label for="street">Street*</label>
                                 <input type="text" id="street" name="street" th:value="${user.street}" required maxlength="100">
                             </div>
                         </div>
-                        <div class="form-col">
+                        <div class="form-column">
                             <div class="form-group">
-                                <label for="civic">Civic Number:</label>
+                                <label for="civic">Civic Number*</label>
                                 <input type="text" id="civic" name="civic" th:value="${user.civic}" required maxlength="50">                            
                             </div>
                         </div>
                     </div>
                 </div>
                 
-                <!-- Error message display -->
+                <div id="dynamic-error-message" class="error-message" style="display: none;">
+                    <span id="error-message-content"></span>
+                </div>
+                
                 <div class="error-message" th:if="${error != null}">
                     <span th:text="${error}"></span>
                 </div>
-                <!-- Dynamic error message display -->
-                <div id="dynamic-error-message" class="error-message" style="display: none;">
-                    <span id="error-message-text"></span>
-                </div>
-                <!-- Success message display -->
+                
                 <div class="success-message" th:if="${success != null}">
                     <span th:text="${success}"></span>
-                </div>                <div class="buttons">
-                    <button type="submit" class="submit-btn">Save Changes</button>
+                </div>
+                
+                <button type="submit" id="saveChangesButton" class="green-button submit-btn disabled-btn" disabled>Save Changes</button>
+                
+                <div class="button-container">
+                    <button onclick="window.location.href='/logout'" class="orange-button">Logout</button>
+                    <button id="delete-account-btn" class="red-button" onclick="deleteAccount(event)">Delete My Account</button>
                 </div>
             </form>
-          <div class="links">
-            <button onclick="window.location.href='/logout'" class="logout-btn">Logout</button>
-            <button id="delete-account-btn" class="delete-btn" onclick="deleteAccount(event)">Delete My Account</button>
         </div>
     </div>
+    
     <script>          
-        // Store original form values to detect changes
         let originalFormValues = {};
         
-        // Function to show error message in page instead of alert
-        function showError(message) {
-            const errorContainer = document.getElementById('error-message-container');
-            const errorText = document.getElementById('error-message-text');
-            errorText.textContent = message;
-            errorContainer.style.display = 'block';
-            // Scroll to error message
-            errorContainer.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        let messageTimeout = null;
+        
+        function showErrorWithTimeout(message, persistent = false) {
+            const errorDiv = document.getElementById('dynamic-error-message');
+            const errorMessage = document.getElementById('error-message-content');
             
-            // Hide the message after 5 seconds
-            setTimeout(() => {
-                errorContainer.style.display = 'none';
+            errorDiv.style.display = 'block';
+            errorMessage.textContent = message;
+            
+            if (messageTimeout) {
+                clearTimeout(messageTimeout);
+                messageTimeout = null;
+            }
+            
+            if (!persistent) {
+                messageTimeout = setTimeout(() => {
+                    errorDiv.style.display = 'none';
+                }, 5000);
+            }
+        }
+        
+        function showSuccessWithTimeout(message) {
+            let successDiv = document.querySelector('.temp-success-message');
+            if (!successDiv) {
+                successDiv = document.createElement('div');
+                successDiv.className = 'success-message temp-success-message';
+                
+                const messageSpan = document.createElement('span');
+                successDiv.appendChild(messageSpan);
+                
+                const errorDiv = document.getElementById('dynamic-error-message');
+                errorDiv.parentNode.insertBefore(successDiv, errorDiv.nextSibling);
+            }
+            
+            const messageSpan = successDiv.querySelector('span');
+            messageSpan.textContent = message;
+            successDiv.style.display = 'block';
+            
+            if (messageTimeout) {
+                clearTimeout(messageTimeout);
+            }
+            
+            messageTimeout = setTimeout(() => {
+                successDiv.style.display = 'none';
             }, 5000);
         }
         
-        // Function to check if any form field has changed
         function checkFormChanges() {
             const formFields = ['username', 'email', 'name', 'surname', 'state', 'region', 'province', 'city', 'street', 'civic'];
             const saveButton = document.querySelector('.submit-btn');
             
-            // Check if any field has changed from its original value
             const hasChanges = formFields.some(field => {
                 const input = document.getElementById(field);
                 return input && input.value !== originalFormValues[field];
             });
             
-            // Also check if password field is not empty
             const hasPassword = document.getElementById('password').value.trim() !== '';
             
-            // Enable/disable the button based on changes
             saveButton.disabled = !(hasChanges || hasPassword);
             
-            // Update button style based on state
             if (saveButton.disabled) {
                 saveButton.classList.add('disabled-btn');
             } else {
@@ -193,25 +218,38 @@
             const deleteBtn = document.getElementById('delete-account-btn');
             
             if (deleteBtn.textContent === "Delete My Account") {
-                // First click - change button text to confirmation message
-                deleteBtn.textContent = "Click to confirm";
-            } else {
-                // Second click - actually delete the account
+                deleteBtn.textContent = "Click to Confirm";
+                
+                setTimeout(() => {
+                    if (deleteBtn.textContent === "Click to Confirm") {
+                        deleteBtn.textContent = "Delete My Account";
+                    }
+                }, 3000);
+            } else if (deleteBtn.textContent === "Click to Confirm") {
+                const originalText = deleteBtn.textContent;
+                deleteBtn.innerHTML = '<div class="spinner"></div>';
+                deleteBtn.classList.add('loading');
+                deleteBtn.disabled = true;
+                
                 fetch('/profile/delete', {
                     method: 'DELETE',
                     headers: {
-                        'Content-Type': 'application/json',
-                        // Include CSRF token if your Spring Security setup requires it
-                        // 'X-CSRF-TOKEN': document.querySelector('meta[name="_csrf"]').getAttribute('content')
-                    }
+                        'Content-Type': 'application/json'
+                    },
+                    credentials: 'same-origin'
                 }).then(response => {
                     if (response.redirected) {
                         window.location.href = response.url;
                     } else {
                         window.location.href = "/login?deleted=true";
-                    }                }).catch(error => {
+                    }
+                }).catch(error => {
                     console.error('Error:', error);
-                    showError('An error occurred while trying to delete your account. Please try again later.');
+                    showErrorWithTimeout('An error occurred while trying to delete your account. Please try again later.');
+                    
+                    deleteBtn.innerHTML = originalText;
+                    deleteBtn.classList.remove('loading');
+                    deleteBtn.disabled = false;
                 });
             }
         }
@@ -235,7 +273,6 @@
         function checkPasswordStrength() {
             const password = document.getElementById('password').value;
             const errorDiv = document.getElementById('dynamic-error-message');
-            const errorMessage = document.getElementById('error-message-text');
             
             if (password.length === 0) {
                 errorDiv.style.display = 'none';
@@ -243,27 +280,22 @@
             }
             
             if (password.length < 8) {
-                errorDiv.style.display = 'block';
-                errorMessage.textContent = 'Password must be at least 8 characters long.';
+                showErrorWithTimeout('Password must be at least 8 characters long.', true);
                 return;
             }
             
             if (!/[A-Z]/.test(password)) {
-                errorDiv.style.display = 'block';
-                errorMessage.textContent = 'Password must contain at least one uppercase letter.';
+                showErrorWithTimeout('Password must contain at least one uppercase letter.', true);
                 return;
             }
             
             if (!/[a-z]/.test(password)) {
-                errorDiv.style.display = 'block';
-                errorMessage.textContent = 'Password must contain at least one lowercase letter.';
+                showErrorWithTimeout('Password must contain at least one lowercase letter.', true);
                 return;
             }
-
             
             if (!/[^A-Za-z0-9]/.test(password)) {
-                errorDiv.style.display = 'block';
-                errorMessage.textContent = 'Password must contain at least one special character.';
+                showErrorWithTimeout('Password must contain at least one special character.', true);
                 return;
             }
             
@@ -273,18 +305,17 @@
         function checkPasswordsMatch() {
             const password = document.getElementById('password').value;
             const confirmPassword = document.getElementById('confirm_password').value;
-            const errorDiv = document.getElementById('dynamic-error-message');
-            const errorMessage = document.getElementById('error-message-text');
             
             if (confirmPassword.length === 0) {
                 return;
             }
             
             if (password !== confirmPassword) {
-                errorDiv.style.display = 'block';
-                errorMessage.textContent = 'Passwords do not match.';
+                showErrorWithTimeout('Passwords do not match.', true);
             } else {
-                // Only hide the error if it's currently showing a password match error
+                const errorDiv = document.getElementById('dynamic-error-message');
+                const errorMessage = document.getElementById('error-message-content');
+                
                 if (errorMessage.textContent === 'Passwords do not match.') {
                     errorDiv.style.display = 'none';
                 }
@@ -292,34 +323,24 @@
         }
         
         function validatePassword(password) {
-            const errorDiv = document.getElementById('dynamic-error-message');
-            const errorMessage = document.getElementById('error-message-text');
-            
-            // Check password length
             if (password.length < 8) {
-                errorDiv.style.display = 'block';
-                errorMessage.textContent = 'Password must be at least 8 characters long.';
+                showErrorWithTimeout('Password must be at least 8 characters long.', true);
                 return false;
             }
             
-            // Check for uppercase letter
             if (!/[A-Z]/.test(password)) {
-                errorDiv.style.display = 'block';
-                errorMessage.textContent = 'Password must contain at least one uppercase letter.';
+                showErrorWithTimeout('Password must contain at least one uppercase letter.', true);
                 return false;
             }
             
-            // Check for special character
             if (!/[^A-Za-z0-9]/.test(password)) {
-                errorDiv.style.display = 'block';
-                errorMessage.textContent = 'Password must contain at least one special character.';
+                showErrorWithTimeout('Password must contain at least one special character.', true);
                 return false;
             }
             
             return true;
         }        
         
-        // SHA-256 password hashing function
         async function hashPassword(password) {
             const encoder = new TextEncoder();
             const data = encoder.encode(password);
@@ -330,49 +351,58 @@
         }
 
         document.addEventListener('DOMContentLoaded', function() {
-            // Store original form values for change detection
             const formFields = ['username', 'email', 'name', 'surname', 'state', 'region', 'province', 'city', 'street', 'civic'];
             formFields.forEach(field => {
                 const input = document.getElementById(field);
                 if (input) {
                     originalFormValues[field] = input.value;
-                    // Add event listener to detect changes
                     input.addEventListener('input', checkFormChanges);
                 }
             });
             
-            // Initial button state setup
             const saveButton = document.querySelector('.submit-btn');
             saveButton.disabled = true;
             saveButton.classList.add('disabled-btn');
             
             const editProfileForm = document.getElementById('edit-profile-form');
-            // Cancel button has been removed
+            
             const successMessage = document.querySelector('.success-message');
             const deleteAccountBtn = document.getElementById('delete-account-btn');
             
-            // Add event listener for delete account button
             if (deleteAccountBtn) {
-                deleteAccountBtn.addEventListener('click', function(event) {
+                deleteAccountBtn.removeEventListener('click', function(event) {
                     deleteAccount(event);
                 });
             }
             
-            // Password visibility toggle functionality is now handled by the togglePassword function
-            // Add event listeners once the DOM is fully loaded
             const passwordInput = document.getElementById('password');
             const confirmPasswordInput = document.getElementById('confirm_password');
             
-            // Check password requirements as user types
             passwordInput.addEventListener('input', function() {
                 checkPasswordStrength();
                 checkFormChanges();
             });
             
-            // Check if passwords match when user types in either field
-            confirmPasswordInput.addEventListener('input', checkPasswordsMatch);
+            confirmPasswordInput.addEventListener('input', function() {
+                checkPasswordsMatch();
+                checkFormChanges();
+            });
             
-            // Form validation with password confirmation
+            const serverErrorMessage = document.querySelector('.error-message:not(#dynamic-error-message)');
+            const serverSuccessMessage = document.querySelector('.success-message');
+            
+            if (serverErrorMessage && serverErrorMessage.style.display !== 'none') {
+                setTimeout(() => {
+                    serverErrorMessage.style.display = 'none';
+                }, 5000);
+            }
+            
+            if (serverSuccessMessage && serverSuccessMessage.style.display !== 'none') {
+                setTimeout(() => {
+                    serverSuccessMessage.style.display = 'none';
+                }, 5000);
+            }
+            
             const form = document.getElementById('profileEditForm');
             form.addEventListener('submit', async function(event) {
                 event.preventDefault();
@@ -381,102 +411,81 @@
                 const confirmPassword = document.getElementById('confirm_password').value;
                 const username = document.getElementById('username').value;
                 const email = document.getElementById('email').value;
-                const errorDiv = document.getElementById('dynamic-error-message');
-                const errorMessage = document.getElementById('error-message-text');
-                  // Check for empty username
+                
                 if (!username.trim()) {
-                    errorDiv.style.display = 'block';
-                    errorMessage.textContent = 'Username cannot be empty!';
+                    showErrorWithTimeout('Username cannot be empty!');
                     return;
                 }
                 
-                // Check username length
                 if (username.length > 50) {
-                    errorDiv.style.display = 'block';
-                    errorMessage.textContent = 'Username cannot exceed 50 characters!';
+                    showErrorWithTimeout('Username cannot exceed 50 characters!');
                     return;
                 }
                 
-                // Check email validity
                 if (!email.trim() || !email.includes('@')) {
-                    errorDiv.style.display = 'block';
-                    errorMessage.textContent = 'Please enter a valid email address!';
+                    showErrorWithTimeout('Please enter a valid email address!');
                     return;
                 }
                 
-                // Check email length
                 if (email.length > 100) {
-                    errorDiv.style.display = 'block';
-                    errorMessage.textContent = 'Email cannot exceed 100 characters!';
+                    showErrorWithTimeout('Email cannot exceed 100 characters!');
                     return;
                 }
                 
-                // Check other field lengths
                 const name = document.getElementById('name').value;
                 if (name.length > 50) {
-                    errorDiv.style.display = 'block';
-                    errorMessage.textContent = 'Name cannot exceed 50 characters!';
+                    showErrorWithTimeout('Name cannot exceed 50 characters!');
                     return;
                 }
                 
                 const surname = document.getElementById('surname').value;
                 if (surname.length > 50) {
-                    errorDiv.style.display = 'block';
-                    errorMessage.textContent = 'Surname cannot exceed 50 characters!';
+                    showErrorWithTimeout('Surname cannot exceed 50 characters!');
                     return;
                 }
                 
                 const state = document.getElementById('state').value;
                 if (state.length > 50) {
-                    errorDiv.style.display = 'block';
-                    errorMessage.textContent = 'State cannot exceed 50 characters!';
+                    showErrorWithTimeout('State cannot exceed 50 characters!');
                     return;
                 }
                 
                 const region = document.getElementById('region').value;
                 if (region.length > 50) {
-                    errorDiv.style.display = 'block';
-                    errorMessage.textContent = 'Region cannot exceed 50 characters!';
+                    showErrorWithTimeout('Region cannot exceed 50 characters!');
                     return;
                 }
                 
                 const province = document.getElementById('province').value;
                 if (province.length > 50) {
-                    errorDiv.style.display = 'block';
-                    errorMessage.textContent = 'Province cannot exceed 50 characters!';
+                    showErrorWithTimeout('Province cannot exceed 50 characters!');
                     return;
                 }
                 
                 const city = document.getElementById('city').value;
                 if (city.length > 50) {
-                    errorDiv.style.display = 'block';
-                    errorMessage.textContent = 'City cannot exceed 50 characters!';
+                    showErrorWithTimeout('City cannot exceed 50 characters!');
                     return;
                 }
                 
                 const street = document.getElementById('street').value;
                 if (street.length > 100) {
-                    errorDiv.style.display = 'block';
-                    errorMessage.textContent = 'Street cannot exceed 100 characters!';
+                    showErrorWithTimeout('Street cannot exceed 100 characters!');
                     return;
                 }
                 
                 const civic = document.getElementById('civic').value;
                 if (civic.length > 50) {
-                    errorDiv.style.display = 'block';
-                    errorMessage.textContent = 'Civic Number cannot exceed 50 characters!';
+                    showErrorWithTimeout('Civic Number cannot exceed 50 characters!');
                     return;
                 }
                 
-                // Only validate passwords if user is trying to change password
                 if (password || confirmPassword) {
                     if (password !== confirmPassword) {
-                        errorDiv.style.display = 'block';
-                        errorMessage.textContent = 'Passwords do not match!';
+                        showErrorWithTimeout('Passwords do not match!', true);
                         return;
                     }
                     
-                    // Password validation rules
                     if (password) {
                         if (!validatePassword(password)) {
                             return;
@@ -484,14 +493,19 @@
                     }
                 }
                 
-                // Hash password if provided, otherwise use null
+                const saveButton = document.getElementById('saveChangesButton');
+                const originalText = saveButton.textContent;
+                
+                saveButton.innerHTML = '<div class="spinner"></div>';
+                saveButton.classList.add('loading');
+                saveButton.disabled = true;
+                
                 let hashedPassword = null;
                 if (password) {
                     hashedPassword = await hashPassword(password);
                 }
                 
-                // Create JSON data from form inputs
-                const formData = {
+                const formData = trimObjectValues({
                     username: document.getElementById('username').value,
                     name: document.getElementById('name').value,
                     surname: document.getElementById('surname').value,
@@ -503,9 +517,8 @@
                     city: document.getElementById('city').value,
                     street: document.getElementById('street').value,
                     civic: document.getElementById('civic').value
-                };
+                });
                 
-                // Submit form data as JSON
                 fetch('/profile/edit', {
                     method: 'PUT',
                     headers: {
@@ -517,19 +530,39 @@
                     if (response.redirected) {
                         window.location.href = response.url;
                     } else if (response.ok) {
-                        window.location.href = '/profile';
+                        showSuccessWithTimeout('Profile updated successfully!');
+                        setTimeout(() => {
+                            window.location.href = '/profile';
+                        }, 5000);
                     } else {
-                        console.error('Profile update failed');
+                        return response.json().then(data => {
+                            throw new Error(data.message || 'Profile update failed');
+                        });
                     }
                 })
                 .catch(error => {
                     console.error('Error:', error);
+                    showErrorWithTimeout(error.message || 'An error occurred while updating your profile.');
+                    
+                    saveButton.innerHTML = originalText;
+                    saveButton.classList.remove('loading');
+                    saveButton.disabled = true;
+                    checkFormChanges();
                 });
+                
+                setTimeout(() => {
+                    if (document.body.contains(saveButton)) {
+                        saveButton.innerHTML = originalText;
+                        saveButton.classList.remove('loading');
+                        saveButton.disabled = true;
+                        checkFormChanges();
+                    }
+                }, 5000);
             });
         });
         
     </script>
-    <!-- Add Easter Egg Script -->
+    
     <script th:src="@{/js/easterEgg.js}"></script>
 </body>
 </html>
