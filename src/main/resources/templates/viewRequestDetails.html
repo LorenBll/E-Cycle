@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>    
+    <title>E-Cycle - Request Details</title>    
+    <link rel="icon" th:href="@{/images/logos/logoIcon.png}" type="image/png">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" th:href="@{/css/generic.css}">
+    <link rel="stylesheet" th:href="@{/css/viewRequestDetails.css}">
+    <script th:src="@{/js/formUtils.js}"></script>
+</head>
+<body>
+    <header>
+        <div>
+            <img th:src="@{/images/logos/logo.png}" alt="E-Cycle Logo">
+        </div>
+        <div>
+            <button class="green-button" onclick="window.location.href='/home'">Home</button>
+        </div>
+    </header>
+
+    <main>
+        <section>
+            <h2 th:text="${request.title}">Request Title</h2>
+            <h3>Active Requests</h3>
+            <div th:if="${singRequests.isEmpty()}" class="empty-table-message">
+                <p>No active items available in this request</p>
+            </div>
+            
+            <div th:if="${!singRequests.isEmpty()}">
+                <div>
+                    <table id="singRequestsTable">
+                        <thead>
+                            <tr>
+                                <th>Select</th>
+                                <th>Category</th>
+                                <th>Nature</th>
+                                <th>Brand</th>
+                                <th>Model</th>
+                                <th>Batch</th>
+                                <th>Quality</th>
+                                <th>Function</th>
+                                <th>Main Color</th>
+                                <th>Budget</th>
+                                <th>Offer's Price</th>
+                                <th>Description</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>                        
+                            <tr th:each="singRequest, iterStat : ${singRequests}">
+                                <td>
+                                    <input type="checkbox" name="selectedRequest" th:value="${singRequest.id}" th:id="'request-' + ${singRequest.id}" class="single-checkbox">
+                                </td>
+                                <td th:text="${singRequest.characteristics?.category?.id}"></td>
+                                <td th:text="${singRequest.characteristics?.nature?.id}"></td>
+                                <td th:text="${singRequest.characteristics?.model?.brand?.id}"></td>
+                                <td th:text="${singRequest.characteristics?.model?.id}"></td>
+                                <td th:text="${singRequest.characteristics?.batch}"></td>
+                                <td th:text="${singRequest.characteristics?.quality}"></td>
+                                <td th:text="${singRequest.characteristics?.function}"></td>
+                                <td th:text="${singRequest.characteristics?.mainColour}"></td>
+                                <td th:text="${singRequest.maxPrice}"></td>
+                                <td th:text="${activeNegotiations != null && iterStat.index < activeNegotiations.size() && activeNegotiations[iterStat.index] != null ? activeNegotiations[iterStat.index].singOffer?.price : ''}"></td>
+                                <td th:text="${activeNegotiations != null && iterStat.index < activeNegotiations.size() && activeNegotiations[iterStat.index] != null ? activeNegotiations[iterStat.index].singOffer?.description : ''}"></td>
+                                <td class="action-column">
+                                    <span th:if="${statuses != null && !statuses.isEmpty() && iterStat.index < statuses.size() && statuses[iterStat.index] != 'Pending Negotiation'}" 
+                                         class="status-text" 
+                                         th:text="${statuses[iterStat.index]}">
+                                    </span>
+                                    
+                                    <div th:if="${statuses == null || statuses.isEmpty() || iterStat.index >= statuses.size() || statuses[iterStat.index] == 'Pending Negotiation'}" 
+                                         th:class="${activeNegotiations != null && iterStat.index < activeNegotiations.size() && activeNegotiations[iterStat.index] != null ? 'button-container' : ''}">
+                                        <button th:if="${activeNegotiations != null && iterStat.index < activeNegotiations.size() && activeNegotiations[iterStat.index] != null}"
+                                                class="green-button accept-button"
+                                                th:data-negotiation-id="${activeNegotiations[iterStat.index]?.id}"
+                                                th:onclick="'acceptNegotiation(' + ${activeNegotiations[iterStat.index]?.id} + ')'">
+                                            Accept
+                                        </button>
+                                        <button th:if="${activeNegotiations != null && iterStat.index < activeNegotiations.size() && activeNegotiations[iterStat.index] != null}"
+                                                class="red-button reject-button"
+                                                th:data-negotiation-id="${activeNegotiations[iterStat.index]?.id}"
+                                                th:onclick="'rejectNegotiation(' + ${activeNegotiations[iterStat.index]?.id} + ')'">
+                                            Reject
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div id="error-message-container">
+                    <p id="error-message-text"></p>
+                </div>
+                
+                <div>
+                    <button id="deleteButton" class="red-button">Delete Selected Item</button>
+                </div>
+            </div>
+            
+            <h3>Inactive Requests</h3>
+            <div th:if="${inactiveSingRequests.isEmpty()}" class="empty-table-message">
+                <p>No inactive items available in this request</p>
+            </div>
+            <div th:if="${!inactiveSingRequests.isEmpty()}">
+                <div>
+                    <table id="inactiveSingRequestsTable" class="inactive-related-table">
+                        <thead>
+                            <tr>
+                                <th>Category</th>
+                                <th>Nature</th>
+                                <th>Brand</th>
+                                <th>Model</th>
+                                <th>Batch</th>
+                                <th>Quality</th>
+                                <th>Function</th>
+                                <th>Main Color</th>
+                                <th>Budget</th>
+                                <th>Offer's Price</th>
+                                <th>Description</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>                        
+                            <tr th:each="singRequest, iterStat : ${inactiveSingRequests}">
+                                <td th:text="${singRequest.characteristics?.category?.id}"></td>
+                                <td th:text="${singRequest.characteristics?.nature?.id}"></td>
+                                <td th:text="${singRequest.characteristics?.model?.brand?.id}"></td>
+                                <td th:text="${singRequest.characteristics?.model?.id}"></td>
+                                <td th:text="${singRequest.characteristics?.batch}"></td>
+                                <td th:text="${singRequest.characteristics?.quality}"></td>
+                                <td th:text="${singRequest.characteristics?.function}"></td>
+                                <td th:text="${singRequest.characteristics?.mainColour}"></td>
+                                <td th:text="${singRequest.maxPrice}"></td>
+                                <td th:text="${inactiveNegotiations != null && iterStat.index < inactiveNegotiations.size() && inactiveNegotiations[iterStat.index] != null ? inactiveNegotiations[iterStat.index].singOffer?.price : ''}"></td>
+                                <td th:text="${inactiveNegotiations != null && iterStat.index < inactiveNegotiations.size() && inactiveNegotiations[iterStat.index] != null ? inactiveNegotiations[iterStat.index].singOffer?.description : ''}"></td>
+                                <td th:text="${inactiveStatuses != null && !inactiveStatuses.isEmpty() && iterStat.index < inactiveStatuses.size() ? inactiveStatuses[iterStat.index] : ''}"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const checkboxes = document.querySelectorAll('.single-checkbox');
+            checkboxes.forEach(checkbox => {
+                checkbox.addEventListener('change', function() {
+                    if (this.checked) {
+                        checkboxes.forEach(item => {
+                            if (item !== this) item.checked = false;
+                        });
+                    }
+                });
+            });
+            
+            document.querySelectorAll('#singRequestsTable th').forEach((header, index) => {
+                if (!header.classList.contains('checkbox-column')) {
+                    header.addEventListener('click', function() {
+                        sortTable(this, 'singRequestsTable');
+                    });
+                }
+            });
+
+            document.querySelectorAll('#inactiveSingRequestsTable th').forEach(header => {
+                header.addEventListener('click', function() {
+                    sortTable(this, 'inactiveSingRequestsTable');
+                });
+            });
+            
+            const sortActiveTableHeader = document.querySelector('#singRequestsTable th:nth-child(2)');
+            if (sortActiveTableHeader) {
+                sortTable(sortActiveTableHeader, 'singRequestsTable');
+            }
+            
+            const sortInactiveTableHeader = document.querySelector('#inactiveSingRequestsTable th:first-child');
+            if (sortInactiveTableHeader) {
+                sortTable(sortInactiveTableHeader, 'inactiveSingRequestsTable');
+            }
+                
+            const deleteButton = document.getElementById('deleteButton');
+            let isConfirmMode = false;
+            
+            deleteButton.addEventListener('click', function() {
+                const selectedRequest = document.querySelector('.single-checkbox:checked');
+                if (!selectedRequest) {
+                    showError('Please select an item to delete');
+                    return;
+                }
+                
+                if (!isConfirmMode) {
+                    deleteButton.textContent = "Click to Confirm";
+                    isConfirmMode = true;
+                    
+                    setTimeout(() => {
+                        if (isConfirmMode) {
+                            deleteButton.textContent = "Delete Selected Item";
+                            isConfirmMode = false;
+                        }
+                    }, 3000);
+                    
+                    return;
+                }
+                
+                // Only show spinner and disable on confirmation click
+                const originalText = deleteButton.textContent;
+                deleteButton.innerHTML = '<div class="spinner"></div>';
+                deleteButton.classList.add('loading');
+                deleteButton.disabled = true;
+                
+                fetch('/deleteSingRequest?singRequestId=' + selectedRequest.value, {
+                    method: 'PUT'
+                })
+                .then(response => {
+                    if (response.ok || response.redirected) {
+                        window.location.href = '/home?singRequestDeleted=true';
+                    } else {
+                        showError('Failed to delete the item. Please try again.');
+                        deleteButton.innerHTML = originalText;
+                        deleteButton.classList.remove('loading');
+                        deleteButton.disabled = false;
+                        isConfirmMode = false;
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    showError('An error occurred while deleting the item.');
+                    deleteButton.innerHTML = originalText;
+                    deleteButton.classList.remove('loading');
+                    deleteButton.disabled = false;
+                    isConfirmMode = false;
+                });
+            });
+        });
+        
+        function acceptNegotiation(negotiationId) {
+            const acceptBtn = document.querySelector(`button.accept-button[data-negotiation-id="${negotiationId}"]`);
+            const rejectBtn = document.querySelector(`button.reject-button[data-negotiation-id="${negotiationId}"]`);
+            
+            if (acceptBtn.textContent !== "Click to Confirm") {
+                if (rejectBtn) rejectBtn.style.display = 'none';
+                
+                acceptBtn.textContent = "Click to Confirm";
+                
+                setTimeout(() => {
+                    if (acceptBtn.textContent === "Click to Confirm") {
+                        acceptBtn.textContent = "Accept";
+                        if (rejectBtn) rejectBtn.style.display = '';
+                    }
+                }, 3000);
+                
+                return;
+            }
+            
+            // Only add spinner and disable on confirmation click
+            const originalText = acceptBtn.textContent;
+            acceptBtn.innerHTML = '<div class="spinner"></div>';
+            acceptBtn.classList.add('loading');
+            acceptBtn.disabled = true;
+            
+            fetch('/acceptNegotiation?negotiationId=' + negotiationId, {
+                method: 'PUT'
+            })
+            .then(response => {
+                if (response.ok || response.redirected) {
+                    window.location.reload();
+                } else {
+                    showError('Failed to accept the negotiation. Please try again.');
+                    acceptBtn.innerHTML = originalText;
+                    acceptBtn.classList.remove('loading');
+                    acceptBtn.disabled = false;
+                    if (rejectBtn) rejectBtn.style.display = '';
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showError('An error occurred while accepting the negotiation.');
+                acceptBtn.innerHTML = originalText;
+                acceptBtn.classList.remove('loading');
+                acceptBtn.disabled = false;
+                if (rejectBtn) rejectBtn.style.display = '';
+            });
+        }
+        
+        function rejectNegotiation(negotiationId) {
+            const rejectBtn = document.querySelector(`button.reject-button[data-negotiation-id="${negotiationId}"]`);
+            const acceptBtn = document.querySelector(`button.accept-button[data-negotiation-id="${negotiationId}"]`);
+            
+            if (rejectBtn.textContent !== "Click to Confirm") {
+                if (acceptBtn) acceptBtn.style.display = 'none';
+                
+                rejectBtn.textContent = "Click to Confirm";
+                
+                setTimeout(() => {
+                    if (rejectBtn.textContent === "Click to Confirm") {
+                        rejectBtn.textContent = "Reject";
+                        if (acceptBtn) acceptBtn.style.display = '';
+                    }
+                }, 3000);
+                
+                return;
+            }
+            
+            // Only add spinner and disable on confirmation click
+            const originalText = rejectBtn.textContent;
+            rejectBtn.innerHTML = '<div class="spinner"></div>';
+            rejectBtn.classList.add('loading');
+            rejectBtn.disabled = true;
+            
+            fetch('/rejectNegotiation?negotiationId=' + negotiationId, {
+                method: 'PUT'
+            })
+            .then(response => {
+                if (response.ok || response.redirected) {
+                    window.location.reload();
+                } else {
+                    showError('Failed to reject the negotiation. Please try again.');
+                    rejectBtn.innerHTML = originalText;
+                    rejectBtn.classList.remove('loading');
+                    rejectBtn.disabled = false;
+                    if (acceptBtn) acceptBtn.style.display = '';
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showError('An error occurred while rejecting the negotiation.');
+                rejectBtn.innerHTML = originalText;
+                rejectBtn.classList.remove('loading');
+                rejectBtn.disabled = false;
+                if (acceptBtn) acceptBtn.style.display = '';
+            });
+        }
+        
+        function sortTable(header, tableId) {
+            const table = document.getElementById(tableId);
+            const tbody = table.querySelector('tbody');
+            const rows = Array.from(tbody.querySelectorAll('tr'));
+            const columnIndex = Array.from(header.parentNode.children).indexOf(header);
+            
+            const isTimestamp = ['Date', 'Created', 'Updated', 'Time'].some(term => 
+                header.textContent.includes(term));
+                
+            if (isTimestamp) {
+                console.log('Timestamp columns are not considered for sorting as requested');
+                return;
+            }
+            
+            const isNumeric = ['Price'].includes(header.textContent);
+            
+            const sortDirection = header.getAttribute('data-sort') === 'asc' ? 'desc' : 'asc';
+            
+            table.querySelectorAll('th').forEach(th => {
+                th.removeAttribute('data-sort');
+            });
+            
+            header.setAttribute('data-sort', sortDirection);
+            
+            rows.sort((a, b) => {
+                let aValue = a.children[columnIndex]?.textContent.trim() || '';
+                let bValue = b.children[columnIndex]?.textContent.trim() || '';
+                
+                if (isNumeric) {
+                    aValue = parseFloat(aValue) || 0;
+                    bValue = parseFloat(bValue) || 0;
+                }
+                
+                if (aValue < bValue) return sortDirection === 'asc' ? -1 : 1;
+                if (aValue > bValue) return sortDirection === 'asc' ? 1 : -1;
+                
+                if (aValue === bValue) {
+                    const columns = header.parentNode.children.length;
+                    for (let nextCol = columnIndex + 1; nextCol < columns; nextCol++) {
+                        if (header.parentNode.children[nextCol].classList.contains('checkbox-column')) {
+                            continue;
+                        }
+                        
+                        aValue = a.children[nextCol]?.textContent.trim() || '';
+                        bValue = b.children[nextCol]?.textContent.trim() || '';
+                        
+                        const isNextColNumeric = ['Price'].includes(
+                            header.parentNode.children[nextCol].textContent);
+                        
+                        if (isNextColNumeric) {
+                            aValue = parseFloat(aValue) || 0;
+                            bValue = parseFloat(bValue) || 0;
+                        }
+                        
+                        if (aValue < bValue) return sortDirection === 'asc' ? -1 : 1;
+                        if (aValue > bValue) return sortDirection === 'asc' ? 1 : -1;
+                    }
+                }
+                
+                return 0;
+            });
+            
+            rows.forEach(row => tbody.appendChild(row));
+        }
+        
+        function showError(message) {
+            const errorContainer = document.getElementById('error-message-container');
+            const errorText = document.getElementById('error-message-text');
+            errorText.textContent = message;
+            errorContainer.style.display = 'block';
+            
+            setTimeout(() => {
+                errorContainer.style.display = 'none';
+            }, 5000);
+        }
+    </script>
+    
+    <script th:src="@{/js/easterEgg.js}"></script>
+</body>
+</html>

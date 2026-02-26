@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>      
+    <title>E-Cycle - Profile</title>      
+    <link rel="icon" th:href="@{/images/logos/logoIcon.png}" type="image/png">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" th:href="@{/css/generic.css}">
+    <link rel="stylesheet" th:href="@{/css/profile.css}">
+    <script th:src="@{/js/formUtils.js}"></script>
+</head>
+<body>
+    <header>
+        <div class="logo-section">
+            <img th:src="@{/images/logos/logo.png}" alt="E-Cycle Logo">
+        </div>
+        <div class="navigation-links">
+            <button class="green-button" onclick="window.location.href='/home'" style="margin-right: 25px;">Home</button>
+        </div>
+    </header>
+    
+    <div class="container">
+        <div class="card">
+            <h2>User Profile</h2>
+            
+            <form id="profileEditForm">
+                <div class="profile-section">
+                    <div class="form-group">
+                        <label for="username">Username*</label>
+                        <input type="text" id="username" name="username" th:value="${user.username}" required maxlength="50">
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-column">
+                            <div class="form-group">
+                                <label for="name">Name</label>
+                                <input type="text" id="name" name="name" th:value="${user.name}" maxlength="50">
+                            </div>
+                        </div>
+                        <div class="form-column">
+                            <div class="form-group">
+                                <label for="surname">Surname</label>
+                                <input type="text" id="surname" name="surname" th:value="${user.surname}" maxlength="50">
+                            </div>
+                        </div>                    
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="email">Email*</label>
+                        <input type="email" id="email" name="email" th:value="${user.email}" required maxlength="100">
+                    </div>
+                    
+                    <div class="form-group password-container">
+                        <label for="password">New Password (leave blank to keep current):</label>
+                        <input type="password" id="password" name="password">
+                        <span class="toggle-password" onclick="togglePassword('password', 'eye-icon-open-password', 'eye-icon-closed-password')">                                
+                            <span id="eye-icon-open-password">See</span>
+                            <span id="eye-icon-closed-password">Hide</span>
+                        </span>
+                    </div>
+                    
+                    <div class="password-instructions">
+                        Password requirements: at least 8 characters, 1 uppercase letter, and 1 special character.
+                    </div>
+                    
+                    <div class="form-group password-container">
+                        <label for="confirm_password">Confirm New Password:</label>
+                        <input type="password" id="confirm_password" name="confirm_password">
+                        <span class="toggle-password" onclick="togglePassword('confirm_password', 'eye-icon-open-confirm', 'eye-icon-closed-confirm')">                                
+                            <span id="eye-icon-open-confirm">See</span>
+                            <span id="eye-icon-closed-confirm">Hide</span>
+                        </span>
+                    </div>
+                </div>
+                
+                <div class="profile-section">
+                    <h3>Address Information</h3>
+                    
+                    <div class="form-row">
+                        <div class="form-column">
+                            <div class="form-group">
+                                <label for="state">State*</label>
+                                <input type="text" id="state" name="state" th:value="${user.state}" required maxlength="50">
+                            </div>
+                        </div>
+                        <div class="form-column">
+                            <div class="form-group">
+                                <label for="region">Region*</label>
+                                <input type="text" id="region" name="region" th:value="${user.region}" required maxlength="50">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-column">
+                            <div class="form-group">
+                                <label for="province">Province*</label>
+                                <input type="text" id="province" name="province" th:value="${user.province}" required maxlength="50">
+                            </div>
+                        </div>
+                        <div class="form-column">
+                            <div class="form-group">
+                                <label for="city">City*</label>
+                                <input type="text" id="city" name="city" th:value="${user.city}" required maxlength="50">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-column">
+                            <div class="form-group">
+                                <label for="street">Street*</label>
+                                <input type="text" id="street" name="street" th:value="${user.street}" required maxlength="100">
+                            </div>
+                        </div>
+                        <div class="form-column">
+                            <div class="form-group">
+                                <label for="civic">Civic Number*</label>
+                                <input type="text" id="civic" name="civic" th:value="${user.civic}" required maxlength="50">                            
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="dynamic-error-message" class="error-message" style="display: none;">
+                    <span id="error-message-content"></span>
+                </div>
+                
+                <div class="error-message" th:if="${error != null}">
+                    <span th:text="${error}"></span>
+                </div>
+                
+                <div class="success-message" th:if="${success != null}">
+                    <span th:text="${success}"></span>
+                </div>
+                
+                <button type="submit" id="saveChangesButton" class="green-button submit-btn disabled-btn" disabled>Save Changes</button>
+                
+                <div class="button-container">
+                    <button onclick="window.location.href='/logout'" class="orange-button">Logout</button>
+                    <button id="delete-account-btn" class="red-button" onclick="deleteAccount(event)">Delete My Account</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <script>          
+        let originalFormValues = {};
+        
+        let messageTimeout = null;
+        
+        function showErrorWithTimeout(message, persistent = false) {
+            const errorDiv = document.getElementById('dynamic-error-message');
+            const errorMessage = document.getElementById('error-message-content');
+            
+            errorDiv.style.display = 'block';
+            errorMessage.textContent = message;
+            
+            if (messageTimeout) {
+                clearTimeout(messageTimeout);
+                messageTimeout = null;
+            }
+            
+            if (!persistent) {
+                messageTimeout = setTimeout(() => {
+                    errorDiv.style.display = 'none';
+                }, 5000);
+            }
+        }
+        
+        function showSuccessWithTimeout(message) {
+            let successDiv = document.querySelector('.temp-success-message');
+            if (!successDiv) {
+                successDiv = document.createElement('div');
+                successDiv.className = 'success-message temp-success-message';
+                
+                const messageSpan = document.createElement('span');
+                successDiv.appendChild(messageSpan);
+                
+                const errorDiv = document.getElementById('dynamic-error-message');
+                errorDiv.parentNode.insertBefore(successDiv, errorDiv.nextSibling);
+            }
+            
+            const messageSpan = successDiv.querySelector('span');
+            messageSpan.textContent = message;
+            successDiv.style.display = 'block';
+            
+            if (messageTimeout) {
+                clearTimeout(messageTimeout);
+            }
+            
+            messageTimeout = setTimeout(() => {
+                successDiv.style.display = 'none';
+            }, 5000);
+        }
+        
+        function checkFormChanges() {
+            const formFields = ['username', 'email', 'name', 'surname', 'state', 'region', 'province', 'city', 'street', 'civic'];
+            const saveButton = document.querySelector('.submit-btn');
+            
+            const hasChanges = formFields.some(field => {
+                const input = document.getElementById(field);
+                return input && input.value !== originalFormValues[field];
+            });
+            
+            const hasPassword = document.getElementById('password').value.trim() !== '';
+            
+            saveButton.disabled = !(hasChanges || hasPassword);
+            
+            if (saveButton.disabled) {
+                saveButton.classList.add('disabled-btn');
+            } else {
+                saveButton.classList.remove('disabled-btn');
+            }
+        }
+          
+        function deleteAccount(event) {
+            event.preventDefault();
+            const deleteBtn = document.getElementById('delete-account-btn');
+            
+            if (deleteBtn.textContent === "Delete My Account") {
+                deleteBtn.textContent = "Click to Confirm";
+                
+                setTimeout(() => {
+                    if (deleteBtn.textContent === "Click to Confirm") {
+                        deleteBtn.textContent = "Delete My Account";
+                    }
+                }, 3000);
+            } else if (deleteBtn.textContent === "Click to Confirm") {
+                const originalText = deleteBtn.textContent;
+                deleteBtn.innerHTML = '<div class="spinner"></div>';
+                deleteBtn.classList.add('loading');
+                deleteBtn.disabled = true;
+                
+                fetch('/profile/delete', {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    credentials: 'same-origin'
+                }).then(response => {
+                    if (response.redirected) {
+                        window.location.href = response.url;
+                    } else {
+                        window.location.href = "/login?deleted=true";
+                    }
+                }).catch(error => {
+                    console.error('Error:', error);
+                    showErrorWithTimeout('An error occurred while trying to delete your account. Please try again later.');
+                    
+                    deleteBtn.innerHTML = originalText;
+                    deleteBtn.classList.remove('loading');
+                    deleteBtn.disabled = false;
+                });
+            }
+        }
+        
+        function togglePassword(inputId, openEyeId, closedEyeId) {
+            const passwordInput = document.getElementById(inputId);
+            const openEye = document.getElementById(openEyeId);
+            const closedEye = document.getElementById(closedEyeId);
+            
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                openEye.style.display = 'none';
+                closedEye.style.display = 'inline';
+            } else {
+                passwordInput.type = 'password';
+                openEye.style.display = 'inline';
+                closedEye.style.display = 'none';
+            }
+        }        
+        
+        function checkPasswordStrength() {
+            const password = document.getElementById('password').value;
+            const errorDiv = document.getElementById('dynamic-error-message');
+            
+            if (password.length === 0) {
+                errorDiv.style.display = 'none';
+                return;
+            }
+            
+            if (password.length < 8) {
+                showErrorWithTimeout('Password must be at least 8 characters long.', true);
+                return;
+            }
+            
+            if (!/[A-Z]/.test(password)) {
+                showErrorWithTimeout('Password must contain at least one uppercase letter.', true);
+                return;
+            }
+            
+            if (!/[a-z]/.test(password)) {
+                showErrorWithTimeout('Password must contain at least one lowercase letter.', true);
+                return;
+            }
+            
+            if (!/[^A-Za-z0-9]/.test(password)) {
+                showErrorWithTimeout('Password must contain at least one special character.', true);
+                return;
+            }
+            
+            errorDiv.style.display = 'none';
+        }
+
+        function checkPasswordsMatch() {
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirm_password').value;
+            
+            if (confirmPassword.length === 0) {
+                return;
+            }
+            
+            if (password !== confirmPassword) {
+                showErrorWithTimeout('Passwords do not match.', true);
+            } else {
+                const errorDiv = document.getElementById('dynamic-error-message');
+                const errorMessage = document.getElementById('error-message-content');
+                
+                if (errorMessage.textContent === 'Passwords do not match.') {
+                    errorDiv.style.display = 'none';
+                }
+            }
+        }
+        
+        function validatePassword(password) {
+            if (password.length < 8) {
+                showErrorWithTimeout('Password must be at least 8 characters long.', true);
+                return false;
+            }
+            
+            if (!/[A-Z]/.test(password)) {
+                showErrorWithTimeout('Password must contain at least one uppercase letter.', true);
+                return false;
+            }
+            
+            if (!/[^A-Za-z0-9]/.test(password)) {
+                showErrorWithTimeout('Password must contain at least one special character.', true);
+                return false;
+            }
+            
+            return true;
+        }        
+        
+        async function hashPassword(password) {
+            const encoder = new TextEncoder();
+            const data = encoder.encode(password);
+            const hash = await crypto.subtle.digest('SHA-256', data);
+            const hashArray = Array.from(new Uint8Array(hash));
+            const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+            return hashHex;
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const formFields = ['username', 'email', 'name', 'surname', 'state', 'region', 'province', 'city', 'street', 'civic'];
+            formFields.forEach(field => {
+                const input = document.getElementById(field);
+                if (input) {
+                    originalFormValues[field] = input.value;
+                    input.addEventListener('input', checkFormChanges);
+                }
+            });
+            
+            const saveButton = document.querySelector('.submit-btn');
+            saveButton.disabled = true;
+            saveButton.classList.add('disabled-btn');
+            
+            const editProfileForm = document.getElementById('edit-profile-form');
+            
+            const successMessage = document.querySelector('.success-message');
+            const deleteAccountBtn = document.getElementById('delete-account-btn');
+            
+            if (deleteAccountBtn) {
+                deleteAccountBtn.removeEventListener('click', function(event) {
+                    deleteAccount(event);
+                });
+            }
+            
+            const passwordInput = document.getElementById('password');
+            const confirmPasswordInput = document.getElementById('confirm_password');
+            
+            passwordInput.addEventListener('input', function() {
+                checkPasswordStrength();
+                checkFormChanges();
+            });
+            
+            confirmPasswordInput.addEventListener('input', function() {
+                checkPasswordsMatch();
+                checkFormChanges();
+            });
+            
+            const serverErrorMessage = document.querySelector('.error-message:not(#dynamic-error-message)');
+            const serverSuccessMessage = document.querySelector('.success-message');
+            
+            if (serverErrorMessage && serverErrorMessage.style.display !== 'none') {
+                setTimeout(() => {
+                    serverErrorMessage.style.display = 'none';
+                }, 5000);
+            }
+            
+            if (serverSuccessMessage && serverSuccessMessage.style.display !== 'none') {
+                setTimeout(() => {
+                    serverSuccessMessage.style.display = 'none';
+                }, 5000);
+            }
+            
+            const form = document.getElementById('profileEditForm');
+            form.addEventListener('submit', async function(event) {
+                event.preventDefault();
+                
+                const password = document.getElementById('password').value;
+                const confirmPassword = document.getElementById('confirm_password').value;
+                const username = document.getElementById('username').value;
+                const email = document.getElementById('email').value;
+                
+                if (!username.trim()) {
+                    showErrorWithTimeout('Username cannot be empty!');
+                    return;
+                }
+                
+                if (username.length > 50) {
+                    showErrorWithTimeout('Username cannot exceed 50 characters!');
+                    return;
+                }
+                
+                if (!email.trim() || !email.includes('@')) {
+                    showErrorWithTimeout('Please enter a valid email address!');
+                    return;
+                }
+                
+                if (email.length > 100) {
+                    showErrorWithTimeout('Email cannot exceed 100 characters!');
+                    return;
+                }
+                
+                const name = document.getElementById('name').value;
+                if (name.length > 50) {
+                    showErrorWithTimeout('Name cannot exceed 50 characters!');
+                    return;
+                }
+                
+                const surname = document.getElementById('surname').value;
+                if (surname.length > 50) {
+                    showErrorWithTimeout('Surname cannot exceed 50 characters!');
+                    return;
+                }
+                
+                const state = document.getElementById('state').value;
+                if (state.length > 50) {
+                    showErrorWithTimeout('State cannot exceed 50 characters!');
+                    return;
+                }
+                
+                const region = document.getElementById('region').value;
+                if (region.length > 50) {
+                    showErrorWithTimeout('Region cannot exceed 50 characters!');
+                    return;
+                }
+                
+                const province = document.getElementById('province').value;
+                if (province.length > 50) {
+                    showErrorWithTimeout('Province cannot exceed 50 characters!');
+                    return;
+                }
+                
+                const city = document.getElementById('city').value;
+                if (city.length > 50) {
+                    showErrorWithTimeout('City cannot exceed 50 characters!');
+                    return;
+                }
+                
+                const street = document.getElementById('street').value;
+                if (street.length > 100) {
+                    showErrorWithTimeout('Street cannot exceed 100 characters!');
+                    return;
+                }
+                
+                const civic = document.getElementById('civic').value;
+                if (civic.length > 50) {
+                    showErrorWithTimeout('Civic Number cannot exceed 50 characters!');
+                    return;
+                }
+                
+                if (password || confirmPassword) {
+                    if (password !== confirmPassword) {
+                        showErrorWithTimeout('Passwords do not match!', true);
+                        return;
+                    }
+                    
+                    if (password) {
+                        if (!validatePassword(password)) {
+                            return;
+                        }
+                    }
+                }
+                
+                const saveButton = document.getElementById('saveChangesButton');
+                const originalText = saveButton.textContent;
+                
+                saveButton.innerHTML = '<div class="spinner"></div>';
+                saveButton.classList.add('loading');
+                saveButton.disabled = true;
+                
+                let hashedPassword = null;
+                if (password) {
+                    hashedPassword = await hashPassword(password);
+                }
+                
+                const formData = trimObjectValues({
+                    username: document.getElementById('username').value,
+                    name: document.getElementById('name').value,
+                    surname: document.getElementById('surname').value,
+                    email: document.getElementById('email').value,
+                    password: hashedPassword,
+                    state: document.getElementById('state').value,
+                    region: document.getElementById('region').value,
+                    province: document.getElementById('province').value,
+                    city: document.getElementById('city').value,
+                    street: document.getElementById('street').value,
+                    civic: document.getElementById('civic').value
+                });
+                
+                fetch('/profile/edit', {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(formData)
+                })
+                .then(response => {
+                    if (response.redirected) {
+                        window.location.href = response.url;
+                    } else if (response.ok) {
+                        showSuccessWithTimeout('Profile updated successfully!');
+                        setTimeout(() => {
+                            window.location.href = '/profile';
+                        }, 5000);
+                    } else {
+                        return response.json().then(data => {
+                            throw new Error(data.message || 'Profile update failed');
+                        });
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    showErrorWithTimeout(error.message || 'An error occurred while updating your profile.');
+                    
+                    saveButton.innerHTML = originalText;
+                    saveButton.classList.remove('loading');
+                    saveButton.disabled = true;
+                    checkFormChanges();
+                });
+                
+                setTimeout(() => {
+                    if (document.body.contains(saveButton)) {
+                        saveButton.innerHTML = originalText;
+                        saveButton.classList.remove('loading');
+                        saveButton.disabled = true;
+                        checkFormChanges();
+                    }
+                }, 5000);
+            });
+        });
+        
+    </script>
+    
+    <script th:src="@{/js/easterEgg.js}"></script>
+</body>
+</html>

@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>E-Cycle - Login</title>
+    <link rel="icon" th:href="@{/images/logos/logoIcon.png}" type="image/png">
+    <link rel="stylesheet" th:href="@{/css/generic.css}">
+    <link rel="stylesheet" th:href="@{/css/login.css}">
+    <script th:src="@{/js/formUtils.js}"></script>
+</head>
+<body>
+    <header>
+        <div class="logo-section">
+            <img th:src="@{/images/logos/logo.png}" alt="E-Cycle Logo">
+        </div>
+        <div class="nav-section">
+            <!-- Navigation buttons removed from here -->
+        </div>
+    </header>
+    
+    <div class="container">
+        <div class="card">
+            <h2>Login</h2>
+            
+            <form id="loginForm" onsubmit="submitLoginForm(event)">
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <input type="text" id="username" name="username" required>                  
+                </div>
+                
+                <div class="form-group password-container">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" required>
+                    <span class="toggle-password" onclick="togglePassword()">                    
+                        <span id="eye-icon-open">See</span>
+                        <span id="eye-icon-closed">Hide</span>
+                    </span>
+                </div>
+                
+                <!-- Consolidate all error/success message containers here, just above the login button -->
+                <div id="error-message-container" class="error-message" style="display: none;"></div>
+                
+                <div th:if="${error}" class="error-message">
+                    <p th:text="${error}" id="error-message-text">Error message</p>
+                </div>
+                
+                <div th:if="${success}" class="success-message">
+                    <p th:text="${success}">Success message</p>
+                </div>
+                
+                <button type="submit" class="green-button">Login</button>
+            
+                <div class="bottom-nav">
+                    <button onclick="window.location.href='/'" class="green-button">Go Back</button>
+                    <button onclick="window.location.href='/registration'" class="green-button">Register</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <script>
+        async function hashPassword(password) {
+            const encoder = new TextEncoder();
+            const data = encoder.encode(password);
+            const hash = await crypto.subtle.digest('SHA-256', data);
+            const hashArray = Array.from(new Uint8Array(hash));
+            const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+            return hashHex;
+        }
+
+        async function submitLoginForm(event) {
+            event.preventDefault();
+            if (!validateLoginForm()) {
+                return;
+            }
+            
+            const password = document.getElementById('password').value;
+            const hashedPassword = await hashPassword(password);
+            
+            const formData = trimObjectValues({
+                username: document.getElementById('username').value,
+                password: hashedPassword
+            });
+            
+            fetch('/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(formData)
+            })
+            .then(response => {
+                if (response.redirected) {
+                    window.location.href = response.url;
+                } else if (response.ok) {
+                    window.location.href = '/home';
+                } else {
+                    console.error('Login failed');
+                    window.location.href = '/login?error=invalid';
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        }
+        
+        function togglePassword() {
+            const passwordInput = document.getElementById('password');
+            const openEye = document.getElementById('eye-icon-open');
+            const closedEye = document.getElementById('eye-icon-closed');
+            
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                openEye.style.display = 'none';
+                closedEye.style.display = 'inline';
+            } else {
+                passwordInput.type = 'password';
+                openEye.style.display = 'inline';
+                closedEye.style.display = 'none';
+            }
+        }
+        
+        function validateLoginForm() {
+            const usernameInput = document.getElementById('username');
+            const passwordInput = document.getElementById('password');
+            
+            // Check if either username or password is empty
+            if (!usernameInput.value.trim() || !passwordInput.value.trim()) {
+                // Create error message element if it doesn't exist
+                let errorDiv = document.querySelector('.error-message');
+                if (!errorDiv) {
+                    errorDiv = document.createElement('div');
+                    errorDiv.className = 'error-message';
+                    
+                    const errorMessage = document.createElement('p');
+                    errorMessage.textContent = 'Username and password are required';
+                    errorDiv.appendChild(errorMessage);
+                    
+                    // Insert before the submit button
+                    const submitButton = document.querySelector('button[type="submit"]');
+                    submitButton.parentNode.insertBefore(errorDiv, submitButton);
+                } else {
+                    // Update existing error message
+                    const errorMessageP = errorDiv.querySelector('p') || document.createElement('p');
+                    errorMessageP.textContent = 'Username and password are required';
+                    if (!errorDiv.contains(errorMessageP)) {
+                        errorDiv.appendChild(errorMessageP);
+                    }
+                    errorDiv.style.display = 'block';
+                }
+                
+                return false;
+            }
+            
+            return true;
+        }
+    </script>
+    
+    <!-- Add Easter Egg Script -->
+    <script th:src="@{/js/easterEgg.js}"></script>
+    
+    <!-- Initialize auto-hide for all error messages -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Function to auto-hide error messages
+            function setupAutoHideForErrors() {
+                const errorElements = document.querySelectorAll('.error-message');
+                errorElements.forEach(element => {
+                    if (element && element.style.display !== 'none') {
+                        setTimeout(() => {
+                            element.style.display = 'none';
+                        }, 5000);
+                    }
+                });
+            }
+
+            // Initial setup for server-side errors
+            setupAutoHideForErrors();
+
+            // Create a MutationObserver to watch for dynamically added error messages
+            const observer = new MutationObserver(function(mutations) {
+                mutations.forEach(function(mutation) {
+                    if (mutation.type === 'childList' && mutation.addedNodes.length > 0) {
+                        const hasErrorMessage = Array.from(mutation.addedNodes).some(node => 
+                            node.classList && node.classList.contains('error-message'));
+                        if (hasErrorMessage) {
+                            setupAutoHideForErrors();
+                        }
+                    }
+                });
+            });
+
+            // Start observing the document with the configured parameters
+            observer.observe(document.body, { childList: true, subtree: true });
+
+            // Also add auto-hide to errors shown during form validation
+            const loginForm = document.getElementById('loginForm');
+            if (loginForm) {
+                loginForm.addEventListener('submit', function() {
+                    setTimeout(setupAutoHideForErrors, 100);
+                });
+            }
+        });
+    </script>
+</body>
+</html>
