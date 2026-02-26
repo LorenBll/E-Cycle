@@ -1,0 +1,393 @@
+/* Common styles for offer and request insertion pages */
+
+/* Header styling to match viewRequestDetails page */
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem 0;
+    width: 100%;
+}
+
+header div:first-child {
+    display: flex;
+    align-items: center;
+}
+
+header .logo-section {
+    display: flex;
+    align-items: center;
+}
+
+header .logo-section img {
+    max-height: 65px;
+    margin-left: 30px;
+    transition: transform 0.3s ease;
+}
+
+header .logo-section img:hover {
+    transform: scale(1.05);
+}
+
+/* Site-header styling (consistent with header) */
+.site-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem 0;
+    width: 100%;
+}
+
+.site-header div:first-child {
+    display: flex;
+    align-items: center;
+}
+
+.site-header .logo-section {
+    display: flex;
+    align-items: center;
+}
+
+.site-header .logo-section img {
+    max-height: 65px;
+    margin-right: 30px;
+    transition: transform 0.3s ease;
+}
+
+.site-header .logo-section img:hover {
+    transform: scale(1.05);
+}
+
+.site-header div:last-child {
+    margin-right: 30px;
+}
+
+main {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.main-card {
+    position: relative;
+    background-color: transparent;
+    border: 2px solid #2f8932;
+    border-radius: 10px;
+    padding: 30px;
+    width: 100%;
+    max-width: 800px;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    margin-bottom: 50px;
+    animation: fadeInUp 0.8s cubic-bezier(0.25, 0.1, 0.25, 1) forwards;
+    padding-bottom: 80px; /* Add extra padding at bottom for fixed buttons */
+}
+
+.main-card h2 {
+    color: #2f8932;
+    text-align: center;
+    margin-top: 0;
+    margin-bottom: 20px;
+    font-weight: normal;
+    font-size: 1.8rem;
+    /* No border-bottom to maintain consistency */
+}
+
+/* Form sections */
+.characteristics-section {
+    border: 1px solid rgba(47, 137, 50, 0.3);
+    padding: 20px;
+    margin-bottom: 20px;
+    border-radius: 8px;
+    background-color: rgba(47, 137, 50, 0.05);
+}
+
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.section-header h3 {
+    color: #2f8932;
+    margin: 0;
+    /* No border-bottom to maintain consistency */
+}
+
+.input-group {
+    margin-bottom: 15px;
+}
+
+.input-group label {
+    display: block;
+    margin-bottom: 5px;
+    color: white;
+}
+
+.input-group input,
+.input-group select,
+.input-group textarea {
+    background-color: transparent;
+    border: 2px solid #2f8932;
+    border-radius: 5px;
+    padding: 10px 15px;
+    width: 100%;
+    color: white;
+    box-sizing: border-box;
+    transition: all 0.3s cubic-bezier(0.25, 0.1, 0.25, 1);
+}
+
+/* Make textarea non-resizable */
+.input-group textarea {
+    resize: none;
+}
+
+.input-group input:focus,
+.input-group select:focus,
+.input-group textarea:focus {
+    outline: none;
+    border-color: #46a049;
+    box-shadow: 0 0 8px rgba(47, 137, 50, 0.5);
+}
+
+.input-group input::placeholder,
+.input-group select::placeholder,
+.input-group textarea::placeholder {
+    color: rgba(255, 255, 255, 0.6);
+}
+
+/* Style for button that adds another characteristic section */
+#addCharacteristicsBtn {
+    background-color: #2f8932;
+    color: white;
+    border: none;
+    border-radius: 25px;
+    padding: 10px 20px;
+    margin: 10px 0 20px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: block;
+    width: 100%;
+    max-width: 300px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+#addCharacteristicsBtn:hover {
+    background-color: #46a049;
+    transform: scale(1.02);
+}
+
+/* Button container at the bottom */
+.btn-container {
+    position: absolute;
+    bottom: 30px;
+    left: 30px;
+    right: 30px;
+    display: flex;
+    justify-content: space-between;
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.btn-container button {
+    flex: 1;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 25px;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn-container button[type="submit"] {
+    background-color: #2f8932;
+    color: white;
+}
+
+.btn-container button[type="submit"]:hover {
+    background-color: #46a049;
+    transform: scale(1.02);
+}
+
+.btn-container button[type="button"] {
+    background-color: #e63946;
+    color: white;
+}
+
+.btn-container button[type="button"]:hover {
+    background-color: #c1121f;
+    transform: scale(1.02);
+}
+
+/* Cancel section button */
+.cancelSectionBtn {
+    background-color: #e63946;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 5px 10px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.cancelSectionBtn:hover {
+    background-color: #c1121f;
+}
+
+.cancelSectionBtn[disabled] {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* Hidden class for manual input fields */
+.hidden {
+    display: none;
+}
+
+/* Error message styles */
+#error-message-container {
+    display: none;
+    background-color: rgba(230, 57, 70, 0.2);
+    border: 1px solid #e63946;
+    color: #e63946;
+    padding: 10px;
+    margin: 10px 0;
+    border-radius: 5px;
+    text-align: center;
+    transition: opacity 0.5s ease-in-out;
+}
+
+/* Animation for fading out error message */
+.fade-out {
+    opacity: 0;
+}
+
+/* Animation */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Style dropdown buttons to be green */
+.input-group select {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-image: url("data:image/svg+xml;utf8,<svg fill='%232f8932' height='24' viewBox='0 0 24 24' width='24' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/><path d='M0 0h24v24H0z' fill='none'/></svg>");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+}
+
+/* Style dropdown options with blurry background and green text */
+.input-group select option {
+    background-color: rgba(33, 33, 33, 0.9);
+    color: #2f8932;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+}
+
+/* Improved styling for number input spinner buttons */
+.input-group input[type="number"]::-webkit-inner-spin-button {
+    opacity: 1;
+    -webkit-appearance: none;
+    width: 20px;
+    height: 100%;
+    position: absolute;
+    right: 0;
+    top: 0;
+    background: linear-gradient(to bottom, transparent 0%, transparent 50%, transparent 100%);
+    cursor: pointer;
+}
+
+/* Custom styling for up/down arrows */
+.input-group input[type="number"]::-webkit-outer-spin-button {
+    display: none;
+}
+
+/* Add the green arrows */
+.input-group input[type="number"]::-webkit-inner-spin-button::before,
+.input-group input[type="number"]::-webkit-inner-spin-button::after {
+    content: "";
+    position: absolute;
+    right: 0;
+    width: 0; 
+    height: 0;
+    border-left: 7px solid transparent;
+    border-right: 7px solid transparent;
+}
+
+/* Up arrow - green triangle */
+.input-group input[type="number"]::-webkit-inner-spin-button::before {
+    top: 5px;
+    border-bottom: 7px solid #2f8932;
+}
+
+/* Down arrow - green triangle */
+.input-group input[type="number"]::-webkit-inner-spin-button::after {
+    bottom: 5px;
+    border-top: 7px solid #2f8932;
+}
+
+/* Remove previous CSS that was creating invisible controls */
+.input-group input[type="number"]::-webkit-inner-spin-button:before,
+.input-group input[type="number"]::-webkit-inner-spin-button:hover:before {
+    content: none;
+}
+
+/* Style calendar icon and view */
+.input-group input[type="date"]::-webkit-calendar-picker-indicator {
+    filter: invert(42%) sepia(93%) saturate(363%) hue-rotate(91deg) brightness(92%) contrast(89%);
+    cursor: pointer;
+}
+
+/* Calendar dropdown styling - requires browser support */
+::-webkit-datetime-edit-fields-wrapper {
+    color: white;
+}
+
+::-webkit-calendar-picker {
+    background-color: rgba(33, 33, 33, 0.9);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    color: #2f8932;
+    border: 1px solid #2f8932;
+}
+
+/* Loading spinner for buttons */
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.spinner {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border: 3px solid rgba(255,255,255,0.3);
+    border-radius: 50%;
+    border-top: 3px solid white;
+    animation: spin 1s linear infinite;
+    vertical-align: middle;
+    margin: 0 auto;
+}
+
+/* Button styles when loading */
+button.loading {
+    pointer-events: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}

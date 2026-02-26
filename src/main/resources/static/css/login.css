@@ -1,0 +1,47 @@
+.bottom-nav {
+    margin-top: 20px;
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    border-top: 1px solid rgba(47, 137, 50, 0.3);
+    padding-top: 15px;
+}
+
+.bottom-nav button {
+    flex: 1;
+}
+
+.bottom-nav button[disabled] {
+    opacity: 0.6;
+    cursor: default;
+}
+
+.bottom-nav button[disabled]:hover {
+    transform: none;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+button[type="submit"] {
+    background-color: #2f8932;
+    color: white;
+    border: none;
+    border-radius: 25px;
+    padding: 12px 20px;
+    width: 100%;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+button[type="submit"]:hover {
+    background-color: #46a049;
+    transform: scale(1.02);
+}
+
+@media (max-width: 768px) {
+    .bottom-nav {
+        flex-direction: column;
+    }
+}

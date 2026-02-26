@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>E-Cycle - Registration</title>    
+    <link rel="icon" th:href="@{/images/logos/logoIcon.png}" type="image/png">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" th:href="@{/css/generic.css}">
+    <link rel="stylesheet" th:href="@{/css/registration.css}">
+    <script th:src="@{/js/formUtils.js}"></script>
+</head>
+<body>
+    <header>
+        <div class="logo-section">
+            <img th:src="@{/images/logos/logo.png}" alt="E-Cycle Logo">
+        </div>
+        <div class="nav-section">
+            <!-- Navigation buttons removed from here -->
+        </div>
+    </header>
+    
+    <div class="card">
+        <h2>Registration</h2>
+        
+        <form id="registrationForm" onsubmit="submitRegistrationForm(event)">
+            <!-- Personal Information -->
+            <div class="form-group">
+                <label for="username">Username*</label>
+                <input type="text" id="username" name="username" required maxlength="50">
+            </div>
+            
+            <div class="form-row">
+                <div class="form-column">
+                    <div class="form-group">
+                        <label for="name">Name</label>
+                        <input type="text" id="name" name="name" maxlength="50">
+                    </div>
+                </div>
+                <div class="form-column">
+                    <div class="form-group">
+                        <label for="surname">Surname</label>
+                        <input type="text" id="surname" name="surname" maxlength="50">
+                    </div>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="email">Email*</label>
+                <input type="email" id="email" name="email" required maxlength="100">                
+            </div>
+            
+            <!-- Password Fields -->
+            <div class="form-group password-container">
+                <label for="password">Password*</label>
+                <input type="password" id="password" name="password" required>
+                <span class="toggle-password" onclick="togglePassword('password', 'eye-icon-open-password', 'eye-icon-closed-password')">                    
+                    <span id="eye-icon-open-password">See</span>
+                    <span id="eye-icon-closed-password">Hide</span>
+                </span>
+            </div>
+            
+            <div class="password-instructions">
+                Password requirements: at least 8 characters, 1 uppercase letter, and 1 special character.
+            </div>
+            
+            <div class="form-group password-container">
+                <label for="confirmPassword">Confirm Password*</label>
+                <input type="password" id="confirmPassword" name="confirmPassword" required>
+                <span class="toggle-password" onclick="togglePassword('confirmPassword', 'eye-icon-open-confirm', 'eye-icon-closed-confirm')">                    
+                    <span id="eye-icon-open-confirm">See</span>
+                    <span id="eye-icon-closed-confirm">Hide</span>
+                </span>
+            </div>
+            
+            <!-- Address Information - Two column layout -->
+            <h3>Address Information</h3>
+            
+            <div class="form-row">
+                <div class="form-column">
+                    <div class="form-group">
+                        <label for="state">State*</label>
+                        <input type="text" id="state" name="state" required maxlength="50">
+                    </div>
+                </div>
+                <div class="form-column">
+                    <div class="form-group">
+                        <label for="region">Region*</label>
+                        <input type="text" id="region" name="region" required maxlength="50">
+                    </div>
+                </div>
+            </div>
+            
+            <div class="form-row">
+                <div class="form-column">
+                    <div class="form-group">
+                        <label for="province">Province*</label>
+                        <input type="text" id="province" name="province" required maxlength="50">
+                    </div>
+                </div>
+                <div class="form-column">
+                    <div class="form-group">
+                        <label for="city">City*</label>
+                        <input type="text" id="city" name="city" required maxlength="50">
+                    </div>
+                </div>
+            </div>
+            
+            <div class="form-row">
+                <div class="form-column">
+                    <div class="form-group">
+                        <label for="street">Street*</label>
+                        <input type="text" id="street" name="street" required maxlength="100">
+                    </div>
+                </div>
+                <div class="form-column">
+                    <div class="form-group">
+                        <label for="civic">Civic Number*</label>
+                        <input type="text" id="civic" name="civic" required maxlength="50">
+                    </div>
+                </div>
+            </div>
+              
+            <!-- Consolidate all error messages here, just above the register button -->
+            <div id="error-message-container" class="error-message" style="display: none;"></div>
+            
+            <div id="password-validation-error" class="error-message" style="display: none;">
+                <p id="password-validation-message"></p>
+            </div>
+            
+            <div th:if="${error}" class="error-message">
+                <p th:text="${error}">Error message</p>
+            </div>
+            
+            <button type="submit" class="green-button" id="registerButton">Register</button>
+        </form>
+        
+        <div class="bottom-nav button-container">
+            <button onclick="window.location.href='/'" class="green-button">Go Back</button>
+            <button onclick="window.location.href='/login'" class="green-button">Login</button>
+        </div>
+    </div>
+    
+    <script>
+        // Function to hash password with SHA-256
+        async function hashPassword(password) {
+            const encoder = new TextEncoder();
+            const data = encoder.encode(password);
+            const hash = await crypto.subtle.digest('SHA-256', data);
+            const hashArray = Array.from(new Uint8Array(hash));
+            const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+            return hashHex;
+        }
+
+        async function submitRegistrationForm(event) {
+            event.preventDefault();
+            if (!validateForm()) {
+                return;
+            }
+            
+            // Get the register button and disable it
+            const registerButton = document.getElementById('registerButton');
+            const originalText = registerButton.textContent;
+            
+            // Replace text with spinner and disable button
+            registerButton.innerHTML = '<div class="spinner"></div>';
+            registerButton.classList.add('loading');
+            registerButton.disabled = true;
+            
+            const password = document.getElementById('password').value;
+            const hashedPassword = await hashPassword(password);
+            
+            const formData = trimObjectValues({
+                username: document.getElementById('username').value,
+                name: document.getElementById('name').value,
+                surname: document.getElementById('surname').value,
+                email: document.getElementById('email').value,
+                password: hashedPassword,
+                state: document.getElementById('state').value,
+                region: document.getElementById('region').value,
+                province: document.getElementById('province').value,
+                city: document.getElementById('city').value,
+                street: document.getElementById('street').value,
+                civic: document.getElementById('civic').value
+            });
+              
+            fetch('/register', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(formData)
+            })
+            .then(response => {
+                if (response.redirected) {
+                    window.location.href = response.url;
+                } else if (response.ok) {
+                    window.location.href = '/home';
+                } else {
+                    console.error('Registration failed');
+                    // Reset button after error
+                    setTimeout(() => {
+                        registerButton.innerHTML = originalText;
+                        registerButton.classList.remove('loading');
+                        registerButton.disabled = false;
+                    }, 5000);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                // Reset button after error
+                setTimeout(() => {
+                    registerButton.innerHTML = originalText;
+                    registerButton.classList.remove('loading');
+                    registerButton.disabled = false;
+                }, 5000);
+            });
+            
+            // Set a timeout to re-enable the button after 5 seconds
+            // This will only take effect if the page doesn't redirect
+            setTimeout(() => {
+                registerButton.innerHTML = originalText;
+                registerButton.classList.remove('loading');
+                registerButton.disabled = false;
+            }, 5000);
+        }
+    </script>
+    <script>
+        function togglePassword(inputId, openEyeId, closedEyeId) {
+            const passwordInput = document.getElementById(inputId);
+            const openEye = document.getElementById(openEyeId);
+            const closedEye = document.getElementById(closedEyeId);
+            
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                openEye.style.display = 'none';
+                closedEye.style.display = 'inline';
+            } else {
+                passwordInput.type = 'password';
+                openEye.style.display = 'inline';
+                closedEye.style.display = 'none';
+            }
+        }
+        
+        // Add event listeners once the DOM is fully loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            const passwordInput = document.getElementById('password');
+            const confirmPasswordInput = document.getElementById('confirmPassword');
+            
+            // Check password requirements as user types
+            passwordInput.addEventListener('input', checkPasswordStrength);
+            
+            // Check if passwords match when user types in either field
+            passwordInput.addEventListener('input', checkPasswordsMatch);
+            confirmPasswordInput.addEventListener('input', checkPasswordsMatch);
+        });
+        
+        function checkPasswordStrength() {
+            const password = document.getElementById('password').value;
+            const errorDiv = document.getElementById('password-validation-error');
+            const errorMessage = document.getElementById('password-validation-message');
+            
+            if (password.length === 0) {
+                errorDiv.style.display = 'none';
+                return;
+            }
+            
+            if (password.length < 8) {
+                errorDiv.style.display = 'block';
+                errorMessage.textContent = 'Password must be at least 8 characters long.';
+                return;
+            }
+            
+            if (!/[A-Z]/.test(password)) {
+                errorDiv.style.display = 'block';
+                errorMessage.textContent = 'Password must contain at least one uppercase letter.';
+                return;
+            }
+            
+            if (!/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password)) {
+                errorDiv.style.display = 'block';
+                errorMessage.textContent = 'Password must contain at least one special character.';
+                return;
+            }
+            
+            errorDiv.style.display = 'none';
+        }
+        
+        function checkPasswordsMatch() {
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            const errorDiv = document.getElementById('password-validation-error');
+            const errorMessage = document.getElementById('password-validation-message');
+            
+            if (confirmPassword.length === 0) {
+                return;
+            }
+            
+            if (password !== confirmPassword) {
+                errorDiv.style.display = 'block';
+                errorMessage.textContent = 'Passwords do not match.';
+            } else {
+                // Only hide the error if it's currently showing a password match error
+                if (errorMessage.textContent === 'Passwords do not match.') {
+                    errorDiv.style.display = 'none';
+                }
+            }
+        }
+        
+        function validateForm() {
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            const errorDiv = document.getElementById('password-validation-error');
+            const errorMessage = document.getElementById('password-validation-message');
+            
+            // Check field lengths
+            const username = document.getElementById('username').value;
+            if (username.length > 50) {
+                errorDiv.style.display = 'block';
+                errorMessage.textContent = 'Username cannot exceed 50 characters!';
+                return false;
+            }
+            
+            const email = document.getElementById('email').value;
+            if (email.length > 100) {
+                errorDiv.style.display = 'block';
+                errorMessage.textContent = 'Email cannot exceed 100 characters!';
+                return false;
+            }
+            
+            const name = document.getElementById('name').value;
+            if (name && name.length > 50) {
+                errorDiv.style.display = 'block';
+                errorMessage.textContent = 'Name cannot exceed 50 characters!';
+                return false;
+            }
+            
+            const surname = document.getElementById('surname').value;
+            if (surname && surname.length > 50) {
+                errorDiv.style.display = 'block';
+                errorMessage.textContent = 'Surname cannot exceed 50 characters!';
+                return false;
+            }
+            
+            const state = document.getElementById('state').value;
+            if (state.length > 50) {
+                errorDiv.style.display = 'block';
+                errorMessage.textContent = 'State cannot exceed 50 characters!';
+                return false;
+            }
+            
+            const region = document.getElementById('region').value;
+            if (region.length > 50) {
+                errorDiv.style.display = 'block';
+                errorMessage.textContent = 'Region cannot exceed 50 characters!';
+                return false;
+            }
+            
+            const province = document.getElementById('province').value;
+            if (province.length > 50) {
+                errorDiv.style.display = 'block';
+                errorMessage.textContent = 'Province cannot exceed 50 characters!';
+                return false;
+            }
+            
+            const city = document.getElementById('city').value;
+            if (city.length > 50) {
+                errorDiv.style.display = 'block';
+                errorMessage.textContent = 'City cannot exceed 50 characters!';
+                return false;
+            }
+            
+            const street = document.getElementById('street').value;
+            if (street.length > 100) {
+                errorDiv.style.display = 'block';
+                errorMessage.textContent = 'Street cannot exceed 100 characters!';
+                return false;
+            }
+            
+            const civic = document.getElementById('civic').value;
+            if (civic.length > 50) {
+                errorDiv.style.display = 'block';
+                errorMessage.textContent = 'Civic Number cannot exceed 50 characters!';
+                return false;
+            }
+            
+            // Check if passwords match
+            if (password !== confirmPassword) {
+                errorDiv.style.display = 'block';
+                errorMessage.textContent = 'Passwords do not match.';
+                return false;
+            }
+            
+            // Check password length
+            if (password.length < 8) {
+                errorDiv.style.display = 'block';
+                errorMessage.textContent = 'Password must be at least 8 characters long.';
+                return false;
+            }
+            
+            // Check for uppercase letter
+            if (!/[A-Z]/.test(password)) {
+                errorDiv.style.display = 'block';
+                errorMessage.textContent = 'Password must contain at least one uppercase letter.';
+                return false;
+            }
+            
+            // Check for special character
+            if (!/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password)) {
+                errorDiv.style.display = 'block';
+                errorMessage.textContent = 'Password must contain at least one special character.';
+                return false;
+            }
+            
+            // All validations passed
+            errorDiv.style.display = 'none';            
+            return true;
+        }
+    </script>    <!-- Add Easter Egg Script -->
+    <script th:src="@{/js/easterEgg.js}"></script>
+    
+    <!-- Initialize auto-hide for server-side error messages -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const errorElements = document.querySelectorAll('.error-message');
+            errorElements.forEach(element => {
+                if (element && element.style.display !== 'none') {
+                    setTimeout(() => {
+                        element.style.display = 'none';
+                    }, 5000);
+                }
+            });
+        });
+    </script>
+</body>
+</html>
