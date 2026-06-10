@@ -143,5 +143,7 @@ The project follows a standard Spring Boot layout:
 - **Other:** Lombok
 
 ## License
+- [LICENSE](LICENSE)
 
-This project is licensed under the terms specified in [LICENSE](LICENSE).
+## Author
+- [LorenBll](https://github.com/LorenBll)
