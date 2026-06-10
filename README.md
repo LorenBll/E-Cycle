@@ -6,6 +6,7 @@ Marketplace platform for reselling unused goods through characteristic-based mat
 
 - [About](#about)
 - [Features](#features)
+- [Screenshots](#screenshots)
 - [Project Structure](#project-structure)
 - [Installation](#installation)
 - [Usage](#usage)
@@ -27,6 +28,29 @@ E-Cycle solves this by providing a characteristic-based matching system that let
 - **Negotiation System:** Direct communication interface between matched parties
 - **Advanced Filtering:** Search and browse by category, nature, brand, and specific characteristics
 - **Clear Decision System:** Accept or reject proposals with transparent feedback
+
+## Screenshots
+
+### Login
+![Login screen](docs/images/login.png)
+
+### Registration
+![Registration screen](docs/images/registration.png)
+
+### Profile Edit
+![Profile edit screen](docs/images/profile-edit.png)
+
+### Request Insertion
+![Request insertion screen](docs/images/requestInsertion.png)
+
+### Request Details
+![Request details screen](docs/images/requestDetails.png)
+
+### Offer Insertion
+![Offer insertion screen](docs/images/offerInsertion.png)
+
+### Offer Details
+![Offer details screen](docs/images/offerDetails.png)
 
 ## Project Structure
 
@@ -65,8 +89,11 @@ The project follows a standard Spring Boot layout:
 ### Prerequisites
 
 - Java 24 or newer
+  - [Oracle](https://www.java.com/it/download/manual.jsp) or [OpenJDK](https://openjdk.org/)
 - Maven 3.6 or newer
+  - [Apache Maven](https://maven.apache.org/download.cgi)
 - MySQL 8.0 or newer
+  - [MySQL Community Server](https://dev.mysql.com/downloads/mysql/)
 
 ### Quick Start
 
