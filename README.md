@@ -11,7 +11,7 @@ Marketplace platform for reselling unused goods through characteristic-based mat
 - [Installation](#installation)
 - [Usage](#usage)
 - [Tech Stack](#tech-stack)
-- [License](#license)
+- [Licence](#licence)
 
 ## About
 
@@ -142,7 +142,7 @@ The project follows a standard Spring Boot layout:
 - **Build Tool:** Maven
 - **Other:** Lombok
 
-## License
+## Licence
 - [LICENSE](LICENSE)
 
 ## Author
